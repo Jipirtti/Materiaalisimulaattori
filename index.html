@@ -1,0 +1,1178 @@
+<!doctype html>
+<!--
+  Materiaalisimulaattori – teräksen lämpökäsittely, kiderakenne, Fe–C-tasapainopiirros ja vetokoe
+  Tekijä: Juho Pirttilahti, Seinäjoen ammattikorkeakoulu (SEAMK), 2026.
+  Suunnittelu, sisältö ja validointi: Juho Pirttilahti. Ohjelmakoodi toteutettu tekoälyavusteisesti (Claude, Anthropic).
+  Lisenssi: Creative Commons Nimeä 4.0 Kansainvälinen (CC BY 4.0), https://creativecommons.org/licenses/by/4.0/deed.fi
+  Saat kopioida, jakaa ja muokata ohjelmaa mihin tahansa tarkoitukseen, kunhan mainitset
+  tekijän ja oppilaitoksen, merkitset lisenssin ja kerrot tekemistäsi muutoksista.
+-->
+<html lang="fi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Materiaalisimulaattori</title>
+<meta name="author" content="Juho Pirttilahti, Seinäjoen ammattikorkeakoulu (SEAMK)">
+<meta name="copyright" content="Juho Pirttilahti, Seinäjoen ammattikorkeakoulu (SEAMK), 2026. CC BY 4.0">
+<link rel="license" href="https://creativecommons.org/licenses/by/4.0/deed.fi">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#DCE3E9;--paper:#F7F9FA;--grid:#E2E8ED;--grid2:#D3DBE2;--panel:#EDF1F4;--ink:#17212B;--muted:#56636F;
+  --line:#C2CBD3;--acc:#E39B17;--sel:#1E5DBA;--ok:#2E8B57;--warn:#C0392B;--on:#E39B17;
+  --c1:#C2392B;--c2:#1E6FB0;--c3:#2E8B57;--c4:#8A5BD6}
+*,*::before,*::after{box-sizing:inherit}
+html{height:100%}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0E1419;--paper:#131A20;--grid:#1A232B;--grid2:#222D36;--panel:#161F26;--ink:#E2E8EE;--muted:#93A0AC;--line:#2A3540;--acc:#F0A82A;--sel:#6FA7FF;--ok:#4CC38A;--warn:#FF6B5B;--on:#F0A82A;--c1:#FF7A6B;--c2:#6FB3F0;--c3:#4CC38A;--c4:#B596FF}}
+:root[data-theme="dark"]{--bg:#0E1419;--paper:#131A20;--grid:#1A232B;--grid2:#222D36;--panel:#161F26;--ink:#E2E8EE;--muted:#93A0AC;--line:#2A3540;--acc:#F0A82A;--sel:#6FA7FF;--ok:#4CC38A;--warn:#FF6B5B;--on:#F0A82A;--c1:#FF7A6B;--c2:#6FB3F0;--c3:#4CC38A;--c4:#B596FF}
+body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:"Barlow",system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.4;-webkit-text-size-adjust:100%}
+button,select,input{font:inherit;color:inherit}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--sel);outline-offset:1px}
+.app{min-height:100%;display:grid;grid-template-columns:300px minmax(0,1fr);grid-template-rows:auto auto minmax(0,1fr);grid-template-areas:"bar bar" "tabs tabs" "ctl view"}
+.bar{grid-area:bar;display:flex;flex-wrap:wrap;align-items:center;gap:8px 18px;padding:8px 14px;border-bottom:1px solid var(--line);background:var(--panel)}
+.brand{display:flex;flex-direction:column;line-height:1.1;margin-right:6px}
+.brand strong{font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-size:24px;font-weight:600}
+.brand span{font-size:13px;color:var(--muted)}
+.grp{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.langsw{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.langsw button{border:0;background:var(--paper);padding:5px 12px;cursor:pointer;font-size:14px;font-weight:600}
+.langsw button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.btn{background:var(--paper);border:1px solid var(--line);border-radius:7px;padding:6px 12px;cursor:pointer;min-height:34px}
+.btn:hover{border-color:var(--muted)}
+a.btn{display:inline-flex;align-items:center;text-decoration:none;color:var(--ink)}
+.btn.pri{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.btn.on{background:var(--acc);border-color:var(--acc);color:#1E1404}
+select,input[type=number]{background:var(--paper);border:1px solid var(--line);border-radius:7px;padding:5px 8px;min-height:32px}
+.tabs{grid-area:tabs;display:flex;flex-wrap:wrap;gap:4px;padding:6px 14px 0;background:var(--panel);border-bottom:1px solid var(--line)}
+.tabs button{border:1px solid var(--line);border-bottom:0;background:var(--bg);border-radius:8px 8px 0 0;padding:6px 16px;cursor:pointer;font-weight:600}
+.tabs button[aria-selected="true"]{background:var(--paper);position:relative;top:1px}
+.ctl{grid-area:ctl;background:var(--panel);border-right:1px solid var(--line);padding:10px 12px 24px;overflow:auto}
+.ctl h3{font-size:13px;font-weight:600;color:var(--muted);margin:14px 0 6px;text-transform:none}
+.ctl h3:first-child{margin-top:2px}
+.fld{display:grid;grid-template-columns:minmax(0,1fr) 140px;gap:6px;align-items:center;margin:0 0 6px;font-size:14px}
+.fld select,.fld input{width:100%}
+.fld .inp{display:flex;align-items:center;gap:4px}.fld .inp input{min-width:0;flex:1}.fld .inp em{font-style:normal;color:var(--muted);font-size:13px;min-width:26px;flex:none;white-space:nowrap}
+.ctl .note,.mnote{font-size:13px;color:var(--muted);margin:6px 0}
+.ctl .acts{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.copy{font-size:11.5px;line-height:1.35;color:var(--muted);margin:18px 0 0;padding-top:10px;border-top:1px solid var(--line)}
+.copy a,.mcopy a{color:inherit}
+.view{grid-area:view;background:var(--paper);padding:10px 12px 18px;overflow:auto;min-width:0}
+.panel{display:none}.panel.on{display:block}
+.g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.card{border:1px solid var(--line);border-radius:10px;background:var(--paper);padding:8px 10px;min-width:0}
+.card h4{margin:0 0 4px;font-size:14px;font-weight:600}
+.card canvas{width:100%;display:block}
+.cv260{height:260px}.cv320{height:320px}.cv420{height:420px}.cv480{height:480px}
+.res{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
+.res td{padding:3px 6px;border-bottom:1px solid var(--grid2);vertical-align:top}
+.res td:first-child{color:var(--muted)}
+.res td:last-child{text-align:right;font-weight:600}
+.warns div{margin:6px 0;padding:6px 10px;border-radius:7px;background:rgba(192,57,43,.1);border:1px solid rgba(192,57,43,.35);font-size:14px}
+.warns div.info{background:rgba(30,93,186,.08);border-color:rgba(30,93,186,.3)}
+.phase{font-size:14px;margin:6px 0 0}
+.phase b{font-weight:600}
+.leg{display:flex;flex-wrap:wrap;gap:10px;font-size:13px;color:var(--muted);margin:4px 0 0}
+.leg i{display:inline-block;width:16px;height:4px;border-radius:2px;margin-right:4px;vertical-align:middle}
+.leg i.sw{width:12px;height:12px;border:1px solid var(--line)}
+.rng{display:flex;align-items:center;gap:8px;font-size:14px;margin:6px 0}
+.rng input{flex:1}
+.kv{font-size:14px;line-height:1.5}
+.kv p{margin:6px 0}
+.big{font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-size:22px;font-variant-numeric:tabular-nums}
+.modal{position:fixed;inset:0;background:rgba(10,16,22,.5);display:none;align-items:center;justify-content:center;z-index:100;padding:16px}
+.modal.open{display:flex}
+.mbox{background:var(--paper);border-radius:12px;max-width:760px;width:100%;max-height:88vh;overflow:auto;padding:18px 22px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.mbox h2{margin:0 0 8px;font-family:"Barlow Condensed","Arial Narrow",sans-serif}
+.mbox h3{margin:14px 0 4px;font-size:15px}
+.mbox p{margin:6px 0}
+.mrow{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}
+.mcopy{font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:10px;margin-top:14px}
+@media (max-width:980px){.app{grid-template-columns:1fr;grid-template-areas:"bar" "tabs" "ctl" "view"}.ctl{border-right:0;border-bottom:1px solid var(--line)}.g2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="bar">
+    <div class="brand"><strong data-en="Materials Simulator">Materiaalisimulaattori</strong><span>Juho Pirttilahti, SEAMK 2026, CC BY 4.0</span></div>
+    <div class="langsw" role="group" aria-label="Kieli / Language"><button type="button" data-lang="fi" lang="fi">FI</button><button type="button" data-lang="en" lang="en">EN</button></div>
+    <div class="grp">
+      <button class="btn" id="helpBtn" type="button" data-en="Help">Ohje</button>
+      <a class="btn" id="manualLink" href="https://jipirtti.github.io/Materiaalisimulaattori/docs/kayttoohje.html" target="_blank" rel="noopener" data-en="User manual (FI)">Käyttöohje</a>
+    </div>
+  </header>
+  <nav class="tabs" role="tablist" aria-label="Osat" data-en-aria="Sections">
+    <button type="button" role="tab" data-tab="ht" aria-selected="true" data-en="Heat treatment">Lämpökäsittely</button>
+    <button type="button" role="tab" data-tab="xs" aria-selected="false" data-en="Crystal structure">Kiderakenne</button>
+    <button type="button" role="tab" data-tab="fec" aria-selected="false" data-en="Fe–C diagram">Fe–C-piirros</button>
+    <button type="button" role="tab" data-tab="tt" aria-selected="false" data-en="Tensile test">Vetokoe</button>
+  </nav>
+  <aside class="ctl" id="ctl" aria-label="Asetukset" data-en-aria="Settings"></aside>
+  <main class="view" id="view">
+    <section class="panel on" id="p-ht">
+      <div class="warns" id="htWarns"></div>
+      <div class="g2">
+        <div class="card"><h4 data-en="Temperature – time">Lämpötila – aika</h4><canvas id="cvT" class="cv260"></canvas><div class="leg" id="legT"></div></div>
+        <div class="card"><h4 data-en="Hardness profile (click to choose depth)">Kovuusprofiili (klikkaa: valitse syvyys)</h4><canvas id="cvH" class="cv260"></canvas><div class="leg" id="legH"></div></div>
+        <div class="card"><h4 data-en="Microstructure, cross-section from the surface (schematic)">Mikrorakenne, poikkileikkaus pinnasta alkaen (kaavamainen)</h4><canvas id="cvM" class="cv260"></canvas><div class="phase" id="phaseTxt"></div></div>
+        <div class="card"><h4 data-en="Results">Tulokset</h4><table class="res" id="htRes"></table><div id="jomBox"><h4 style="margin-top:10px" data-en="Jominy hardenability and equivalent distances">Jominy-karkenevuus ja vastaavat etäisyydet</h4><canvas id="cvJ" class="cv260" style="height:190px"></canvas></div></div>
+      </div>
+    </section>
+    <section class="panel" id="p-xs">
+      <div class="g2">
+        <div class="card"><h4 data-en="Unit cell (drag to rotate)">Alkeiskoppi (pyöritä vetämällä)</h4><canvas id="cvX" class="cv480"></canvas><div class="leg" id="legX"></div></div>
+        <div class="card kv" id="xsInfo"></div>
+      </div>
+    </section>
+    <section class="panel" id="p-fec">
+      <div class="g2">
+        <div class="card"><h4 data-en="Fe–Fe₃C phase diagram, steel region (click to choose a point)">Fe–Fe₃C-tasapainopiirros, teräsalue (klikkaa: valitse piste)</h4><canvas id="cvF" class="cv480"></canvas></div>
+        <div class="card"><h4 data-en="Equilibrium state">Tasapainotila</h4><table class="res" id="fecRes"></table><h4 style="margin-top:10px" data-en="Microstructure (slow cooling, schematic)">Mikrorakenne (hidas jäähtyminen, kaavamainen)</h4><canvas id="cvFM" class="cv260"></canvas><p class="mnote" id="fecTxt"></p></div>
+      </div>
+    </section>
+    <section class="panel" id="p-tt">
+      <div class="g2">
+        <div class="card"><h4 data-en="Stress – strain">Jännitys – venymä</h4><canvas id="cvS" class="cv420"></canvas><div class="leg" id="legS"></div></div>
+        <div class="card"><h4 data-en="Specimen">Koesauva</h4><canvas id="cvB" class="cv260" style="height:150px"></canvas><table class="res" id="ttRes"></table></div>
+      </div>
+    </section>
+  </main>
+</div>
+<div class="modal" id="modal" role="dialog" aria-modal="true"><div class="mbox" id="mbox"></div></div>
+<script>
+(()=>{
+'use strict';
+const $=s=>document.querySelector(s);
+let lang=(()=>{try{const u=new URLSearchParams(location.search).get('lang');if(u==='fi'||u==='en')return u;const st=localStorage.getItem('matsim-lang');if(st==='fi'||st==='en')return st;}catch(e){}
+  return (navigator.language||'fi').toLowerCase().startsWith('fi')?'fi':'en';})();
+const tr=(fi,en)=>lang==='en'?en:fi;
+const L2=a=>Array.isArray(a)?(lang==='en'?a[1]:a[0]):a;
+const clamp=(x,a,b)=>x<a?a:x>b?b:x;
+const nf=(x,d=1)=>Number.isFinite(x)?x.toLocaleString(lang==='en'?'en-US':'fi-FI',{minimumFractionDigits:d,maximumFractionDigits:d,useGrouping:false}):'–';
+const esc=s=>String(s).replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
+/* lineaarinen interpolointi taulukosta (x nouseva) */
+function interp(xs,ys,x){if(x<=xs[0])return ys[0];const n=xs.length;if(x>=xs[n-1])return ys[n-1];let i=1;while(xs[i]<x)i++;const t=(x-xs[i-1])/(xs[i]-xs[i-1]);return ys[i-1]+t*(ys[i]-ys[i-1]);}
+
+/* ---------- kovuusmuunnos HRC ↔ HV (teräs, ASTM E140 / ISO 18265, likiarvot) ---------- */
+const CONV_HRC=[20,22,24,25,26,28,30,32,34,35,36,38,40,42,44,45,46,48,50,52,54,55,56,57,58,60,62,64,65,66,68];
+const CONV_HV=[238,248,260,266,272,286,302,318,336,345,354,372,392,412,434,446,458,484,513,544,577,595,613,633,653,697,746,800,832,865,940];
+const hrc2hv=h=>h<20?238-(20-h)*5:interp(CONV_HRC,CONV_HV,h);
+const hv2hrc=v=>v<238?null:interp(CONV_HV,CONV_HRC,v);
+const hv2hb=v=>v*0.95;          // HB ≈ 0,95·HV (teräs, < 450 HV)
+const hv2rm=v=>3.1*v;           // Rm ≈ 3,1·HV (nuorrutusteräs, ISO 18265 -tyyppinen likiarvo)
+
+/* ---------- martensiitin kovuus hiilipitoisuuden funktiona ----------
+   100 % martensiitti: ASTM A255 (polynomi, C ≤ 0,7 %); 50 % martensiitti: Hodge–Orehoski-taulukko. */
+const hrcM100=C=>{C=clamp(C,0.05,0.7);return 35.395+6.990*C+312.330*C*C-821.744*C**3+1015.479*C**4-538.346*C**5;};
+const HO50_C=[0.2,0.3,0.4,0.5,0.6,0.7,0.8],HO50_H=[32.5,36,41.5,47,51.5,53,54];
+const hrcM50=C=>interp(HO50_C,HO50_H,C);
+/* Ms Andrewsin (1965) lineaarisella yhtälöllä */
+const msAndrews=c=>539-423*c.C-30.4*c.Mn-12.1*c.Cr-7.5*c.Mo-17.7*(c.Ni||0);
+
+/* ---------- teräkset ----------
+   Lähde: Lucefin Group, teknisten korttien muunnospisteet, päästökäyrät ja Jominy-kaistat (ISO 683-1, ISO 683-2).
+   temper: [T °C, HRC] päästökäyrä (oletus 1 h); ref: päästökäyrän koesauva; HVn: normalisoidun / pehmeän tilan kovuus. */
+const STEELS={
+  C45:{name:'C45E (1.1191)',comp:{C:0.46,Si:0.25,Mn:0.65,Cr:0.20,Mo:0.05,Ni:0.20},Ac1:735,Ac3:780,Ms:350,Mf:120,
+    aus:{vesi:820,oljy:860},HVn:200,
+    temper:[[100,58],[200,57],[300,52],[400,43],[500,33],[600,23],[620,18.5],[650,13],[700,9]],ref:['Ø10 mm, vesi 850 °C','Ø10 mm, water 850 °C'],
+    jd:[1,2,3,4,5,6,7,8,9,10,11,13,15],jmin:[55,51,37,30,28,27,26,25,24,23,22,21,20],jmax:[62,61,61,60,57,51,44,37,34,33,32,31,30],
+    nit:{X:0.25}},
+  '42CrMo4':{name:'42CrMo4 (1.7225)',comp:{C:0.42,Si:0.25,Mn:0.75,Cr:1.05,Mo:0.22,Ni:0},Ac1:745,Ac3:790,Ms:335,Mf:80,
+    aus:{vesi:820,oljy:860},HVn:220,
+    temper:[[100,57],[150,56.5],[200,54.5],[250,52.5],[300,51],[350,49],[400,47],[450,45],[500,42],[550,39],[600,36],[650,31],[700,27]],ref:['Ø10 mm, öljy 850 °C','Ø10 mm, oil 850 °C'],
+    rm:[[100,2200,1520,0],[150,2180,1600,7],[200,2030,1620,9.5],[250,1910,1590,10],[300,1800,1560,10],[350,1700,1510,10],[400,1590,1440,10.4],[450,1480,1340,11],[500,1350,1230,12],[550,1220,1110,13.5],[600,1100,1000,15.8],[650,980,870,19],[700,880,710,21.5]],
+    jd:[1.5,3,5,7,9,11,13,15,20,25,30,35,40,45,50],jmin:[53,53,52,51,49,43,40,37,34,32,31,30,30,29,29],jmax:[61,61,61,60,60,59,59,58,56,53,51,48,47,46,45],
+    nit:{X:1.27}},
+  '34CrNiMo6':{name:'34CrNiMo6 (1.6582)',comp:{C:0.34,Si:0.25,Mn:0.65,Cr:1.50,Mo:0.22,Ni:1.50},Ac1:715,Ac3:770,Ms:320,Mf:100,
+    aus:{vesi:830,oljy:860},HVn:230,
+    temper:[[100,53],[200,51.5],[300,49],[400,46.5],[500,40],[550,37],[600,34],[650,28],[700,22]],ref:['Ø60 mm, öljy 850 °C','Ø60 mm, oil 850 °C'],
+    rm:[[100,1950,1450,10],[200,1850,1480,10],[300,1700,1450,10],[400,1500,1350,12],[500,1260,1180,13],[550,1150,980,13.4],[600,1050,950,18],[650,900,700,20],[700,800,680,22]],
+    jd:[1.5,3,5,7,9,11,13,15,20,25,30,35,40,45,50],jmin:[50,50,50,50,49,48,48,48,48,47,47,47,46,45,44],jmax:[58,58,58,58,57,57,57,57,57,57,57,57,57,57,57],
+    nit:{X:1.72}}
+};
+/* Päästökäyrä HRC → HV; alle 20 HRC arvot (C45, 620–700 °C) on muunnettu Rm-arvoista (Rm/3,1). */
+for(const k in STEELS){const s=STEELS[k];s.tT=s.temper.map(p=>p[0]);
+  s.tHV=s.temper.map(p=>k==='C45'&&p[0]>=620?({620:740,650:600,700:540}[p[0]])/3.1:hrc2hv(p[1]));}
+
+/* sammutusaineet: tehollinen lämmönsiirtokerroin h (W/(m²·K)) välillä 800–500 °C.
+   Arvot on valittu kirjallisuuden vaihteluväleiltä (Totten, Steel Heat Treatment Handbook; Liščić, Quenching Theory and Technology):
+   öljy ja vesi on sovitettu teknisten korttien päästökäyrien koesauvoihin (42CrMo4 Ø10 öljy, C45 Ø10 vesi), ks. VALIDOINTI.md. */
+const MEDIA={ilma:{h:'air',n:['Ilma (tyyni)','Air (still)']},oljy:{h:2000,n:['Öljy, sekoitettu (h 2000 W/m²K)','Oil, agitated (h 2000 W/m²K)']},polymeeri:{h:3500,n:['Polymeeriliuos (h 3500 W/m²K)','Polymer solution (h 3500 W/m²K)']},
+  vesi:{h:6000,n:['Vesi, sekoitettu (h 6000 W/m²K)','Water, agitated (h 6000 W/m²K)']},suihku:{h:15000,n:['Vesisuihku (h 15 000 W/m²K)','Water spray (h 15 000 W/m²K)']}};
+
+/* ---------- vetokoemateriaalit (tyypilliset arvot; vähimmäisarvot standardeista) ---------- */
+const MATS={
+  S235:{n:['S235JR rakenneteräs','S235JR structural steel'],std:'EN 10025-2',E:210,ReH:290,ReL:270,luders:1.6,Rm:420,Ag:18,A:30,Z:62,min:'ReH ≥ 235 MPa, Rm 360–510 MPa, A ≥ 26 %'},
+  S355:{n:['S355J2 rakenneteräs','S355J2 structural steel'],std:'EN 10025-2',E:210,ReH:390,ReL:375,luders:1.4,Rm:540,Ag:15,A:25,Z:60,min:'ReH ≥ 355 MPa, Rm 470–630 MPa, A ≥ 22 %'},
+  C45N:{n:['C45 normalisoitu (+N)','C45 normalized (+N)'],std:'EN ISO 683-1',E:210,ReH:380,ReL:365,luders:0.8,Rm:680,Ag:11,A:18,Z:45,min:'Re ≥ 340 MPa, Rm ≥ 620 MPa, A ≥ 14 % (d ≤ 16 mm)'},
+  CrMoQT:{n:['42CrMo4 nuorrutettu (+QT)','42CrMo4 quenched and tempered (+QT)'],std:'EN ISO 683-2',E:210,Rp:900,Rm:1080,Ag:6,A:14,Z:55,min:'Rp0,2 ≥ 750 MPa, Rm 1000–1200 MPa, A ≥ 11 % (16 < d ≤ 40 mm)'},
+  HT:{n:['Lämpökäsittelyn tulos (Lämpökäsittely-välilehti)','Heat treatment result (Heat treatment tab)'],std:'',E:210,Rp:900,Rm:1080,Ag:6,A:14,Z:55,min:''},
+  SS:{n:['1.4301 ruostumaton (austeniittinen)','1.4301 stainless (austenitic)'],std:'EN 10088-3',E:200,Rp:290,Rm:620,Ag:50,A:56,Z:70,min:'Rp0,2 ≥ 190 MPa, Rm 500–700 MPa, A ≥ 45 %'},
+  AL6082:{n:['EN AW-6082-T6 alumiini','EN AW-6082-T6 aluminium'],std:'EN 755-2',E:70,Rp:290,Rm:320,Ag:7,A:11,Z:30,min:'Rp0,2 ≥ 250 MPa, Rm ≥ 290 MPa, A ≥ 8 %'},
+  AL7075:{n:['EN AW-7075-T6 alumiini','EN AW-7075-T6 aluminium'],std:'EN 755-2',E:72,Rp:500,Rm:570,Ag:8,A:10,Z:20,min:'Rp0,2 ≥ 485 MPa, Rm ≥ 540 MPa, A ≥ 7 %'},
+  CU:{n:['Cu-ETP kupari, hehkutettu (R220)','Cu-ETP copper, annealed (R220)'],std:'EN 1652',E:120,Rp:80,Rm:235,Ag:35,A:45,Z:75,min:'Rm 220–260 MPa, Rp0,2 ≤ 140 MPa, A ≥ 33 %'},
+  TI:{n:['Ti-6Al-4V titaani','Ti-6Al-4V titanium'],std:'ASTM B348 Gr 5',E:114,Rp:900,Rm:980,Ag:8,A:14,Z:35,min:'Rp0,2 ≥ 828 MPa, Rm ≥ 895 MPa, A ≥ 10 %'},
+  GJS:{n:['EN-GJS-400-15 pallografiittivalurauta','EN-GJS-400-15 ductile iron'],std:'EN 1563',E:169,Rp:270,Rm:430,Ag:14,A:18,Z:15,min:'Rp0,2 ≥ 250 MPa, Rm ≥ 400 MPa, A ≥ 15 %'},
+  GJL:{n:['EN-GJL-250 suomugrafiittivalurauta','EN-GJL-250 grey cast iron'],std:'EN 1561',E:110,Rm:270,A:0.6,brittle:1,Z:0,min:'Rm 250–350 MPa, A 0,3–0,8 %'}
+};
+
+/* ---------- kidehilat ---------- */
+const XS={
+  bcc:{n:['α-rauta, ferriitti (tkk, BCC)','α-iron, ferrite (bcc)']},
+  fcc:{n:['γ-rauta, austeniitti (pkk, FCC)','γ-iron, austenite (fcc)']},
+  bct:{n:['Martensiitti (tetragonaalinen, BCT)','Martensite (body-centred tetragonal)']},
+  bain:{n:['Bainin muunnos austeniitti → martensiitti','Bain transformation austenite → martensite']},
+  gp:{n:["γ'-Fe₄N (nitridi, yhdistekerros)","γ'-Fe₄N (nitride, compound layer)"]},
+  eps:{n:['ε-Fe₂₋₃N (nitridi, yhdistekerros)','ε-Fe₂₋₃N (nitride, compound layer)']}
+};
+const latt={aAlpha:2.866,aGamma:C=>3.555+0.044*C,bct:C=>({a:2.866-0.013*C,c:2.866+0.116*C}),aGp:3.795,eps:{a:2.70,c:4.37}};
+
+/* ================= MALLIT ================= */
+/* Teräksen lämpöominaisuudet (seostamaton ja niukkaseosteinen teräs, likiarvot):
+   λ(T) [W/(m·K)], c(T) [J/(kg·K)] sisältää magneettisen muutoksen huipun noin 745 °C:ssa, ρ = 7800 kg/m³.
+   Faasimuutosten latenttia lämpöä ei mallinneta. */
+const RHO=7800,SIGMA=5.67e-8,T_CURIE=770;
+const kT=T=>Math.max(24,48-0.03*T);
+const cpT=T=>460+0.33*Math.min(T,900)+450*Math.exp(-(((T-745)/45)**2));
+const hAir=T=>10+0.8*SIGMA*((T+273.15)**2+293.15**2)*((T+273.15)+293.15);
+
+/* ---------- Jominy-päätykarkaisu: 1D-sauva (Ø25 × 100 mm) ----------
+   Päätyä jäähdyttää vesisuihku (h_pää), vaippaa ilma (konvektio + säteily). Tuloksena jokaisen etäisyyden
+   puolilämpötila-aika ja jäähtymisaika t8/5. Päädyn lämmönsiirtokerroin h = 15 000 W/(m²·K) on valittu niin, että jäähtymisnopeus 700 °C:ssa
+   1,5 mm etäisyydellä on noin 300 °C/s (Jominy-käyrästöjen yläakselin likiarvo), ks. VALIDOINTI.md M03. */
+const JOM={h_end:1.5e4,L:0.1,D:0.025,dx:5e-4,Ta:850};
+let jomCache=null;
+function jominy(){if(jomCache)return jomCache;
+  const N=Math.round(JOM.L/JOM.dx),dx=JOM.dx,T=new Float64Array(N).fill(JOM.Ta),Tw=20,P_A=4/JOM.D;
+  const half=(JOM.Ta+Tw)/2,tHalf=new Float64Array(N).fill(NaN),t8=new Float64Array(N).fill(NaN),t5=new Float64Array(N).fill(NaN),t75=new Float64Array(N).fill(NaN),t65=new Float64Array(N).fill(NaN);
+  const alphaMax=48/(RHO*460);const dt=0.4*dx*dx/alphaMax;let t=0;const kk=new Float64Array(N+1),iStop=Math.round(0.065/dx);
+  while(t<3000){
+    for(let i=1;i<N;i++){const Tm=(T[i-1]+T[i])/2;kk[i]=kT(Tm)*(T[i-1]-T[i])/dx;}
+    const Ts=T[0];kk[0]=-(Ts-Tw)/(dx/2/kT(Ts)+1/JOM.h_end);kk[N]=0;
+    for(let i=0;i<N;i++){const Ti=T[i];const side=hAir(Ti)*P_A*(Ti-20);T[i]=Ti+dt*((kk[i]-kk[i+1])/dx-side)/(RHO*cpT(Ti));}
+    t+=dt;
+    for(let i=0;i<N;i++){const Ti=T[i];if(isNaN(tHalf[i])&&Ti<=half)tHalf[i]=t;if(isNaN(t8[i])&&Ti<=800)t8[i]=t;if(isNaN(t5[i])&&Ti<=500)t5[i]=t;if(isNaN(t75[i])&&Ti<=750)t75[i]=t;if(isNaN(t65[i])&&Ti<=650)t65[i]=t;}
+    if(!isNaN(t5[iStop])&&!isNaN(tHalf[iStop]))break;}
+  const d=[],t85=[],th=[],r700=[];for(let i=0;i<N;i++){d.push((i+0.5)*dx*1000);t85.push(t5[i]-t8[i]);th.push(tHalf[i]);r700.push(100/(t65[i]-t75[i]));}
+  jomCache={d,t85,th,r700};return jomCache;}
+/* t8/5 → Jominy-etäisyys (mm) ja kovuus (HRC) karkenevuuskaistasta */
+function jomDist(t85){const J=jominy();if(t85<=J.t85[0])return J.d[0];const n=J.t85.length;if(t85>=J.t85[n-1])return J.d[n-1]*Math.sqrt(t85/J.t85[n-1]);return interp(J.t85,J.d,t85);}
+function jomHRC(s,d,band){const lo=interp(s.jd,s.jmin,d),hi=interp(s.jd,s.jmax,d);return band==='min'?lo:band==='max'?hi:(lo+hi)/2;}
+/* sammutuskovuus (HV) jäähtymisajasta t8/5 */
+function quenchHV(s,t85,band){const J=jominy(),dl=s.jd[s.jd.length-1];const tl=interp(J.d,J.t85,dl);
+  let hv=hrc2hv(jomHRC(s,jomDist(t85),band));
+  if(t85>tl){const hvL=hrc2hv(jomHRC(s,dl,band));const f=clamp(Math.log(t85/tl)/Math.log(10),0,1);hv=hvL+(Math.min(hvL,s.HVn+40)-hvL)*f;hv=Math.max(hv,s.HVn);}
+  return hv;}
+/* martensiittiosuus kovuudesta: 100 % (ASTM A255) ja 50 % (Hodge–Orehoski) martensiitin kovuuksien avulla */
+function martFrac(s,hv){const C=s.comp.C,h100=hrc2hv(hrcM100(C)),h50=hrc2hv(hrcM50(C));
+  if(hv>=h100)return 1;if(hv>=h50)return 0.5+0.5*(hv-h50)/(h100-h50);return clamp(0.5*(hv-s.HVn)/(h50-s.HVn),0,0.5);}
+const alloyed=s=>s.comp.Cr+s.comp.Mo+(s.comp.Ni||0)>1;
+
+/* ---------- päästö: Hollomon–Jaffe P = T[K]·(20 + log10 t[h]) ---------- */
+const HJ_C=20;
+const hjP=(T,th)=>(T+273.15)*(HJ_C+Math.log10(Math.max(th,1e-6)));
+function temperHV(s,P){const Ps=s.tT.map(T=>hjP(T,1));return interp(Ps,s.tHV,P);}
+/* päästetty kovuus: martensiittiosa pehmenee päästökäyrän mukaan, muu rakenne ei */
+function temperedHV(s,hvq,fM,P){const hvM=s.tHV[0];const ht=temperHV(s,P);if(P<=hjP(s.tT[0],1))return hvq;
+  return Math.max(s.HVn,hvq-fM*Math.max(0,hvM-ht));}
+/* lujuusarvot päästetylle rakenteelle: Rm ≈ 3,1·HV; Rp0,2/Rm ja A päästökäyrän taulukosta samalla Rm:llä */
+function strengthFromHV(s,hv){const Rm=hv2rm(hv);let ratio=0.88,A=14;
+  if(s.rm){const rs=s.rm.map(r=>r[1]).slice().reverse(),rp=s.rm.map(r=>r[2]/r[1]).reverse(),aa=s.rm.map(r=>r[3]||8).reverse();ratio=interp(rs,rp,Rm);A=interp(rs,aa,Rm);}
+  else{ratio=Rm>900?0.85:0.68;A=Rm>1500?8:Rm>900?14:20;}
+  return {Rm,Rp:Rm*ratio,A};}
+
+/* ---------- säteittäinen lämmönjohtuminen sylinterissä (äärellinen tilavuus) ---------- */
+function radialSim(o){
+  /* o: R [m], N, T0, phases: [{t: kesto s, h: lämmönsiirto (W/m²K) tai 'air', Tf: väliaine °C, qs: pintateho W/m² (induktio), f: Hz}] */
+  const R=o.R,N=o.N,dr=R/N,T=new Float64Array(N).fill(o.T0),r=i=>(i+0.5)*dr,V=new Float64Array(N),A=new Float64Array(N+1);
+  for(let i=0;i<N;i++)V[i]=Math.PI*(((i+1)*dr)**2-(i*dr)**2);for(let i=0;i<=N;i++)A[i]=2*Math.PI*i*dr;
+  const Tmax=new Float64Array(N).fill(o.T0),t8=new Float64Array(N).fill(NaN),t5=new Float64Array(N).fill(NaN);
+  const rec={t:[],s:[],m:[],c:[]};const iS=N-1,iM=Math.floor(N/2),iC=0;
+  const dt0=0.4*dr*dr/(48/(RHO*460));let t=0,nextRec=0;const flux=new Float64Array(N+1),q=new Float64Array(N);
+  const recInt=o.recInt||0.05;
+  for(const ph of o.phases){const tEnd=t+ph.t;const dt=Math.min(dt0,ph.t/50||dt0);
+    while(t<tEnd-1e-12){
+      if(ph.stopCore&&T[0]<ph.stopCore&&T[N-1]<ph.stopCore)break;
+      for(let i=1;i<N;i++){const Tm=(T[i-1]+T[i])/2;flux[i]=kT(Tm)*(T[i]-T[i-1])/dr*A[i];}
+      const Ts=T[N-1];const h=ph.h==='air'?hAir(Ts):ph.h;flux[N]=-(Ts-ph.Tf)/(dr/2/kT(Ts)+1/Math.max(h,1e-9))*A[N];flux[0]=0;
+      q.fill(0);
+      if(ph.qs){/* induktio: tehon tunkeutuminen exp(−2∫dx/δ), δ = 503·√(ρ/(μr·f)) paikallisesta lämpötilasta */
+        let att=0,sum=0;for(let i=N-1;i>=0;i--){const Ti=T[i],rho=1.9e-7+1.1e-9*Ti,mu=Ti<T_CURIE?50:1,del=503*Math.sqrt(rho/(mu*ph.f));
+          const w=Math.exp(-att)*(1-Math.exp(-2*dr/del));q[i]=w;sum+=w;att+=2*dr/del;if(att>30)break;}
+        const Ptot=ph.qs*A[N];for(let i=0;i<N;i++)q[i]=q[i]*Ptot/(sum||1);}
+      for(let i=0;i<N;i++){const Ti=T[i];T[i]=Ti+dt*(flux[i+1]-flux[i]+q[i])/(RHO*cpT(Ti)*V[i]);}
+      t+=dt;
+      for(let i=0;i<N;i++){const Ti=T[i];if(Ti>Tmax[i])Tmax[i]=Ti;if(ph.cool){if(isNaN(t8[i])&&Ti<=800&&Tmax[i]>=800)t8[i]=t;if(isNaN(t5[i])&&Ti<=500&&Tmax[i]>800)t5[i]=t;}}
+      if(t>=nextRec){rec.t.push(t);rec.s.push(T[iS]);rec.m.push(T[iM]);rec.c.push(T[iC]);nextRec=t+recInt;}}}
+  const t85=[];for(let i=0;i<N;i++)t85.push(isNaN(t8[i])?NaN:(isNaN(t5[i])?1e5:t5[i]-t8[i]));
+  return {N,dr,depth:Array.from({length:N},(_,i)=>(R-r(i))*1000),Tmax:Array.from(Tmax),t85,rec,T:Array.from(T)};}
+/* syvyysjärjestys (pinta ensin) */
+const revd=a=>a.slice().reverse();
+
+/* ---------- prosessit ---------- */
+function htQT(s,p){
+  /* nuorrutus: tasainen austenitointi, sammutus, päästö */
+  const R=p.D/2000,hq=MEDIA[p.medium].h;
+  const N2=Math.round(clamp(p.D*1.2,40,80));
+  const sim=radialSim({R,N:N2,T0:p.Taus,recInt:Math.max(0.05,p.D*p.D*0.002),phases:[{t:2e5,stopCore:350,h:hq,Tf:p.medium==='ilma'?20:p.Tf,cool:1}]});
+  /* austenitointi hitaalla kuumennuksella: austeniittiosuus Ac1…Ac3 välillä lineaarisesti */
+  const fA=clamp((p.Taus-s.Ac1)/(s.Ac3-s.Ac1),0,1);
+  const P=hjP(p.Tt,p.tt);const prof=[];
+  for(let k=N2-1;k>=0;k--){const t85=sim.t85[k];const hq=quenchHV(s,isNaN(t85)?1e5:t85,p.band);const fM=martFrac(s,hq)*fA;const hvq=fA*hq+(1-fA)*s.HVn;const hv=temperedHV(s,hvq,fM,P);
+    prof.push({x:sim.depth[k],hvq,fM,hv,t85,Tmax:sim.Tmax[k],fA});}
+  return {sim,prof,P,kind:'qt'};}
+function htIND(s,p){
+  /* induktiokarkaisu: lähtötila (nuorrutettu tai normalisoitu), kuumennus, viive, suihkusammutus, päästö */
+  const R=p.D/2000,dr=Math.min(1e-4,R/80),N=Math.round(R/dr);
+  const sim=radialSim({R,N,T0:20,recInt:0.02,phases:[{t:p.th,h:'air',Tf:20,qs:p.qs*1e7,f:p.f*1000},{t:p.td,h:'air',Tf:20,cool:1},{t:p.tq,h:MEDIA.suihku.h,Tf:20,cool:1}]});
+  const P0=p.prior==='qt'?hjP(p.Tp,1):null,hv0=p.prior==='qt'?temperHV(s,P0):s.HVn;
+  const A1=s.Ac1+50,A3=s.Ac3+100;const P=hjP(p.Tt,p.tt);const prof=[];
+  for(let k=N-1;k>=0;k--){const Tm=sim.Tmax[k],fA=clamp((Tm-A1)/(A3-A1),0,1);
+    /* austenitoitumaton osa: lisäpäästö huippulämpötilassa (lyhyt aika 2 s) */
+    let hvOld=hv0;if(p.prior==='qt'&&Tm>p.Tp){hvOld=Math.min(hv0,temperHV(s,hjP(Tm,2/3600)));}
+    let hvq=hvOld,fM=0,t85=sim.t85[k];
+    if(fA>0){const hq=quenchHV(s,isNaN(t85)?1e5:t85,p.band);fM=martFrac(s,hq)*fA;hvq=fA*hq+(1-fA)*hvOld;}
+    const hv=fM>0?Math.max(hvOld*(1-fA),temperedHV(s,hvq,fM,P)):hvq;
+    prof.push({x:sim.depth[k],hvq,fM,hv,t85,Tmax:Tm,fA,hvOld});}
+  const hs=prof[0].hv,HL=0.8*hs;let shd=0;for(const q of prof){if(q.hv>=HL)shd=q.x;else break;}
+  return {sim,prof,P,kind:'ind',shd,HL};}
+/* nitrohiiletys (ferriittinen) ja jälkihapetus:
+   yhdistekerros x = k·√t, k(580 °C) = 10 µm/√h, aktivoitumisenergia 100 kJ/mol;
+   nitrauskovuussyvyys NHD = kD·√t, kD(580 °C) = 0,175 mm/√h · √(1,77/(X+0,5)), X = Cr+Mo (nitridejä muodostavat), Q = 77 kJ/mol (typen diffuusio α-raudassa);
+   pinnan (diffuusiovyöhykkeen) kovuus HVs = 300 + 280·X; yhdistekerroksen kovuus 700 + 200·X;
+   kovuus syvyydellä x: HV = HVc + (HVs − HVc)·exp(−x/λ), λ = NHD / ln((HVs − HVc)/50) (NHD: ydin + 50 HV). */
+function htNC(s,p){
+  const R_=8.314,Tk=p.T+273.15,T0=580+273.15,th=p.t;
+  const kCL=10*Math.exp(-100000/R_*(1/Tk-1/T0)),cl=kCL*Math.sqrt(th);
+  const X=s.nit.X,kD=0.175*Math.sqrt(1.77/(X+0.5))*Math.exp(-77000/(2*R_)*(1/Tk-1/T0)),nhd=kD*Math.sqrt(th);
+  const P0=p.prior==='qt'?hjP(p.Tp,1):null;let hvc=p.prior==='qt'?temperHV(s,P0):s.HVn;
+  if(p.prior==='qt'){const Pn=hjP(p.T,th);if(Pn>P0)hvc=temperHV(s,Pn);}
+  const HVs=300+280*X,HVcl=700+200*X,lam=nhd/Math.log(Math.max(1.01,(HVs-hvc)/50));
+  const ox=p.ox?1.0*Math.sqrt(p.oxt/15)*Math.exp(-60000/R_*(1/(p.oxT+273.15)-1/(400+273.15))):0;
+  const xmax=Math.max(0.2,nhd*1.6),prof=[];
+  for(let i=0;i<=200;i++){const x=xmax*i/200;let hv;
+    if(x*1000<ox)hv=NaN;else if(x*1000<ox+cl)hv=HVcl;else hv=hvc+(HVs-hvc)*Math.exp(-(x-(ox+cl)/1000)/lam);
+    prof.push({x,hv,hvq:hv,fM:0,zone:x*1000<ox?'ox':x*1000<ox+cl?'cl':'dz'});}
+  /* lämpötilakäyrä: kuumennus, pito, (hapetus), jäähdytys (kaavamainen) */
+  const rec={t:[],s:[],m:[],c:[]};const pts=[[0,20],[0.5,350],[1,p.T],[1+th,p.T]];if(p.ox){pts.push([1.15+th,p.oxT],[1.15+th+p.oxt/60,p.oxT]);}pts.push([pts[pts.length-1][0]+0.4,40]);
+  for(const [t,T] of pts){rec.t.push(t*3600);rec.s.push(T);rec.m.push(T);rec.c.push(T);}
+  return {prof,kind:'nc',cl,nhd,ox,HVs,HVcl,hvc,lam,sim:{rec},warnTemper:p.prior==='qt'&&p.T>p.Tp-20};}
+
+/* ---------- Fe–Fe₃C-tasapainopiirros (teräsalue) ---------- */
+const A3C=[0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.77],A3T=[912,883,852,822,795,773,756,738,727];
+const CS=0.77,CP=0.022,CE=2.11,TE=1148,TA1=727;
+const a3=C=>interp(A3C,A3T,C);
+const acm=C=>TA1+(TE-TA1)*(C-CS)/(CE-CS);
+const a3inv=T=>interp(A3T.slice().reverse(),A3C.slice().reverse(),T);
+const acmInv=T=>CS+(CE-CS)*(T-TA1)/(TE-TA1);
+const alphaSol=T=>T>=TA1?CP*(912-T)/(912-TA1):CP*Math.max(0,(T-20))/(TA1-20)*0.3+CP*0.7*Math.max(0,(T-400))/(TA1-400);
+function feC(C,T){
+  /* palauttaa faasit, koostumukset ja osuudet (vipusääntö) */
+  if(C<=CE&&T>=Math.max(C<CS?a3(C):acm(C),TA1+1e-9)&&T<=1400)return {reg:'g',ph:[{n:'γ',x:C,f:1}]};
+  if(C<CS&&T>TA1){const xa=alphaSol(T),xg=a3inv(T);if(C<=xa)return {reg:'a',ph:[{n:'α',x:C,f:1}]};const fg=(C-xa)/(xg-xa);return {reg:'ag',ph:[{n:'α',x:xa,f:1-fg},{n:'γ',x:xg,f:fg}]};}
+  if(C>CS&&T>TA1){const xg=acmInv(T);const fc=(C-xg)/(6.67-xg);return {reg:'gc',ph:[{n:'γ',x:xg,f:1-fc},{n:'Fe₃C',x:6.67,f:fc}]};}
+  /* A1:n alapuolella: faasit α + Fe₃C, rakenneosat (hidas jäähtyminen) esiutektoidinen ferriitti / sementiitti + perliitti */
+  const xa=Math.min(CP,alphaSol(T));const fc=(C-xa)/(6.67-xa);
+  let micro;if(C<=CP)micro=[{n:'α',f:1}];else if(C<CS){const fp=(C-CP)/(CS-CP);micro=[{n:'α_pro',f:1-fp},{n:'P',f:fp}];}else{const fpc=(C-CS)/(6.67-CS);micro=[{n:'P',f:1-fpc},{n:'Fe₃C_pro',f:fpc}];}
+  return {reg:'ac',ph:[{n:'α',x:xa,f:1-fc},{n:'Fe₃C',x:6.67,f:fc}],micro};}
+
+/* ---------- vetokoe: jännitys–venymäkäyrä ----------
+   Tasainen venymä: Voce-tyyppinen muokkauslujittuminen, joka täyttää Considèren ehdon dσ/dε = σ täsmälleen tasavenymässä Ag:
+   σt(εp) = σu·(1 + c − c·exp((εu − εp)/c)), σu = Rm·(1 + Ag), εu = ln(1 + Ag); c sovitetaan niin, että käyrä kulkee Rp0,2:n
+   (εp = 0,002) tai rakenneteräksillä Lüdersin venymän lopun (σ = ReL) kautta. Myötöraja-ilmiö (ReH, ReL, Lüdersin venymä) rakenneteräksille.
+   Kurouma: insinöörijännitys laskee Rm:stä murtojännitykseen. */
+function tensileCurve(m){
+  const E=m.E*1000,pts=[];
+  if(m.brittle){const ef=m.A/100+m.Rm/E;const n=200;for(let i=0;i<=n;i++){const e=ef*i/n;const s=m.Rm*(1-Math.pow(1-e/ef,1.6));pts.push([e,Math.min(s,E*e)]);}
+    return {pts,ef,sf:m.Rm,E};}
+  const eu=Math.log(1+m.Ag/100),su=m.Rm*(1+m.Ag/100),Rp=m.Rp||m.ReL,yl=m.ReH?m.luders/100:0;
+  const eFit=m.ReH?yl:0.002,target=Rp*(1+eFit)/su;
+  const hf=c=>1+c-c*Math.exp((eu-eFit)/c)-target;let lo=1e-4,hi=20;for(let k=0;k<100;k++){const mid=Math.sqrt(lo*hi);if(hf(mid)>0)hi=mid;else lo=mid;}
+  const c=Math.sqrt(lo*hi),RpT=Rp*(1+eFit);
+  const sTrue=ep=>ep>=eFit?su*(1+c-c*Math.exp((eu-ep)/c)):RpT*(0.75+0.25*Math.sqrt(ep/eFit));
+  if(m.ReH){const ey=m.ReH/E;for(let i=0;i<=20;i++){const e=ey*i/20;pts.push([e,E*e]);}
+    pts.push([ey+0.001,m.ReL]);const eL=m.ReL/E+yl;for(let i=1;i<=10;i++)pts.push([ey+0.001+(eL-ey-0.001)*i/10,m.ReL+((i%2)?3:-3)]);
+    for(let i=1;i<=120;i++){const ep=yl+(eu-yl)*i/120;const sT=sTrue(ep);const eEng=Math.exp(ep)-1+sT/E;pts.push([eEng,sT/Math.exp(ep)]);}}
+  else{for(let i=0;i<=40;i++){const s=Rp*0.75*i/40;pts.push([s/E,s]);}
+    for(let i=1;i<=200;i++){const ep=Math.pow(i/200,2)*eu;const sT=sTrue(ep);const eEng=Math.exp(ep)-1+sT/E;pts.push([eEng,sT/Math.exp(ep)]);}}
+  /* kurouma Ag → A */
+  const Ag=m.Ag/100,Af=m.A/100,beta=0.22+0.25*(m.Z/100);
+  for(let i=1;i<=60;i++){const u=i/60;const ep=Ag+(Af-Ag)*u;pts.push([ep+m.Rm*(1-beta*u*u)/E,m.Rm*(1-beta*u*u)]);}
+  const sf=m.Rm*(1-beta);return {pts,ef:Af+sf/E,sf,E,c};}
+function tensileEval(c,m){const P=c.pts;let Rm=0,eRm=0;for(const [e,s] of P)if(s>Rm){Rm=s;eRm=e;}
+  const E=c.E;let Rp=null;for(let i=1;i<P.length;i++){const d0=P[i-1][1]-E*(P[i-1][0]-0.002),d1=P[i][1]-E*(P[i][0]-0.002);if(d0>=0&&d1<0||d0>0&&d1<=0){const t=d0/(d0-d1);Rp=P[i-1][1]+t*(P[i][1]-P[i-1][1]);break;}}
+  let ReH=null,ReL=null;if(m.ReH){ReH=Math.max(...P.filter(p=>p[0]<m.ReH/E*1.5+0.002).map(p=>p[1]));const pl=P.filter(p=>p[0]>m.ReH/E+0.0005&&p[0]<m.ReH/E+m.luders/100);ReL=Math.min(...pl.map(p=>p[1]));}
+  const last=P[P.length-1];const A=(last[0]-last[1]/E)*100;const Ag=(eRm-Rm/E)*100;
+  return {Rm,Rp,ReH,ReL,A,Ag,Z:m.Z,E:E/1000};}
+
+/* ---------- kidehilan atomit (yksikkökoppi) ---------- */
+function cellAtoms(kind,C,u){
+  const at=[];const add=(x,y,z,t)=>at.push({x,y,z,t});
+  if(kind==='bcc'){const a=latt.aAlpha;for(const x of[0,1])for(const y of[0,1])for(const z of[0,1])add(x*a,y*a,z*a,'Fe');add(a/2,a/2,a/2,'Fe');
+    return {at,box:[a,a,a],sites:[[a/2,a/2,0],[a/2,0,a/2],[0,a/2,a/2],[a/2,a/2,a],[a/2,a,a/2],[a,a/2,a/2]].map(p=>({x:p[0],y:p[1],z:p[2]}))};}
+  if(kind==='fcc'||kind==='gp'){const a=kind==='gp'?latt.aGp:latt.aGamma(C);for(const x of[0,1])for(const y of[0,1])for(const z of[0,1])add(x*a,y*a,z*a,'Fe');
+    for(const [x,y,z] of [[.5,.5,0],[.5,.5,1],[.5,0,.5],[.5,1,.5],[0,.5,.5],[1,.5,.5]])add(x*a,y*a,z*a,'Fe');
+    if(kind==='gp')add(a/2,a/2,a/2,'N');
+    const sites=[[.5,.5,.5],[.5,0,0],[0,.5,0],[0,0,.5],[.5,1,0],[1,.5,0],[.5,0,1],[0,.5,1],[1,0,.5],[0,1,.5],[1,1,.5],[.5,1,1],[1,.5,1]].map(p=>({x:p[0]*a,y:p[1]*a,z:p[2]*a}));
+    return {at,box:[a,a,a],sites:kind==='gp'?[]:sites};}
+  if(kind==='bct'){const {a,c}=latt.bct(C);for(const x of[0,1])for(const y of[0,1])for(const z of[0,1])add(x*a,y*a,z*c,'Fe');add(a/2,a/2,c/2,'Fe');
+    /* hiili oktaedrisissa z-paikoissa: osuus paikoista ≈ C(at-%) / (1/2 paikkaa per Fe) — näytetään yksi atomi */
+    if(C>0.05)add(a/2,a/2,0,'C');
+    return {at,box:[a,a,c],sites:[[a/2,a/2,0],[0,0,c/2],[a,0,c/2],[0,a,c/2],[a,a,c/2],[a/2,a/2,c]].map(p=>({x:p[0],y:p[1],z:p[2]}))};}
+  if(kind==='bain'){/* kaksi pkk-koppia ja niiden sisällä tilakeskinen tetragonaalinen koppi (a/√2, a/√2, a) → martensiitti */
+    const ag=latt.aGamma(C),m=latt.bct(C);const a0=ag/Math.SQRT2,c0=ag;const a=a0+(m.a-a0)*u,c=c0+(m.c-c0)*u;
+    for(const x of[0,1])for(const y of[0,1])for(const z of[0,1])add(x*a,y*a,z*c,'Fe');add(a/2,a/2,c/2,'Fe');if(C>0.05)add(a/2,a/2,0,'C');
+    return {at,box:[a,a,c],sites:[],ca:c/a};}
+  if(kind==='eps'){const a=latt.eps.a,c=latt.eps.c;const hx=[[0,0],[1,0],[0.5,Math.sqrt(3)/2],[1.5,Math.sqrt(3)/2]];
+    for(const z of[0,1])for(const [x,y] of hx)add(x*a,y*a,z*c,'Fe');add((1/3+1/3*0.5)*a+0.25*a,(Math.sqrt(3)/6)*a,c/2,'Fe');add((1/3+1/3*0.5)*a+0.75*a,(Math.sqrt(3)/2-Math.sqrt(3)/6)*a,c/2,'Fe');
+    add(0.75*a,Math.sqrt(3)/4*a,c/4,'N');add(1.0*a,Math.sqrt(3)/2*a*0.5,3*c/4,'N');
+    return {at,box:[1.5*a,Math.sqrt(3)/2*a,c],hex:1,sites:[]};}
+  return {at,box:[1,1,1],sites:[]};}
+
+/* ================= PIIRTO ================= */
+const cssv=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+function setupCv(cv){const dpr=window.devicePixelRatio||1,r=cv.getBoundingClientRect();const w=Math.max(60,r.width),h=Math.max(60,r.height);
+  if(cv.width!==Math.round(w*dpr)||cv.height!==Math.round(h*dpr)){cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr);}
+  const g=cv.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,w,h);return {g,w,h,dpr};}
+function niceStep(span,n){const raw=span/Math.max(1,n),p=Math.pow(10,Math.floor(Math.log10(raw))),m=raw/p;return (m<1.5?1:m<3?2:m<7?5:10)*p;}
+function ticks(a,b,n){const s=niceStep(b-a,n),out=[];for(let v=Math.ceil(a/s-1e-9)*s;v<=b+1e-9;v+=s)out.push(Math.abs(v)<1e-12?0:v);return {out,s};}
+const decs=s=>s>=1?0:Math.min(3,Math.ceil(-Math.log10(s)-1e-9));
+/* yleinen xy-kuvaaja. o: {x:[a,b], y:[a,b], xl, yl, series:[{x,y,c,w,dash,fill}], y2?:{r:[a,b],l,series}, after(g,X,Y), vlines:[{x,c,dash,l}], hlines:[{y,c,dash,l}]} */
+function plotXY(cv,o){const {g,w,h}=setupCv(cv);const ink=cssv('--ink'),mut=cssv('--muted'),grid=cssv('--grid2');
+  const m={l:52,r:o.y2?52:14,t:10,b:36};const pw=w-m.l-m.r,ph=h-m.t-m.b;
+  const X=v=>m.l+(v-o.x[0])/(o.x[1]-o.x[0])*pw,Y=v=>m.t+ph-(v-o.y[0])/(o.y[1]-o.y[0])*ph;
+  g.font='12px Barlow, system-ui, sans-serif';g.lineWidth=1;
+  const tx=ticks(o.x[0],o.x[1],Math.max(3,Math.floor(pw/70))),ty=ticks(o.y[0],o.y[1],Math.max(3,Math.floor(ph/40)));
+  g.strokeStyle=grid;g.fillStyle=mut;g.textAlign='center';g.textBaseline='top';
+  for(const v of tx.out){const x=X(v);g.beginPath();g.moveTo(x,m.t);g.lineTo(x,m.t+ph);g.stroke();g.fillText(nf(v,decs(tx.s)),x,m.t+ph+4);}
+  g.textAlign='right';g.textBaseline='middle';
+  for(const v of ty.out){const y=Y(v);g.beginPath();g.moveTo(m.l,y);g.lineTo(m.l+pw,y);g.stroke();g.fillText(nf(v,decs(ty.s)),m.l-5,y);}
+  g.strokeStyle=mut;g.strokeRect(m.l,m.t,pw,ph);
+  g.fillStyle=mut;g.textAlign='center';g.textBaseline='bottom';g.fillText(o.xl||'',m.l+pw/2,h-2);
+  g.save();g.translate(12,m.t+ph/2);g.rotate(-Math.PI/2);g.textBaseline='middle';g.fillText(o.yl||'',0,0);g.restore();
+  g.save();g.beginPath();g.rect(m.l,m.t,pw,ph);g.clip();
+  if(o.before)o.before(g,X,Y,m,pw,ph);
+  const drawS=(s,Xf,Yf)=>{g.strokeStyle=s.c||ink;g.lineWidth=s.w||2;g.setLineDash(s.dash||[]);g.beginPath();let st=false;
+    for(let i=0;i<s.x.length;i++){const yv=s.y[i];if(!Number.isFinite(yv)||!Number.isFinite(s.x[i])){st=false;continue;}const px=Xf(s.x[i]),py=Yf(yv);if(!st){g.moveTo(px,py);st=true;}else g.lineTo(px,py);}
+    if(s.fill){g.lineTo(Xf(s.x[s.x.length-1]),Yf(o.y[0]));g.lineTo(Xf(s.x[0]),Yf(o.y[0]));g.closePath();g.fillStyle=s.fill;g.fill();}else g.stroke();g.setLineDash([]);};
+  for(const s of o.series||[])drawS(s,X,Y);
+  let Y2=null;if(o.y2){Y2=v=>m.t+ph-(v-o.y2.r[0])/(o.y2.r[1]-o.y2.r[0])*ph;for(const s of o.y2.series)drawS(s,X,Y2);}
+  for(const v of o.vlines||[]){g.strokeStyle=v.c||mut;g.lineWidth=v.w||1.2;g.setLineDash(v.dash||[5,4]);g.beginPath();g.moveTo(X(v.x),m.t);g.lineTo(X(v.x),m.t+ph);g.stroke();g.setLineDash([]);
+    if(v.l){g.fillStyle=v.c||mut;g.textAlign=X(v.x)>m.l+pw*0.75?'right':'left';g.textBaseline='top';g.fillText(v.l,X(v.x)+(g.textAlign==='right'?-4:4),m.t+4+(v.row||0)*14);}}
+  for(const v of o.hlines||[]){g.strokeStyle=v.c||mut;g.lineWidth=v.w||1.2;g.setLineDash(v.dash||[5,4]);g.beginPath();g.moveTo(m.l,Y(v.y));g.lineTo(m.l+pw,Y(v.y));g.stroke();g.setLineDash([]);
+    if(v.l){g.fillStyle=v.c||mut;g.textAlign='right';g.textBaseline=v.below?'top':'bottom';g.fillText(v.l,m.l+pw-4,Y(v.y)+(v.below?2:-2));}}
+  if(o.after)o.after(g,X,Y,m,pw,ph);
+  g.restore();
+  if(o.y2){const t2=ticks(o.y2.r[0],o.y2.r[1],Math.max(3,Math.floor(ph/40)));g.fillStyle=mut;g.textAlign='left';g.textBaseline='middle';
+    for(const v of t2.out)g.fillText(nf(v,decs(t2.s)),m.l+pw+5,Y2(v));g.save();g.translate(w-10,m.t+ph/2);g.rotate(Math.PI/2);g.textAlign='center';g.fillText(o.y2.l||'',0,0);g.restore();}
+  cv._map={inv:px=>o.x[0]+(px-m.l)/pw*(o.x[1]-o.x[0]),invY:py=>o.y[0]+(m.t+ph-py)/ph*(o.y[1]-o.y[0]),m,pw,ph};
+  return {X,Y,g};}
+const legend=(el,items)=>{el.innerHTML=items.map(it=>`<span><i style="background:${it.c}${it.dash?';background:repeating-linear-gradient(90deg,'+it.c+' 0 5px,transparent 5px 8px)':''}"${it.sw?' class="sw"':''}></i>${esc(it.l)}</span>`).join('');};
+
+/* ---------- mikrorakenne (kaavamainen, nital-syövytetty) ----------
+   Voronoi-rakeet; jokaisen rakeen faasi arvotaan syvyyden faasiosuuksista. Faasit:
+   M martensiitti, TM päästetty martensiitti, B bainiitti, F ferriitti, P perliitti, CL yhdistekerros, OX oksidi, DZ diffuusiovyöhyke (päästetty martensiitti + nitridit). */
+const PH_COL={F:[226,222,212],P:[95,88,80],M:[150,142,132],TM:[112,104,96],B:[128,118,108],CL:[244,242,236],OX:[28,28,30],DZ:[100,92,86],C:[240,236,228],A:[205,200,190]};
+function rng(seed){let s=seed>>>0||1;return ()=>{s^=s<<13;s>>>=0;s^=s>>>17;s^=s<<5;s>>>=0;return s/4294967296;};}
+/* fracAt(x 0..1 kuvan leveydestä) → {M,TM,B,F,P,CL,OX,DZ: osuudet}; grain: rakeen koko px */
+function drawMicro(cv,fracAt,o={}){const {g,w,h,dpr}=setupCv(cv);const W=Math.round(w),H=Math.round(h);
+  const grain=o.grain||13,R=rng(o.seed||7),seeds=[];const cell=grain;const gx=Math.ceil(W/cell)+1,gy=Math.ceil(H/cell)+1;const grid=new Array(gx*gy);
+  for(let j=0;j<gy;j++)for(let i=0;i<gx;i++){const sx=(i+R())*cell,sy=(j+R())*cell;const u=R(),ang=R()*Math.PI,ph2=R();grid[j*gx+i]=seeds.length;seeds.push({x:sx,y:sy,u,ang,ph2,cos:Math.cos(ang),sin:Math.sin(ang),ph:null});}
+  const pick=(s)=>{if(s.ph)return s.ph;const f=fracAt(clamp(s.x/W,0,1));let acc=0;for(const k of ['OX','CL','M','TM','DZ','B','P','F','C']){acc+=f[k]||0;if(s.u<acc){s.ph=k;return k;}}s.ph='F';return 'F';};
+  const img=g.createImageData(W,H),D=img.data;const layerAt=x=>{const f=fracAt(clamp(x/W,0,1));return f.OX>=1?'OX':f.CL>=1?'CL':null;};
+  for(let y=0;y<H;y++)for(let x=0;x<W;x++){let col;const lay=layerAt(x+0.5);let best=1e9,b2=1e9,bi=0;
+    if(lay){const c=PH_COL[lay];const n=(((x*7+y*13)%11)/11-0.5)*(lay==='OX'?14:8);col=[c[0]+n,c[1]+n,c[2]+n];}
+    else{const ci=Math.floor(x/cell),cj=Math.floor(y/cell);
+      for(let dj=-1;dj<=1;dj++)for(let di=-1;di<=1;di++){const ii=ci+di,jj=cj+dj;if(ii<0||jj<0||ii>=gx||jj>=gy)continue;const s=seeds[grid[jj*gx+ii]];const d=(s.x-x)**2+(s.y-y)**2;if(d<best){b2=best;best=d;bi=grid[jj*gx+ii];}else if(d<b2)b2=d;}
+      const s=seeds[bi],ph=pick(s);const lx=(x-s.x)*s.cos+(y-s.y)*s.sin,ly=-(x-s.x)*s.sin+(y-s.y)*s.cos;let c=PH_COL[ph],v=0;
+      if(ph==='P'){const t=Math.sin(lx*1.9+s.ph2*6);v=t>0.1?58:-12;}
+      else if(ph==='M'||ph==='TM'||ph==='DZ'){/* säleet ja levyt kahteen suuntaan */const a2=((x-s.x)*Math.cos(s.ang+1.1)+(y-s.y)*Math.sin(s.ang+1.1));
+        const n1=Math.sin(lx*1.3+Math.sin(ly*0.35)*1.5),n2=Math.sin(a2*1.1);v=(s.ph2>0.5?n1:n2)>0.55?(ph==='M'?40:22):(ph==='M'?-8:-4);
+        if(ph!=='M'&&((x*31+y*17)%23===0))v-=50;if(ph==='DZ'&&((x*13+y*29)%7===0))v+=30;}
+      else if(ph==='B'){const t=Math.sin(lx*0.9)*Math.cos(ly*0.25);v=t>0.4?30:-6;if((x*11+y*19)%17===0)v-=45;}
+      else if(ph==='F'){v=((x*5+y*3)%7)-3;}
+      col=[c[0]+v,c[1]+v,c[2]+v];
+      if(Math.sqrt(b2)-Math.sqrt(best)<1.2){col=[60,55,50];}}
+    const k=(y*W+x)*4;D[k]=col[0];D[k+1]=col[1];D[k+2]=col[2];D[k+3]=255;}
+  /* putImageData ohittaa muunnoksen: piirretään apukankaalle ja skaalataan */
+  const off=document.createElement('canvas');off.width=W;off.height=H;off.getContext('2d').putImageData(img,0,0);g.imageSmoothingEnabled=false;g.drawImage(off,0,0,W,H);
+  /* asteikko ja merkintä */
+  if(o.scale){const {mm,label}=o.scale;const px=W*mm;g.fillStyle='rgba(0,0,0,.6)';g.fillRect(W-px-18,H-30,px+12,24);g.fillStyle='#fff';g.fillRect(W-px-12,H-12,px,4);g.font='11px Barlow, sans-serif';g.textAlign='center';g.textBaseline='top';g.fillText(label,W-px/2-12,H-28);}
+  if(o.sel!=null){const x=o.sel*W;g.strokeStyle='#E39B17';g.lineWidth=2;g.setLineDash([6,4]);g.beginPath();g.moveTo(x,0);g.lineTo(x,H);g.stroke();g.setLineDash([]);}
+  if(o.marks)for(const mk of o.marks){const x=mk.x*W;g.fillStyle='rgba(0,0,0,.55)';g.font='11px Barlow, sans-serif';const tw=g.measureText(mk.l).width;g.fillRect(x+3,4+(mk.row||0)*17,tw+8,15);g.fillStyle='#fff';g.textAlign='left';g.textBaseline='top';g.fillText(mk.l,x+7,6+(mk.row||0)*17);
+    g.strokeStyle='rgba(255,255,255,.8)';g.lineWidth=1;g.beginPath();g.moveTo(x,0);g.lineTo(x,H);g.stroke();}
+  cv._mapM={W};}
+
+/* ---------- alkeiskoppi 3D ---------- */
+const view3={yaw:0.6,pitch:0.35};
+function drawCell(cv,cellD,o={}){const {g,w,h}=setupCv(cv);const ink=cssv('--ink'),mut=cssv('--muted');
+  const [bx,by,bz]=cellD.box,cx=bx/2,cy=by/2,cz=bz/2;const cyw=Math.cos(view3.yaw),syw=Math.sin(view3.yaw),cp=Math.cos(view3.pitch),sp=Math.sin(view3.pitch);
+  const sc=Math.min(w,h)/(Math.max(bx,by,bz)*2.0)*(o.zoom||1);
+  const P=(x,y,z)=>{x-=cx;y-=cy;z-=cz;/* z ylös */let X1=x*cyw-y*syw,Y1=x*syw+y*cyw;let Z1=z*cp-Y1*sp,D1=z*sp+Y1*cp;return {x:w/2+X1*sc,y:h/2-Z1*sc,d:D1};};
+  /* kopin särmät */
+  g.strokeStyle=mut;g.lineWidth=1.2;
+  const edges=[];if(cellD.hex){const a=latt.eps.a,c=bz;const hx=[[0,0],[a,0],[1.5*a,Math.sqrt(3)/2*a],[0.5*a,Math.sqrt(3)/2*a]];for(const z of[0,c])for(let i=0;i<4;i++)edges.push([[...hx[i],z],[...hx[(i+1)%4],z]]);for(const p of hx)edges.push([[...p,0],[...p,c]]);}
+  else{const V=[[0,0,0],[bx,0,0],[bx,by,0],[0,by,0],[0,0,bz],[bx,0,bz],[bx,by,bz],[0,by,bz]];for(const [a,b] of [[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]])edges.push([V[a],V[b]]);}
+  for(const [a,b] of edges){const p=P(...a),q=P(...b);g.beginPath();g.moveTo(p.x,p.y);g.lineTo(q.x,q.y);g.stroke();}
+  if(o.ghost){g.strokeStyle=cssv('--c2');g.setLineDash([4,4]);for(const [a,b] of o.ghost){const p=P(...a),q=P(...b);g.beginPath();g.moveTo(p.x,p.y);g.lineTo(q.x,q.y);g.stroke();}g.setLineDash([]);}
+  const items=[];const rFe=1.26;for(const a of cellD.at)items.push({...P(a.x,a.y,a.z),t:a.t});
+  if(o.sites)for(const s of cellD.sites)items.push({...P(s.x,s.y,s.z),t:'site'});
+  items.sort((a,b)=>a.d-b.d);
+  for(const it of items){let r,fill,stroke;if(it.t==='Fe'){r=rFe*sc*0.3;fill='#8C9AA8';stroke='#4A5866';}else if(it.t==='C'){r=0.77*sc*0.3;fill='#202326';stroke='#000';}else if(it.t==='N'){r=0.71*sc*0.3;fill='#2F6FD0';stroke='#123C80';}else{r=0.22*sc;fill=null;stroke=cssv('--acc');}
+    const f=1+it.d/(Math.max(bx,by,bz)*4);r*=f;
+    if(fill){const gr=g.createRadialGradient(it.x-r*0.35,it.y-r*0.35,r*0.1,it.x,it.y,r);gr.addColorStop(0,'#fff');gr.addColorStop(0.35,fill);gr.addColorStop(1,stroke);g.fillStyle=gr;g.beginPath();g.arc(it.x,it.y,r,0,7);g.fill();}
+    else{g.strokeStyle=stroke;g.lineWidth=1.6;g.setLineDash([3,2]);g.beginPath();g.arc(it.x,it.y,r,0,7);g.stroke();g.setLineDash([]);}}
+  /* akselit */
+  const o0=P(0,0,0);g.font='12px Barlow, sans-serif';g.lineWidth=1.5;
+  for(const [v,l,c] of [[[bx*0.35,0,0],'x',cssv('--c1')],[[0,by*0.35,0],'y',cssv('--c3')],[[0,0,bz*0.35],'z',cssv('--c2')]]){const q=P(...v);const p0={x:o0.x-0,y:o0.y};
+    g.strokeStyle=c;g.beginPath();g.moveTo(p0.x,p0.y);g.lineTo(q.x,q.y);g.stroke();g.fillStyle=c;g.fillText(l,q.x+3,q.y-3);}
+  g.fillStyle=ink;g.textAlign='left';g.textBaseline='top';if(o.title)g.fillText(o.title,8,6);}
+
+/* ---------- Fe–C-piirros ---------- */
+function drawFeC(cv,st){const Cmax=2.2,o={x:[0,Cmax],y:[600,1100],xl:tr('Hiilipitoisuus (p-%)','Carbon content (wt-%)'),yl:tr('Lämpötila (°C)','Temperature (°C)')};
+  const ink=cssv('--ink'),c1=cssv('--c1'),c2=cssv('--c2'),c3=cssv('--c3'),mut=cssv('--muted');
+  const A3x=[],A3y=[];for(let C=0;C<=CS;C+=0.01){A3x.push(C);A3y.push(a3(C));}
+  const AXs=[];const AYs=[];for(let T=600;T<=912;T+=4){AXs.push(alphaSol(T));AYs.push(T);}
+  o.series=[{x:A3x,y:A3y,c:c2,w:2},{x:[CS,CE],y:[TA1,TE],c:c1,w:2},{x:[CP,Cmax],y:[TA1,TA1],c:ink,w:2},{x:AXs,y:AYs,c:c3,w:1.6}];
+  o.after=(g,X,Y)=>{g.font='13px Barlow, sans-serif';g.fillStyle=mut;g.textAlign='center';
+    const lab=(t,x,y)=>g.fillText(t,X(x),Y(y));lab('γ',1.0,1030);lab('α + γ',0.32,760);lab('γ + Fe₃C',1.55,900);lab('α + Fe₃C',1.0,665);
+    g.font='12px Barlow, sans-serif';g.fillStyle=c2;g.textAlign='left';g.fillText('A3',X(0.14),Y(a3(0.14))-10);g.fillStyle=c1;g.fillText('Acm',X(1.3),Y(acm(1.3))-12);g.fillStyle=ink;g.fillText('A1 727 °C',X(1.62),Y(TA1)-8);
+    g.fillStyle=mut;g.textAlign='center';g.fillText('S 0,77 %',X(CS),Y(TA1)+14);
+    /* valittu piste ja vipu */
+    const r=feC(st.C,st.T);const px=X(st.C),py=Y(st.T);
+    if(r.ph.length===2&&r.reg!=='ac'){g.strokeStyle=cssv('--acc');g.lineWidth=2.5;g.beginPath();g.moveTo(X(r.ph[0].x),py);g.lineTo(X(Math.min(r.ph[1].x,Cmax)),py);g.stroke();
+      for(const p of r.ph){if(p.x<=Cmax){g.fillStyle=cssv('--acc');g.beginPath();g.arc(X(p.x),py,4,0,7);g.fill();}}}
+    g.fillStyle=cssv('--sel');g.beginPath();g.arc(px,py,6,0,7);g.fill();g.strokeStyle='#fff';g.lineWidth=2;g.stroke();};
+  return plotXY(cv,o);}
+
+/* ---------- vetosauva ---------- */
+function drawSpecimen(cv,e,m,neck,broken){const {g,w,h}=setupCv(cv);const ink=cssv('--ink'),mut=cssv('--muted');
+  const L0=100,scale=(w-40)/(L0*1.9+60);const cxm=w/2,cy=h/2;const d0=10*scale*1.3;const L=L0*(1+e)*scale;const grip=30*scale;
+  const dU=d0/Math.sqrt(1+Math.min(e,m.Ag/100));g.fillStyle=cssv('--grid2');g.strokeStyle=mut;g.lineWidth=1;
+  const half=(x)=>{/* x −0.5..0.5 mittapituudella */let d=dU;if(neck>0){const z=Math.sqrt(Math.max(0,1-(m.Z/100)*neck));d=dU*(1-(1-z)*Math.exp(-(((x)/0.06)**2)));}return d/2;};
+  const draw=(a,b)=>{const N=80,us=[];for(let i=0;i<=N;i++)us.push(a+(b-a)*i/N);g.beginPath();us.forEach((u,i)=>{const x=cxm+u*L,y=cy-half(u);if(i)g.lineTo(x,y);else g.moveTo(x,y);});
+    for(let i=N;i>=0;i--){const u=us[i];g.lineTo(cxm+u*L,cy+half(u));}g.closePath();g.fill();g.stroke();};
+  if(!broken){draw(-0.5,0.5);}else{g.save();g.translate(-4,0);draw(-0.5,0);g.restore();g.save();g.translate(4,0);draw(0,0.5);g.restore();}
+  /* päät */
+  g.fillStyle=cssv('--line');for(const s of[-1,1]){const x=cxm+s*(L/2+(broken?4:0));g.fillRect(s<0?x-grip:x,cy-d0*0.9,grip,d0*1.8);}
+  g.fillStyle=ink;g.font='12px Barlow, sans-serif';g.textAlign='center';g.fillText(`d₀ = 10 mm, L₀ = 5,65·√S₀ = 50 mm, ε = ${nf(e*100,1)} %`,cxm,h-8);}
+
+/* ================= KÄYTTÖLIITTYMÄ ================= */
+const VERSION='1.0.0',STORE='matsim-v1';
+const DEF={tab:'ht',
+  ht:{proc:'qt',steel:'42CrMo4',band:'mid',D:30,medium:'oljy',Taus:850,Tf:40,Tt:600,tt:1,
+      Di:40,prior:'qt',Tp:600,f:10,qs:1.0,th:2.0,td:0.3,tqI:10,TtI:180,ttI:1,
+      T:580,t:2,ox:true,oxT:400,oxt:15,priorN:'qt',TpN:620,sel:null},
+  xs:{kind:'bcc',C:0.4,u:1,sites:true},fec:{C:0.4,T:700},tt:{mat:'S235',cmp:''},conv:{hv:300}};
+let st=JSON.parse(JSON.stringify(DEF));
+try{const s=JSON.parse(localStorage.getItem(STORE)||'null');if(s&&typeof s==='object')for(const k of ['tab','ht','xs','fec','tt','conv'])if(s[k]!=null)st[k]=typeof DEF[k]==='object'?Object.assign({},DEF[k],s[k]):s[k];}catch(e){}
+const save=()=>{try{localStorage.setItem(STORE,JSON.stringify(st));}catch(e){}};
+const getK=k=>k.split('.').reduce((o,p)=>o[p],st);
+const setK=(k,v)=>{const ps=k.split('.');let o=st;for(let i=0;i<ps.length-1;i++)o=o[ps[i]];o[ps[ps.length-1]]=v;};
+
+/* ---------- esimerkit ---------- */
+const EXAMPLES=[
+  {id:'qt42',n:['42CrMo4 Ø30, nuorrutus: öljy 850 °C, päästö 600 °C','42CrMo4 Ø30, Q&T: oil 850 °C, temper 600 °C'],ht:{proc:'qt',steel:'42CrMo4',D:30,medium:'oljy',Taus:850,Tt:600,tt:1}},
+  {id:'qt42b',n:['42CrMo4 Ø100, nuorrutus: öljy, päästö 600 °C (läpikarkenevuuden raja)','42CrMo4 Ø100, Q&T: oil, temper 600 °C (through-hardening limit)'],ht:{proc:'qt',steel:'42CrMo4',D:100,medium:'oljy',Taus:850,Tt:600,tt:1}},
+  {id:'qt346',n:['34CrNiMo6 Ø100, nuorrutus: öljy, päästö 600 °C','34CrNiMo6 Ø100, Q&T: oil, temper 600 °C'],ht:{proc:'qt',steel:'34CrNiMo6',D:100,medium:'oljy',Taus:850,Tt:600,tt:1}},
+  {id:'c45w',n:['C45 Ø10, karkaisu vedessä 830 °C, ei päästöä','C45 Ø10, water quench 830 °C, no tempering'],ht:{proc:'qt',steel:'C45',D:10,medium:'vesi',Taus:830,Tt:100,tt:1}},
+  {id:'c45o',n:['C45 Ø40, karkaisu öljyssä (huono karkenevuus)','C45 Ø40, oil quench (poor hardenability)'],ht:{proc:'qt',steel:'C45',D:40,medium:'oljy',Taus:850,Tt:100,tt:1}},
+  {id:'ind10',n:['42CrMo4 Ø40, induktiokarkaisu 10 kHz, päästö 180 °C','42CrMo4 Ø40, induction hardening 10 kHz, temper 180 °C'],ht:{proc:'ind',steel:'42CrMo4',Di:40,prior:'qt',Tp:600,f:10,qs:1.0,th:2.0,td:0.3,tqI:10,TtI:180,ttI:1}},
+  {id:'ind200',n:['42CrMo4 Ø40, induktiokarkaisu 200 kHz (ohut kerros)','42CrMo4 Ø40, induction hardening 200 kHz (thin case)'],ht:{proc:'ind',steel:'42CrMo4',Di:40,prior:'qt',Tp:600,f:200,qs:1.5,th:0.5,td:0.2,tqI:10,TtI:180,ttI:1}},
+  {id:'nc42',n:['42CrMo4 mustanitraus: nitrohiiletys 580 °C 2 h + hapetus','42CrMo4 black nitriding: nitrocarburizing 580 °C 2 h + oxidation'],ht:{proc:'nc',steel:'42CrMo4',T:580,t:2,ox:true,oxT:400,oxt:15,priorN:'qt',TpN:620}},
+  {id:'nc45',n:['C45 nitrohiiletys 580 °C 2 h, normalisoitu lähtötila','C45 nitrocarburizing 580 °C 2 h, normalized'],ht:{proc:'nc',steel:'C45',T:580,t:2,ox:false,oxT:400,oxt:15,priorN:'n',TpN:620}}
+];
+function loadExample(id){const e=EXAMPLES.find(x=>x.id===id);if(!e)return false;st.tab='ht';Object.assign(st.ht,e.ht,{sel:null});save();buildCtl();setTabUI();recompute();return true;}
+
+/* ---------- lämpökäsittelyn ajo ---------- */
+function runHT(h){const s=STEELS[h.steel];let r;
+  if(h.proc==='qt')r=htQT(s,{D:h.D,medium:h.medium,Taus:h.Taus,Tf:h.Tf,Tt:h.Tt,tt:h.tt,band:h.band});
+  else if(h.proc==='ind')r=htIND(s,{D:h.Di,f:h.f,qs:h.qs,th:h.th,td:h.td,tq:h.tqI,prior:h.prior,Tp:h.Tp,Tt:h.TtI,tt:h.ttI,band:h.band});
+  else r=htNC(s,{T:h.T,t:h.t,ox:h.ox,oxT:h.oxT,oxt:h.oxt,prior:h.priorN,Tp:h.TpN});
+  r.steel=s;r.h=Object.assign({},h);r.warns=htWarnings(s,h,r);return r;}
+function htWarnings(s,h,r){const W=[],w=(t,info)=>W.push({t,info:!!info});
+  if(h.proc==='qt'){
+    if(h.Taus<s.Ac3)w(tr(`Austenitointilämpötila ${h.Taus} °C on alle Ac3:n (${s.Ac3} °C): rakenne ei austenitoidu kokonaan, ja ferriitti jää sammutettuun rakenteeseen pehmeänä.`,`Austenitizing temperature ${h.Taus} °C is below Ac3 (${s.Ac3} °C): the structure does not fully austenitize, and soft ferrite remains in the quenched structure.`));
+    if(h.Taus>s.Ac3+120)w(tr(`Austenitointilämpötila on yli ${s.Ac3+120} °C: raekoko kasvaa ja säröriski kasvaa. Teknisen kortin suositus: ${s.aus[h.medium==='vesi'?'vesi':'oljy']}–${s.aus[h.medium==='vesi'?'vesi':'oljy']+30} °C.`,`Austenitizing temperature is above ${s.Ac3+120} °C: grain growth and cracking risk increase. Datasheet recommendation: ${s.aus[h.medium==='vesi'?'vesi':'oljy']}–${s.aus[h.medium==='vesi'?'vesi':'oljy']+30} °C.`));
+    if(alloyed(s)&&h.medium==='vesi')w(tr('Seostettu nuorrutusteräs vesisammutuksessa: suuri karkaisusäröjen riski. Teknisen kortin sammutusaine on öljy tai polymeeri.','Alloyed Q&T steel quenched in water: high risk of quench cracking. The datasheet quenchant is oil or polymer.'));
+    if(h.Tt>=250&&h.Tt<=400)w(tr('Päästö 250–400 °C: päästömartensiitin haurausalue (iskusitkeys heikkenee). Valitse matala (≤ 200 °C) tai korkea (≥ 500 °C) päästö.','Tempering at 250–400 °C: tempered-martensite embrittlement range (impact toughness drops). Choose low (≤ 200 °C) or high (≥ 500 °C) tempering.'),1);
+    if(h.D>(s===STEELS.C45?16:s===STEELS['42CrMo4']?100:250))w(tr('Halkaisija on suurempi kuin teknisen kortin nuorrutusarvojen kokoalue: keskusta ei karkene läpi.','Diameter exceeds the datasheet size range for Q&T properties: the core does not harden through.'),1);
+  }
+  if(h.proc==='ind'){const ps=r.prof[0];
+    if(ps.Tmax<s.Ac3+100)w(tr(`Pinnan huippulämpötila ${nf(ps.Tmax,0)} °C jää alle nopean kuumennuksen austenitointirajan (Ac3 + 100 °C = ${s.Ac3+100} °C): pinta ei austenitoidu kokonaan. Lisää tehoa tai aikaa.`,`Peak surface temperature ${nf(ps.Tmax,0)} °C is below the fast-heating austenitizing limit (Ac3 + 100 °C = ${s.Ac3+100} °C): the surface does not fully austenitize. Increase power or time.`));
+    if(ps.Tmax>1150)w(tr(`Pinnan huippulämpötila ${nf(ps.Tmax,0)} °C: ylikuumeneminen (raekasvu, hiilenkato, sulamisvaara yli noin 1400 °C). Vähennä tehoa tai aikaa.`,`Peak surface temperature ${nf(ps.Tmax,0)} °C: overheating (grain growth, decarburization, melting risk above about 1400 °C). Reduce power or time.`));
+    if(h.prior==='n')w(tr('Normalisoitu lähtötila: ferriittiperliittirakenne tarvitsee nopeassa kuumennuksessa korkeamman lämpötilan hiilen tasoittumiseen. Nuorrutettu lähtötila antaa tasaisemman karkaistun kerroksen.','Normalized prior state: ferrite–pearlite needs a higher temperature for carbon homogenization during fast heating. A quenched-and-tempered prior state gives a more uniform hardened case.'),1);
+    if(r.shd>h.Di/2*0.6)w(tr('Karkaistu kerros on yli 60 % säteestä: kappale karkenee lähes läpi, ja ydin menettää sitkeytensä.','Hardened case exceeds 60 % of the radius: the part hardens nearly through and the core loses its toughness.'));
+  }
+  if(h.proc==='nc'){
+    if(r.warnTemper)w(tr(`Nitrohiiletyslämpötila ${h.T} °C on lähellä nuorrutuksen päästölämpötilaa (${h.TpN} °C) tai sen yli: ydin pehmenee. Päästä vähintään 20–30 °C prosessilämpötilan yläpuolella.`,`Nitrocarburizing temperature ${h.T} °C is close to or above the prior tempering temperature (${h.TpN} °C): the core softens. Temper at least 20–30 °C above the process temperature.`));
+    if(h.T>590)w(tr('Yli 590 °C: ferriittisen nitrohiiletyksen alue ylittyy (Fe–N-eutektoidi 592 °C), ja pintaan voi muodostua typpiausteniittia.','Above 590 °C: the ferritic nitrocarburizing range is exceeded (Fe–N eutectoid 592 °C), and nitrogen austenite may form at the surface.'));
+    if(h.T<550)w(tr('Alle 550 °C: malli on sovitettu 560–590 °C alueelle; tulokset ovat suuntaa antavia.','Below 550 °C: the model is fitted to 560–590 °C; results are indicative.'),1);
+    if(r.cl>25)w(tr('Yhdistekerros yli 25 µm: huokoinen ulkovyöhyke kasvaa ja kerros voi lohkeilla. Tavallinen tavoite on 10–20 µm.','Compound layer over 25 µm: the porous outer zone grows and the layer may spall. The usual target is 10–20 µm.'),1);
+  }
+  return W;}
+
+/* ---------- tila ja laskenta ---------- */
+let HT=null,curTT=null,anim=null,feW=[];
+let recTimer=0;
+function recompute(){clearTimeout(recTimer);recTimer=setTimeout(()=>{HT=runHT(st.ht);updateHTMat();render();},20);}
+function updateHTMat(){if(!HT)return;const s=HT.steel,p=HT.prof;let hv,dep;
+  if(HT.kind==='qt'){const R=HT.h.D/2;dep=HT.h.D<=25?R:12.5;}else dep=HT.kind==='ind'?HT.h.Di/2:0.6;
+  let best=p[0];for(const q of p)if(Math.abs(q.x-dep)<Math.abs(best.x-dep))best=q;hv=best.hv;
+  const S=strengthFromHV(s,hv);const m=MATS.HT;m.Rm=S.Rm;m.Rp=Math.min(S.Rp,S.Rm*0.97);m.A=Math.max(2,S.A);m.Ag=clamp(m.A*0.42,1.5,12);m.Z=S.Rm>1800?30:S.Rm>1300?45:55;m.hv=hv;m.dep=dep;}
+
+/* ---------- ohjauspaneeli ---------- */
+const fNum=(k,lab,unit,min,max,step)=>`<label class="fld"><span>${lab}</span><span class="inp"><input type="number" data-k="${k}" min="${min}" max="${max}" step="${step}" value="${getK(k)}"><em>${unit}</em></span></label>`;
+const fSel=(k,lab,opts,rb)=>`<label class="fld"><span>${lab}</span><select data-k="${k}"${rb?' data-rb="1"':''}>${opts.map(([v,l])=>`<option value="${v}"${String(getK(k))===String(v)?' selected':''}>${esc(l)}</option>`).join('')}</select></label>`;
+const fChk=(k,lab,rb)=>`<label class="fld"><span>${lab}</span><span><input type="checkbox" data-k="${k}"${getK(k)?' checked':''}${rb?' data-rb="1"':''}></span></label>`;
+const steelOpts=()=>Object.keys(STEELS).map(k=>[k,STEELS[k].name]);
+const copyHtml=()=>`<p class="copy">${tr('Juho Pirttilahti, Seinäjoen ammattikorkeakoulu (SEAMK), 2026. Suunnittelu, sisältö ja validointi: Juho Pirttilahti. Ohjelmakoodi toteutettu tekoälyavusteisesti (Claude, Anthropic).','Juho Pirttilahti, Seinäjoki University of Applied Sciences (SEAMK), 2026. Design, content and validation: Juho Pirttilahti. Program code implemented with AI assistance (Claude, Anthropic).')} <a href="https://creativecommons.org/licenses/by/4.0/deed.${lang}" target="_blank" rel="noopener license">CC BY 4.0</a>. ${tr('Versio','Version')} ${VERSION}.</p>`;
+function buildCtl(){const c=$('#ctl');let h='';
+  if(st.tab==='ht'){const H=st.ht;
+    h+=`<h3>${tr('Esimerkit','Examples')}</h3><label class="fld" style="grid-template-columns:1fr"><select id="exSel"><option value="">${tr('Valitse esimerkki…','Choose an example…')}</option>${EXAMPLES.map(e=>`<option value="${e.id}">${esc(L2(e.n))}</option>`).join('')}</select></label>`;
+    h+=`<h3>${tr('Materiaali ja prosessi','Material and process')}</h3>`+fSel('ht.steel',tr('Teräs','Steel'),steelOpts())+
+      fSel('ht.proc',tr('Prosessi','Process'),[['qt',tr('Nuorrutus (karkaisu + päästö)','Quench and temper')],['ind',tr('Induktiokarkaisu','Induction hardening')],['nc',tr('Nitrohiiletys / mustanitraus','Nitrocarburizing / black nitriding')]],1)+
+      (H.proc!=='nc'?fSel('ht.band',tr('Karkenevuus (Jominy-kaista)','Hardenability (Jominy band)'),[['mid',tr('kaistan keskiarvo','band mean')],['min',tr('alaraja','minimum')],['max',tr('yläraja','maximum')]]):'');
+    if(H.proc==='qt'){h+=`<h3>${tr('Karkaisu','Hardening')}</h3>`+fNum('ht.D',tr('Halkaisija','Diameter'),'mm',5,200,1)+fNum('ht.Taus',tr('Austenitointi','Austenitizing'),'°C',700,1000,5)+
+        fSel('ht.medium',tr('Sammutusaine','Quenchant'),Object.keys(MEDIA).filter(k=>k!=='suihku').map(k=>[k,L2(MEDIA[k].n)]))+fNum('ht.Tf',tr('Sammutusaineen lämpötila','Quenchant temperature'),'°C',10,90,5)+
+        `<h3>${tr('Päästö','Tempering')}</h3>`+fNum('ht.Tt',tr('Päästölämpötila','Tempering temperature'),'°C',100,700,10)+fNum('ht.tt',tr('Päästöaika','Tempering time'),'h',0.25,24,0.25)+
+        `<p class="note">${tr('Päästö 100 °C 1 h vastaa käytännössä päästämätöntä tilaa.','Tempering at 100 °C for 1 h corresponds in practice to the untempered state.')}</p>`;}
+    if(H.proc==='ind'){h+=`<h3>${tr('Kappale ja lähtötila','Part and prior state')}</h3>`+fNum('ht.Di',tr('Halkaisija','Diameter'),'mm',10,120,1)+
+        fSel('ht.prior',tr('Lähtötila','Prior state'),[['qt',tr('Nuorrutettu (+QT)','Quenched and tempered (+QT)')],['n',tr('Normalisoitu (+N)','Normalized (+N)')]],1)+(H.prior==='qt'?fNum('ht.Tp',tr('Nuorrutuksen päästö','Prior tempering'),'°C',450,700,10):'')+
+        `<h3>${tr('Induktiokuumennus (paikallaan, koko vaippa)','Induction heating (static, whole surface)')}</h3>`+fNum('ht.f',tr('Taajuus','Frequency'),'kHz',1,500,1)+fNum('ht.qs',tr('Pintatehotiheys','Surface power density'),'kW/cm²',0.2,5,0.1)+fNum('ht.th',tr('Kuumennusaika','Heating time'),'s',0.1,20,0.1)+
+        fNum('ht.td',tr('Viive ennen suihkua','Delay before spray'),'s',0,5,0.1)+fNum('ht.tqI',tr('Suihkusammutus','Spray quench'),'s',2,60,1)+
+        `<h3>${tr('Päästö','Tempering')}</h3>`+fNum('ht.TtI',tr('Päästölämpötila','Tempering temperature'),'°C',100,400,10)+fNum('ht.ttI',tr('Päästöaika','Tempering time'),'h',0.25,8,0.25);}
+    if(H.proc==='nc'){h+=`<h3>${tr('Lähtötila','Prior state')}</h3>`+fSel('ht.priorN',tr('Lähtötila','Prior state'),[['qt',tr('Nuorrutettu (+QT)','Quenched and tempered (+QT)')],['n',tr('Normalisoitu (+N)','Normalized (+N)')]],1)+(H.priorN==='qt'?fNum('ht.TpN',tr('Nuorrutuksen päästö','Prior tempering'),'°C',500,700,10):'')+
+        `<h3>${tr('Nitrohiiletys (kaasu tai suolahaude)','Nitrocarburizing (gas or salt bath)')}</h3>`+fNum('ht.T',tr('Lämpötila','Temperature'),'°C',540,600,5)+fNum('ht.t',tr('Aika','Time'),'h',0.5,8,0.5)+
+        fChk('ht.ox',tr('Jälkihapetus (musta Fe₃O₄)','Post-oxidation (black Fe₃O₄)'),1)+(H.ox?fNum('ht.oxT',tr('Hapetuslämpötila','Oxidation temperature'),'°C',350,550,10)+fNum('ht.oxt',tr('Hapetusaika','Oxidation time'),'min',5,60,5):'')+
+        `<p class="note">${tr('Mustanitraus = ferriittinen nitrohiiletys + jälkihapetus. Kauppanimiä mm. Tenifer/Tufftride QPQ, Nitrotec, Arcor.','Black nitriding = ferritic nitrocarburizing + post-oxidation. Trade names include Tenifer/Tufftride QPQ, Nitrotec and Arcor.')}</p>`;}
+    h+=`<div class="acts"><button class="btn" id="toTT" type="button">${tr('Vie tulos vetokokeeseen','Send result to tensile test')}</button></div>`;
+  }
+  if(st.tab==='xs'){const X=st.xs;h+=`<h3>${tr('Hila','Lattice')}</h3>`+fSel('xs.kind',tr('Rakenne','Structure'),Object.keys(XS).map(k=>[k,L2(XS[k].n)]),1);
+    if(['fcc','bct','bain'].includes(X.kind))h+=fNum('xs.C',tr('Hiilipitoisuus','Carbon content'),'%',0,1.4,0.05);
+    if(X.kind==='bain')h+=`<div class="rng"><span>${tr('Muunnos','Transformation')}</span><input type="range" min="0" max="1" step="0.01" data-k="xs.u" value="${X.u}"><span id="uVal">${nf(X.u*100,0)} %</span></div><div class="acts"><button class="btn" id="bainPlay" type="button">${tr('Animoi','Animate')}</button></div>`;
+    if(['bcc','fcc','bct'].includes(X.kind))h+=fChk('xs.sites',tr('Näytä oktaedriset välisijat','Show octahedral interstitial sites'));
+    h+=`<p class="note">${tr('Pyöritä koppia vetämällä hiirellä tai sormella.','Rotate the cell by dragging with the mouse or a finger.')}</p>`;}
+  if(st.tab==='fec'){h+=`<h3>${tr('Piste','Point')}</h3>`+fNum('fec.C',tr('Hiilipitoisuus','Carbon content'),'%',0,2.1,0.01)+fNum('fec.T',tr('Lämpötila','Temperature'),'°C',600,1100,5)+
+    `<p class="note">${tr('Klikkaa piirrosta valitaksesi pisteen. Vipusääntö antaa faasien osuudet kahden faasin alueella.','Click the diagram to choose a point. The lever rule gives the phase fractions in a two-phase region.')}</p><h3>${tr('Teräkset piirroksessa','Steels on the diagram')}</h3><div class="acts">${Object.keys(STEELS).map(k=>`<button class="btn" type="button" data-fc="${STEELS[k].comp.C}">${k} (${nf(STEELS[k].comp.C,2)} % C)</button>`).join('')}</div>`;}
+  if(st.tab==='tt'){h+=`<h3>${tr('Materiaali','Material')}</h3>`+fSel('tt.mat',tr('Koesauva','Specimen'),Object.keys(MATS).map(k=>[k,L2(MATS[k].n)]))+
+    fSel('tt.cmp',tr('Vertailu','Comparison'),[['',tr('ei vertailua','no comparison')],...Object.keys(MATS).map(k=>[k,L2(MATS[k].n)])])+
+    `<div class="acts"><button class="btn pri" id="ttRun" type="button">${tr('Aja vetokoe','Run tensile test')}</button></div>`+
+    `<h3>${tr('Kovuusmuunnin (teräs)','Hardness converter (steel)')}</h3>`+fNum('conv.hv',tr('Vickers-kovuus','Vickers hardness'),'HV',80,940,5)+`<div class="kv" id="convOut"></div>`+
+    `<p class="note">${tr('HRC ISO 18265 -tyyppisestä taulukosta (≥ 238 HV), HB ≈ 0,95·HV, Rm ≈ 3,1·HV. Muunnokset ovat likiarvoja.','HRC from an ISO 18265-type table (≥ 238 HV), HB ≈ 0.95·HV, Rm ≈ 3.1·HV. Conversions are approximate.')}</p>`;}
+  h+=copyHtml();c.innerHTML=h;
+  const ex=$('#exSel');if(ex)ex.addEventListener('change',()=>{if(ex.value)loadExample(ex.value);});
+  const tt=$('#toTT');if(tt)tt.addEventListener('click',()=>{st.tt.mat='HT';setTab('tt');buildCtl();runTT(true);});
+  const bp=$('#bainPlay');if(bp)bp.addEventListener('click',playBain);
+  const tr2=$('#ttRun');if(tr2)tr2.addEventListener('click',()=>runTT(true));
+  c.querySelectorAll('[data-fc]').forEach(b=>b.addEventListener('click',()=>{st.fec.C=+b.dataset.fc;save();buildCtl();render();}));}
+function onCtl(e){const el=e.target;const k=el.dataset&&el.dataset.k;if(!k)return;let v;
+  if(el.type==='checkbox')v=el.checked;else if(el.type==='number'||el.type==='range'){v=parseFloat(String(el.value).replace(',','.'));if(!Number.isFinite(v))return;
+    if(e.type==='change'){const mn=+el.min,mx=+el.max;v=clamp(v,mn,mx);el.value=v;}else if(v<+el.min||v>+el.max)return;}
+  else v=el.value;
+  setK(k,v);save();
+  if(k.startsWith('ht.')){if(k!=='ht.sel')st.ht.sel=null;recompute();}
+  else if(k.startsWith('tt.')){stopTT();curTT=null;render();}
+  else render();
+  if(el.dataset.rb&&e.type==='change')buildCtl();}
+
+/* ---------- välilehdet ---------- */
+function setTabUI(){document.querySelectorAll('.tabs button').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.tab===st.tab)));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('on',p.id==='p-'+st.tab));}
+function setTab(t){if(!['ht','xs','fec','tt'].includes(t))return false;st.tab=t;save();setTabUI();buildCtl();render();return true;}
+
+/* ---------- lämpökäsittelyn piirto ---------- */
+const PHN={M:['martensiitti','martensite'],TM:['päästetty martensiitti','tempered martensite'],B:['bainiitti','bainite'],F:['ferriitti','ferrite'],P:['perliitti','pearlite'],
+  CL:['yhdistekerros ε-Fe₂₋₃(N,C) + γ′-Fe₄N','compound layer ε-Fe₂₋₃(N,C) + γ′-Fe₄N'],OX:['magnetiitti Fe₃O₄ (musta oksidi)','magnetite Fe₃O₄ (black oxide)'],DZ:['diffuusiovyöhyke: päästetty martensiitti + erkautuneet nitridit (CrN, Mo₂N)','diffusion zone: tempered martensite + precipitated nitrides (CrN, Mo₂N)'],C:['sementiitti','cementite']};
+function profAt(x){const p=HT.prof;let best=p[0];for(const q of p)if(Math.abs(q.x-x)<Math.abs(best.x-x))best=q;return best;}
+function xRange(){if(HT.kind==='qt')return HT.h.D/2;if(HT.kind==='ind')return Math.min(HT.h.Di/2,Math.max(4,HT.shd*2.5));return HT.prof[HT.prof.length-1].x;}
+function phasesAt(x){/* faasiosuudet syvyydellä x (mm) */const s=HT.steel,C=s.comp.C;const f={};const add=(k,v)=>{if(v>0)f[k]=(f[k]||0)+v;};
+  if(HT.kind==='nc'){const q=profAt(x);const xm=x*1000;
+    if(xm<HT.ox)return {OX:1};if(xm<HT.ox+HT.cl)return {CL:1};
+    const dz=x<HT.nhd;const qt=HT.h.priorN==='qt';
+    if(qt){if(dz){add('DZ',1);}else add('TM',1);}else{const fp=clamp((C-0.02)/0.75,0,1);if(dz){add('DZ',0.35);add('F',(1-fp)*0.65);add('P',fp*0.65);}else{add('F',1-fp);add('P',fp);}}
+    return f;}
+  const q=profAt(x);const lowT=(HT.kind==='qt'?HT.h.Tt:HT.h.TtI)<=120;
+  add(lowT?'M':'TM',q.fM);
+  let rest=1-q.fM;
+  if(HT.kind==='ind'&&q.fA<1){const old=(1-q.fA);rest-=old;if(HT.h.prior==='qt')add('TM',old);else{const fp=clamp((C-0.02)/0.75,0,1);add('F',old*(1-fp));add('P',old*fp);}}
+  rest=Math.max(0,rest);
+  if(rest>0){const t85=q.t85;if(Number.isFinite(t85)&&t85<(alloyed(s)?400:8)){add('B',rest);}else{const fp=clamp((C-0.02)/0.75,0,1);add('F',rest*(1-fp));add('P',rest*fp);}}
+  return f;}
+function renderHT(){if(!HT)return;const h=HT.h,s=HT.steel,c1=cssv('--c1'),c2=cssv('--c2'),c3=cssv('--c3'),c4=cssv('--c4'),mut=cssv('--muted');
+  /* varoitukset */
+  $('#htWarns').innerHTML=HT.warns.map(w=>`<div class="${w.info?'info':''}">${esc(w.t)}</div>`).join('');
+  /* lämpötila–aika */
+  const rec=HT.sim.rec,isNC=HT.kind==='nc',tk=isNC?1/3600:1;const tx=rec.t.map(t=>t*tk);const tmax=tx[tx.length-1]||1;
+  const Tm=Math.max(...rec.s,...rec.c,900);
+  const hl=[{y:s.Ac1,l:'Ac1 '+s.Ac1+' °C',c:mut,below:1},{y:s.Ac3,l:'Ac3 '+s.Ac3+' °C',c:mut}];if(!isNC){hl.push({y:s.Ms,l:'Ms '+s.Ms+' °C',c:c4});}
+  plotXY($('#cvT'),{x:[0,tmax],y:[0,Math.ceil((Tm+50)/100)*100],xl:isNC?tr('Aika (h)','Time (h)'):tr('Aika (s)','Time (s)'),yl:'T (°C)',hlines:hl,
+    series:isNC?[{x:tx,y:rec.s,c:c1}]:[{x:tx,y:rec.c,c:c2},{x:tx,y:rec.m,c:c3},{x:tx,y:rec.s,c:c1}]});
+  legend($('#legT'),isNC?[{c:c1,l:tr('Kappale (kaavamainen prosessikäyrä)','Part (schematic process curve)')}]:[{c:c1,l:tr('Pinta','Surface')},{c:c3,l:tr('Puolivälissä säteestä','Mid-radius')},{c:c2,l:tr('Keskusta','Centre')}]);
+  /* kovuusprofiili */
+  const xr=xRange();const P=HT.prof.filter(q=>q.x<=xr+1e-9);const xs=P.map(q=>q.x);
+  const hvMax=Math.max(...P.map(q=>Math.max(q.hv||0,q.hvq||0)),400);
+  const sel=h.sel!=null?h.sel:(isNC?Math.min(xr,HT.nhd*0.5):HT.kind==='ind'?Math.min(xr,HT.shd*0.5):0);
+  const o={x:[0,xr],y:[0,Math.ceil((hvMax+60)/100)*100],xl:tr('Syvyys pinnasta (mm)','Depth from surface (mm)'),yl:'HV',series:[],vlines:[{x:sel,c:cssv('--acc'),dash:[2,3],w:2}],hlines:[]};
+  if(isNC){o.series.push({x:xs,y:P.map(q=>q.hv),c:c1});o.hlines.push({y:HT.hvc+50,l:tr('ydin + 50 HV (NHD-raja)','core + 50 HV (NHD limit)'),c:mut});o.vlines.push({x:HT.nhd,l:'NHD '+nf(HT.nhd,2)+' mm',c:c3});}
+  else{o.series.push({x:xs,y:P.map(q=>q.hvq),c:c2,dash:[6,4],w:1.6},{x:xs,y:P.map(q=>q.hv),c:c1});
+    if(HT.kind==='ind'){o.hlines.push({y:HT.HL,l:tr('rajakovuus 0,8 × pinta','limit hardness 0.8 × surface'),c:mut});o.vlines.push({x:HT.shd,l:'SHD '+nf(HT.shd,2)+' mm',c:c3});
+      o.y2={r:[0,1500],l:'Tmax (°C)',series:[{x:xs,y:P.map(q=>q.Tmax),c:c4,w:1.4,dash:[2,3]}]};}}
+  plotXY($('#cvH'),o);
+  legend($('#legH'),isNC?[{c:c1,l:tr('Kovuus (diffuusiovyöhyke ja ydin)','Hardness (diffusion zone and core)')}]:[{c:c2,l:tr('Sammutettu','As-quenched'),dash:1},{c:c1,l:tr('Päästetty','Tempered')}].concat(HT.kind==='ind'?[{c:c4,l:tr('Huippulämpötila (oikea asteikko)','Peak temperature (right axis)'),dash:1}]:[]));
+  /* mikrorakenne */
+  const W=xr;const mk=[];if(isNC){mk.push({x:(HT.ox+HT.cl)/1000/W,l:tr('yhdistekerros ','compound layer ')+nf(HT.cl,1)+' µm'});mk.push({x:HT.nhd/W,l:'NHD',row:1});}
+  if(HT.kind==='ind')mk.push({x:HT.shd/W,l:'SHD'});
+  const niceL=(()=>{const t=W*0.2;const p=Math.pow(10,Math.floor(Math.log10(t)));const m=t/p;const v=(m<2?1:m<5?2:5)*p;return v;})();
+  drawMicro($('#cvM'),u=>{let x=u*W;if(isNC){/* ohuet kerrokset näkyviin vähintään 3 px */const px=W/($('#cvM').getBoundingClientRect().width||500);
+      if(HT.ox>0&&x*1000<Math.max(HT.ox,px*3*1000))return {OX:1};}return phasesAt(x);},
+    {sel:sel/W,marks:mk,scale:{mm:niceL/W,label:niceL>=1?nf(niceL,0)+' mm':niceL>=0.1?nf(niceL,1)+' mm':nf(niceL*1000,0)+' µm'},grain:isNC?10:13,seed:7});
+  /* faasiteksti valitulla syvyydellä */
+  const f=phasesAt(sel),q=profAt(sel);const parts=Object.keys(f).filter(k=>f[k]>=0.005).sort((a,b)=>f[b]-f[a]).map(k=>`${L2(PHN[k])} ${nf(f[k]*100,0)} %`);
+  let t=`<b>${tr('Syvyys','Depth')} ${nf(sel,isNC?3:2)} mm:</b> ${parts.join(', ')}. `;
+  const hv=isNC&&f.CL?HT.HVcl:q.hv;if(Number.isFinite(hv))t+=`${tr('Kovuus','Hardness')} ${nf(hv,0)} HV${hv2hrc(hv)&&!isNC?` (${nf(hv2hrc(hv),1)} HRC)`:''}. `;
+  if(!isNC){if(Number.isFinite(q.Tmax)&&HT.kind==='ind')t+=`Tmax ${nf(q.Tmax,0)} °C. `;if(Number.isFinite(q.t85))t+=`t8/5 ${nf(q.t85,q.t85<10?1:0)} s. `;}
+  $('#phaseTxt').innerHTML=t+`<br><span class="mnote">${tr('Kuva on kaavamainen: rakeiden koko ja muoto eivät ole mittakaavassa, faasien osuudet ovat.','The image is schematic: grain size and shape are not to scale; phase fractions are.')}</span>`;
+  /* tulostaulukko */
+  const rows=[];const R=(a,b)=>rows.push(`<tr><td>${a}</td><td>${b}</td></tr>`);const hvs=v=>Number.isFinite(v)?`${nf(v,0)} HV`+(hv2hrc(v)&&v<=900&&HT.kind!=='nc'?` / ${nf(hv2hrc(v),1)} HRC`:''):'–';
+  const p0=HT.prof[0],pc=HT.prof[HT.prof.length-1];
+  if(HT.kind==='qt'){R(tr('Pinta, sammutettu','Surface, as-quenched'),hvs(p0.hvq));R(tr('Pinta, päästetty','Surface, tempered'),hvs(p0.hv));R(tr('Keskusta, sammutettu','Centre, as-quenched'),hvs(pc.hvq));R(tr('Keskusta, päästetty','Centre, tempered'),hvs(pc.hv));
+    R(tr('Martensiittia pinta / keskusta','Martensite surface / centre'),`${nf(p0.fM*100,0)} % / ${nf(pc.fM*100,0)} %`);R('t8/5 '+tr('pinta / keskusta','surface / centre'),`${nf(p0.t85,1)} s / ${nf(pc.t85,1)} s`);
+    R(tr('Vastaava Jominy-etäisyys pinta / keskusta','Equivalent Jominy distance surface / centre'),`${nf(jomDist(p0.t85),1)} / ${nf(jomDist(pc.t85),1)} mm`);
+    R(tr('Päästöparametri P (Hollomon–Jaffe)','Tempering parameter P (Hollomon–Jaffe)'),nf(HT.P,0));
+    const m=MATS.HT;R(tr(`Lujuus ${nf(m.dep,1)} mm syvyydellä (Rm ≈ 3,1·HV)`,`Strength at ${nf(m.dep,1)} mm depth (Rm ≈ 3.1·HV)`),`Rm ${nf(m.Rm,0)}, Rp0,2 ${nf(m.Rp,0)} MPa`);
+    R(tr('Ms: Andrews / tekninen kortti','Ms: Andrews / datasheet'),`${nf(msAndrews(s.comp),0)} / ${s.Ms} °C`);}
+  if(HT.kind==='ind'){R(tr('Pinnan huippulämpötila','Peak surface temperature'),nf(p0.Tmax,0)+' °C');R(tr('Pinta, päästetty','Surface, tempered'),hvs(p0.hv));R(tr('Pintakarkaisusyvyys SHD (ISO 18203)','Surface hardening depth SHD (ISO 18203)'),nf(HT.shd,2)+' mm');
+    R(tr('Rajakovuus 0,8 × pinnan kovuus','Limit hardness 0.8 × surface hardness'),nf(HT.HL,0)+' HV');
+    let da=0;for(const q of HT.prof){if(q.fA>=0.5)da=q.x;else break;}R(tr('Austenitoitunut syvyys (≥ 50 %)','Austenitized depth (≥ 50 %)'),nf(da,2)+' mm');
+    R(tr('Ydin','Core'),hvs(pc.hv));R(tr('Tunkeutumissyvyys δ 20 °C / yli Curien (850 °C)','Penetration depth δ at 20 °C / above Curie (850 °C)'),`${nf(deltaMM(h.f,20),2)} / ${nf(deltaMM(h.f,850),2)} mm`);
+    R(tr('Kuumennusenergia','Heating energy'),nf(h.qs*h.th,2)+' kJ/cm²');}
+  if(HT.kind==='nc'){if(h.ox)R(tr('Oksidikerros Fe₃O₄','Oxide layer Fe₃O₄'),'≈ '+nf(HT.ox,1)+' µm');R(tr('Yhdistekerros','Compound layer'),nf(HT.cl,1)+' µm');R(tr('Yhdistekerroksen kovuus','Compound layer hardness'),hvs(HT.HVcl));
+    R(tr('Diffuusiovyöhykkeen pintakovuus','Diffusion zone surface hardness'),hvs(HT.HVs));R(tr('Nitrauskovuussyvyys NHD (ydin + 50 HV, ISO 18203)','Nitriding hardness depth NHD (core + 50 HV, ISO 18203)'),nf(HT.nhd,3)+' mm');R(tr('Ydin','Core'),hvs(HT.hvc));
+    R(tr('Nitridejä muodostavat seosaineet X = Cr + Mo','Nitride-forming alloying elements X = Cr + Mo'),nf(s.nit.X,2)+' %');}
+  $('#htRes').innerHTML=rows.join('');
+  /* Jominy (ei nitrohiiletyksessä) */
+  $('#jomBox').hidden=isNC;if(isNC)return;
+  const J=s.jd;const eq=[];if(HT.kind==='qt'){eq.push({x:jomDist(p0.t85),l:tr('pinta','surface'),c:c1},{x:jomDist(pc.t85),l:tr('keskusta','centre'),c:c2,row:1});}
+  if(HT.kind==='ind'&&Number.isFinite(p0.t85))eq.push({x:jomDist(p0.t85),l:tr('pinta','surface'),c:c1});
+  plotXY($('#cvJ'),{x:[0,Math.max(50,J[J.length-1])],y:[15,65],xl:tr('Etäisyys sammutetusta päästä (mm)','Distance from quenched end (mm)'),yl:'HRC',
+    series:[{x:J,y:s.jmax,c:mut,w:1.4},{x:J,y:s.jmin,c:mut,w:1.4},{x:J,y:J.map((_,i)=>(s.jmin[i]+s.jmax[i])/2),c:c3,dash:[5,4],w:1.4}],vlines:eq.map(e=>({x:e.x,l:e.l+' '+nf(e.x,1)+' mm',c:e.c,row:e.row}))});
+}
+const deltaMM=(fk,T)=>503*Math.sqrt((1.9e-7+1.1e-9*T)/((T<T_CURIE?50:1)*fk*1000))*1000;
+
+/* ---------- kiderakenne ---------- */
+let bainTimer=null;
+function playBain(){if(bainTimer){cancelAnimationFrame(bainTimer);bainTimer=null;}const t0=performance.now();const step=now=>{const u=clamp((now-t0)/2500,0,1);st.xs.u=u;const r=document.querySelector('[data-k="xs.u"]');if(r)r.value=u;renderXS();if(u<1)bainTimer=requestAnimationFrame(step);else{bainTimer=null;save();}};bainTimer=requestAnimationFrame(step);}
+function renderXS(){const X=st.xs,C=X.C;const cd=cellAtoms(X.kind,C,X.u);let ghost=null;
+  if(X.kind==='bain'){const ag=latt.aGamma(C),a=cd.box[0];const k=a/(ag/Math.SQRT2);const c=ag;
+    const q=[[0,0],[a,a],[2*a,0],[a,-a]];ghost=[];for(const z of[0,c])for(let i=0;i<4;i++)ghost.push([[...q[i],z],[...q[(i+1)%4],z]]);for(const p of q)ghost.push([[...p,0],[...p,c]]);}
+  drawCell($('#cvX'),cd,{sites:X.sites&&['bcc','fcc','bct'].includes(X.kind),ghost,zoom:X.kind==='bain'?0.7:1});
+  const uv=$('#uVal');if(uv)uv.textContent=nf(X.u*100,0)+' %';
+  const it=[{c:'#8C9AA8',l:tr('Fe-atomi','Fe atom'),sw:1}];if(cd.at.some(a=>a.t==='C'))it.push({c:'#202326',l:tr('C-atomi (välisija)','C atom (interstitial)'),sw:1});if(cd.at.some(a=>a.t==='N'))it.push({c:'#2F6FD0',l:tr('N-atomi (välisija)','N atom (interstitial)'),sw:1});
+  if(X.sites&&['bcc','fcc','bct'].includes(X.kind))it.push({c:cssv('--acc'),l:tr('Oktaedrinen välisija','Octahedral interstitial site'),sw:1});if(ghost)it.push({c:cssv('--c2'),l:tr('Alkuperäinen pkk-koppi (austeniitti)','Parent fcc cell (austenite)'),dash:1});
+  legend($('#legX'),it);
+  const A='Å';let h=`<h4>${esc(L2(XS[X.kind].n))}</h4>`;const p=(a,b)=>h+=`<p><span class="mnote">${a}</span><br><span class="big">${b}</span></p>`;
+  if(X.kind==='bcc'){p(tr('Hilaparametri a (20 °C)','Lattice parameter a (20 °C)'),`${nf(latt.aAlpha,3)} ${A}`);p(tr('Atomeja kopissa / koordinaatioluku / täyttöaste','Atoms per cell / coordination number / packing factor'),'2 / 8 / 0,68');
+    p(tr('Hiilen liukoisuus enintään','Maximum carbon solubility'),'0,022 % (727 °C)');
+    h+=`<p>${tr('Ferriitin oktaedriset välisijat ovat pieniä (säde noin 0,19 Å, hiiliatomin säde 0,77 Å), joten hiili liukenee siihen erittäin niukasti. Liukenematon hiili on sementiittinä Fe₃C perliitissä tai karbideina.','Ferrite\'s octahedral interstitial sites are small (radius about 0.19 Å, carbon atom radius 0.77 Å), so carbon dissolves very sparingly. Undissolved carbon exists as cementite Fe₃C in pearlite or as carbides.')}</p>`;}
+  if(X.kind==='fcc'){p(tr('Hilaparametri a (huoneenlämpötilaan ekstrapoloitu)','Lattice parameter a (extrapolated to room temperature)'),`${nf(latt.aGamma(C),3)} ${A}`);p(tr('Atomeja kopissa / koordinaatioluku / täyttöaste','Atoms per cell / coordination number / packing factor'),'4 / 12 / 0,74');
+    p(tr('Hiilen liukoisuus enintään','Maximum carbon solubility'),'2,11 % (1148 °C)');
+    h+=`<p>${tr('Austeniitin oktaedrinen välisija on suurempi (säde noin 0,52 Å), joten hiili liukenee siihen hyvin. Induktiokarkaisussa pinta kuumennetaan sekunneissa austeniitiksi, ja karbidien hiilen on ehdittävä liueta ja tasoittua: siksi nopea kuumennus tarvitsee korkeamman lämpötilan (noin Ac3 + 100 °C) kuin uunikarkaisu.','Austenite\'s octahedral site is larger (radius about 0.52 Å), so carbon dissolves readily. In induction hardening the surface becomes austenite within seconds, and carbon from carbides must dissolve and homogenize: this is why fast heating needs a higher temperature (about Ac3 + 100 °C) than furnace hardening.')}</p>`;}
+  if(X.kind==='bct'||X.kind==='bain'){const m=latt.bct(C);p(tr('Martensiitin hilaparametrit a / c','Martensite lattice parameters a / c'),`${nf(m.a,3)} / ${nf(m.c,3)} ${A}`);p('c/a',nf(m.c/m.a,4));
+    if(X.kind==='bain'){p(tr('Kopin c/a tällä hetkellä','Current cell c/a'),nf(cd.ca,3));p(tr('Muutos pkk → tkt','Change fcc → bct'),`c: −${nf((1-m.c/latt.aGamma(C))*100,0)} %, a: +${nf((m.a/(latt.aGamma(C)/Math.SQRT2)-1)*100,0)} %`);}
+    h+=`<p>${tr('Nopeassa sammutuksessa hiili ei ehdi diffundoitua pois. Pkk-hila muuttuu leikkautumalla tilakeskiseksi (Bainin muunnos), ja hiiliatomit jäävät z-suuntaisiin oktaedrisiin välisijoihin. Ne venyttävät hilaa c-suunnassa: c/a ≈ 1 + 0,045·C (p-%). Hilan jännitys estää dislokaatioiden liikettä, mikä tekee martensiitista kovan. Kovuus riippuu lähes yksinomaan hiilipitoisuudesta.','On rapid quenching carbon has no time to diffuse away. The fcc lattice transforms by shear into a body-centred one (Bain transformation), and the carbon atoms remain in z-oriented octahedral sites. They stretch the lattice in the c direction: c/a ≈ 1 + 0.045·C (wt-%). The lattice strain hinders dislocation motion, which makes martensite hard. Hardness depends almost entirely on carbon content.')}</p>`;
+    p(tr('100 % martensiitin kovuus tällä hiilellä','Hardness of 100 % martensite at this carbon'),`${nf(hrcM100(C),1)} HRC`);}
+  if(X.kind==='gp'){p(tr('Hilaparametri a','Lattice parameter a'),`${nf(latt.aGp,3)} ${A}`);h+=`<p>${tr("γ′-Fe₄N: rautaatomit pkk-järjestyksessä, typpi kopin keskellä (yksi neljäsosa oktaedrisista välisijoista). Muodostuu yhdistekerroksen sisäosaan nitrauksessa, typpeä noin 5,9 %.","γ′-Fe₄N: iron atoms in an fcc arrangement, nitrogen at the cell centre (one quarter of the octahedral sites). Forms in the inner part of the compound layer during nitriding, nitrogen about 5.9 %.")}</p>`;}
+  if(X.kind==='eps'){p(tr('Hilaparametrit a / c (likiarvo, riippuu typpipitoisuudesta)','Lattice parameters a / c (approximate, depend on nitrogen content)'),`${nf(latt.eps.a,2)} / ${nf(latt.eps.c,2)} ${A}`);
+    h+=`<p>${tr('ε-Fe₂₋₃(N,C): rauta tiiviissä heksagonaalisessa järjestyksessä, typpi ja hiili oktaedrisissa välisijoissa. Nitrohiiletyksessä hiili vakauttaa ε-faasia, joten yhdistekerros on pääosin ε:a. Se on kova (noin 700–1000 HV), kulumista ja korroosiota kestävä. Jälkihapetus muodostaa sen päälle ohuen mustan magnetiittikerroksen Fe₃O₄, josta nimi mustanitraus.','ε-Fe₂₋₃(N,C): iron in a close-packed hexagonal arrangement, nitrogen and carbon in octahedral sites. In nitrocarburizing carbon stabilizes the ε phase, so the compound layer is mostly ε. It is hard (about 700–1000 HV) and resists wear and corrosion. Post-oxidation forms a thin black magnetite layer Fe₃O₄ on top of it, hence the name black nitriding.')}</p>`;}
+  $('#xsInfo').innerHTML=h;}
+function bindDrag(cv){let d=null;cv.style.touchAction='none';cv.addEventListener('pointerdown',e=>{d={x:e.clientX,y:e.clientY};cv.setPointerCapture(e.pointerId);});
+  cv.addEventListener('pointermove',e=>{if(!d)return;view3.yaw+=(e.clientX-d.x)*0.01;view3.pitch=clamp(view3.pitch+(e.clientY-d.y)*0.01,-1.4,1.4);d={x:e.clientX,y:e.clientY};renderXS();});
+  const up=()=>{d=null;};cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);}
+
+/* ---------- Fe–C ---------- */
+function renderFEC(){const F=st.fec;drawFeC($('#cvF'),F);const r=feC(F.C,F.T);const rows=[];const R=(a,b)=>rows.push(`<tr><td>${a}</td><td>${b}</td></tr>`);
+  const reg={g:tr('austeniitti γ','austenite γ'),a:tr('ferriitti α','ferrite α'),ag:'α + γ',gc:'γ + Fe₃C',ac:'α + Fe₃C'}[r.reg];
+  R(tr('Piste','Point'),`${nf(F.C,2)} % C, ${nf(F.T,0)} °C`);R(tr('Alue','Region'),reg);
+  for(const p of r.ph)R(tr(`Faasi ${p.n}: koostumus / osuus`,`Phase ${p.n}: composition / fraction`),`${nf(p.x,p.x<0.1?3:2)} % C / ${nf(p.f*100,1)} %`);
+  if(r.micro)for(const m of r.micro)R(tr('Rakenneosa: ','Constituent: ')+({α_pro:tr('esieutektoidinen ferriitti','proeutectoid ferrite'),P:tr('perliitti','pearlite'),α:tr('ferriitti','ferrite'),'Fe₃C_pro':tr('esieutektoidinen sementiitti','proeutectoid cementite')}[m.n]),nf(m.f*100,1)+' %');
+  R('A3 / Acm / A1',`${F.C<CS?nf(a3(F.C),0):'–'} / ${F.C>CS?nf(acm(F.C),0):'–'} / ${TA1} °C`);
+  $('#fecRes').innerHTML=rows.join('');
+  /* mikrorakenne hitaassa jäähtymisessä huoneenlämpöön */
+  const C=F.C;let fr;if(r.reg==='g')fr={A:1};else if(r.reg==='ag'){fr={F:r.ph[0].f,A:r.ph[1].f};}else if(r.reg==='gc'){fr={A:r.ph[0].f,C:r.ph[1].f};}else if(r.reg==='a')fr={F:1};
+  else{const m=r.micro;fr={};for(const q of m){const k=q.n==='P'?'P':q.n==='Fe₃C_pro'?'C':'F';fr[k]=(fr[k]||0)+q.f;}}
+  drawMicro($('#cvFM'),()=>fr,{grain:16,seed:11});
+  let t;if(r.reg==='g'||r.reg==='ag'||r.reg==='gc')t=tr('Tässä lämpötilassa rakenteessa on austeniittia (vaalea, kuvassa tasainen). Hitaasti jäähdytettäessä austeniitti muuttuu A1:ssä (727 °C) perliitiksi.','At this temperature the structure contains austenite (light, plain in the image). On slow cooling austenite transforms to pearlite at A1 (727 °C).');
+  else t=tr('Hitaasti jäähdytetty tasapainorakenne: perliitti on ferriitin ja sementiitin lamellirakenne (tumma, raidallinen). Nopea sammutus austeniittialueelta tuottaa sen sijaan martensiittia: katso Lämpökäsittely-välilehti.','Slowly cooled equilibrium structure: pearlite is a lamellar structure of ferrite and cementite (dark, striped). Rapid quenching from the austenite region produces martensite instead: see the Heat treatment tab.');
+  $('#fecTxt').textContent=t;}
+
+/* ---------- vetokoe ---------- */
+let ttAnim=null;
+function stopTT(){if(ttAnim){cancelAnimationFrame(ttAnim);ttAnim=null;}}
+function runTT(animate){stopTT();const m=MATS[st.tt.mat];const c=tensileCurve(m);curTT={c,m,ev:tensileEval(c,m),u:animate?0:1};
+  if(animate){const t0=performance.now();const step=now=>{curTT.u=clamp((now-t0)/3500,0,1);renderTT();if(curTT.u<1)ttAnim=requestAnimationFrame(step);else ttAnim=null;};ttAnim=requestAnimationFrame(step);}else renderTT();}
+function renderTT(){if(!curTT){runTT(false);return;}const {c,m,ev}=curTT;const c1=cssv('--c1'),c2=cssv('--c2'),mut=cssv('--muted');
+  const P=c.pts;const n=Math.max(2,Math.round(P.length*curTT.u));const sub=P.slice(0,n);const series=[{x:sub.map(p=>p[0]*100),y:sub.map(p=>p[1]),c:c1,w:2.2}];
+  let cm=null;if(st.tt.cmp&&MATS[st.tt.cmp]){cm=tensileCurve(MATS[st.tt.cmp]);series.unshift({x:cm.pts.map(p=>p[0]*100),y:cm.pts.map(p=>p[1]),c:mut,dash:[5,4],w:1.6});}
+  const xmax=Math.max(c.ef,cm?cm.ef:0)*100*1.08+0.5,ymax=Math.max(ev.Rm,cm?Math.max(...cm.pts.map(p=>p[1])):0)*1.15;
+  const done=curTT.u>=1;const hl=done?[{y:ev.Rm,l:'Rm '+nf(ev.Rm,0)+' MPa',c:c2}]:[];if(done&&ev.Rp&&!m.ReH)hl.push({y:ev.Rp,l:'Rp0,2 '+nf(ev.Rp,0)+' MPa',c:mut});if(done&&m.ReH)hl.push({y:ev.ReH,l:'ReH '+nf(ev.ReH,0)+' MPa',c:mut});
+  plotXY($('#cvS'),{x:[0,xmax],y:[0,ymax],xl:tr('Venymä ε (%)','Strain ε (%)'),yl:tr('Jännitys R (MPa)','Stress R (MPa)'),series,hlines:hl,
+    after:(g,X,Y)=>{const last=sub[sub.length-1];g.fillStyle=c1;g.beginPath();g.arc(X(last[0]*100),Y(last[1]),4,0,7);g.fill();}});
+  legend($('#legS'),[{c:c1,l:L2(m.n)}].concat(cm?[{c:mut,l:L2(MATS[st.tt.cmp].n),dash:1}]:[]));
+  const last=sub[sub.length-1];const e=last[0];const neck=m.brittle?0:clamp((e-m.Ag/100)/Math.max(1e-6,(m.A-m.Ag)/100),0,1);
+  drawSpecimen($('#cvB'),e,m,neck,done);
+  const rows=[];const R=(a,b)=>rows.push(`<tr><td>${a}</td><td>${b}</td></tr>`);
+  if(done){if(m.ReH){R(tr('Ylempi myötöraja ReH','Upper yield strength ReH'),nf(ev.ReH,0)+' MPa');R(tr('Alempi myötöraja ReL','Lower yield strength ReL'),nf(ev.ReL,0)+' MPa');}
+    else if(!m.brittle)R(tr('Venymisraja Rp0,2','Proof strength Rp0.2'),nf(ev.Rp,0)+' MPa');
+    R(tr('Murtolujuus Rm','Tensile strength Rm'),nf(ev.Rm,0)+' MPa');if(!m.brittle)R(tr('Tasavenymä Ag','Uniform elongation Ag'),nf(ev.Ag,1)+' %');R(tr('Murtovenymä A','Elongation after fracture A'),nf(ev.A,1)+' %');
+    R(tr('Murtokurouma Z','Reduction of area Z'),nf(m.Z,0)+' %');R(tr('Kimmomoduuli E','Elastic modulus E'),nf(ev.E,0)+' GPa');
+    if(!m.brittle)R(tr('Myötösuhde','Yield ratio'),nf((m.ReH?ev.ReL:ev.Rp)/ev.Rm,2));
+    if(m.min)R(tr('Vaatimus ','Requirement ')+(m.std||''),esc(m.min));
+    if(st.tt.mat==='HT'&&HT)R(tr('Lähde','Source'),tr(`Lämpökäsittely-välilehti: ${HT.steel.name}, ${nf(m.hv,0)} HV ${nf(m.dep,1)} mm syvyydellä`,`Heat treatment tab: ${HT.steel.name}, ${nf(m.hv,0)} HV at ${nf(m.dep,1)} mm depth`));}
+  else R(tr('Koe käynnissä','Test running'),'ε = '+nf(e*100,1)+' %');
+  $('#ttRes').innerHTML=rows.join('');
+  const hv=st.conv.hv;const co=$('#convOut');if(co)co.innerHTML=`<p>${hv2hrc(hv)?nf(hv2hrc(hv),1)+' HRC':tr('alle 20 HRC','below 20 HRC')} · ${nf(hv2hb(hv),0)} HB · Rm ≈ ${nf(hv2rm(hv),0)} MPa</p>`;}
+
+/* ---------- kieli ---------- */
+function applyLang(){document.documentElement.lang=lang;
+  document.querySelectorAll('[data-en]').forEach(el=>{if(el.dataset.fi==null)el.dataset.fi=el.textContent;el.textContent=lang==='en'?el.dataset.en:el.dataset.fi;});
+  document.querySelectorAll('[data-en-aria]').forEach(el=>{if(el.dataset.fiAria==null)el.dataset.fiAria=el.getAttribute('aria-label');el.setAttribute('aria-label',lang==='en'?el.dataset.enAria:el.dataset.fiAria);});
+  document.querySelectorAll('.langsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lang===lang)));
+  $('#manualLink').href='https://jipirtti.github.io/Materiaalisimulaattori/docs/kayttoohje.html';}
+function setLang(l){if(l!=='fi'&&l!=='en')return false;lang=l;try{localStorage.setItem('matsim-lang',l);}catch(e){}applyLang();buildCtl();render();if(window.SimPalaute&&SimPalaute.relabel)SimPalaute.relabel();return true;}
+
+/* ---------- ohje ---------- */
+function openHelp(){const m=$('#modal'),b=$('#mbox');
+  b.innerHTML=tr(`<h2>Materiaalisimulaattori</h2>
+<p>Simulaattorilla tutkitaan, miten teräksen lämpökäsittely muuttaa mikrorakennetta, kovuutta ja lujuutta, mitä kidehilassa tapahtuu, ja miten eri materiaalit käyttäytyvät vetokokeessa.</p>
+<h3>Lämpökäsittely</h3><p><b>Nuorrutus:</b> pyörötanko austenitoidaan, sammutetaan ja päästetään. Lämmönjohtumismalli laskee jokaiselle syvyydelle jäähtymisajan t8/5 (800 → 500 °C). Kovuus luetaan teräksen Jominy-kaistalta siltä etäisyydeltä, jolla jäähtyminen on yhtä nopeaa. Päästö lasketaan Hollomon–Jaffe-parametrilla teknisen kortin päästökäyrästä.</p>
+<p><b>Induktiokarkaisu:</b> pintakerros kuumennetaan pyörrevirroilla. Teho tunkeutuu syvyyteen δ = 503·√(ρ/(μr·f)); Curien lämpötilan (770 °C) yläpuolella μr = 1, joten tunkeutuminen syvenee. Karkaistu kerros (SHD) määritetään rajakovuudella 0,8 × pinnan kovuus.</p>
+<p><b>Nitrohiiletys ja mustanitraus:</b> 560–590 °C:ssa typpi ja hiili diffundoituvat ferriittiin. Pintaan kasvaa yhdistekerros (ε + γ′), sen alle diffuusiovyöhyke, jossa kromi- ja molybdeeninitridit kovettavat terästä. Jälkihapetus tekee pinnasta mustan (Fe₃O₄).</p>
+<p>Klikkaa kovuusprofiilia tai mikrorakennetta: alla näkyy valitun syvyyden faasit.</p>
+<h3>Kiderakenne</h3><p>Ferriitin, austeniitin, martensiitin ja nitridien alkeiskopit. Bainin muunnos näyttää, miten pkk-austeniitti leikkautuu tetragonaaliseksi martensiitiksi.</p>
+<h3>Fe–C-piirros</h3><p>Valitse hiilipitoisuus ja lämpötila: vipusääntö antaa faasien koostumukset ja osuudet.</p>
+<h3>Vetokoe</h3><p>Jännitys–venymäkäyrä EN ISO 6892-1:n suureilla. Valitse <i>Lämpökäsittelyn tulos</i> nähdäksesi oman lämpökäsittelysi lujuuden.</p>
+<h3>Mallin rajat</h3><p>Tulokset ovat opetuskäyttöön tarkoitettuja likiarvoja. Mallit ja niiden validointi on kuvattu tiedostossa VALIDOINTI.md ja käyttöohjeessa.</p>`,
+`<h2>Materials Simulator</h2>
+<p>The simulator shows how heat treatment changes the microstructure, hardness and strength of steel, what happens in the crystal lattice, and how different materials behave in a tensile test.</p>
+<h3>Heat treatment</h3><p><b>Quench and temper:</b> a round bar is austenitized, quenched and tempered. A heat-conduction model calculates the cooling time t8/5 (800 → 500 °C) at each depth. Hardness is read from the steel's Jominy band at the distance with the same cooling rate. Tempering uses the Hollomon–Jaffe parameter and the datasheet tempering curve.</p>
+<p><b>Induction hardening:</b> the surface layer is heated by eddy currents. Power penetrates to depth δ = 503·√(ρ/(μr·f)); above the Curie temperature (770 °C) μr = 1, so penetration deepens. The hardened case (SHD) is defined by the limit hardness 0.8 × surface hardness.</p>
+<p><b>Nitrocarburizing and black nitriding:</b> at 560–590 °C nitrogen and carbon diffuse into ferrite. A compound layer (ε + γ′) grows at the surface, with a diffusion zone below it where chromium and molybdenum nitrides harden the steel. Post-oxidation makes the surface black (Fe₃O₄).</p>
+<p>Click the hardness profile or the microstructure to see the phases at the chosen depth.</p>
+<h3>Crystal structure</h3><p>Unit cells of ferrite, austenite, martensite and nitrides. The Bain transformation shows how fcc austenite shears into tetragonal martensite.</p>
+<h3>Fe–C diagram</h3><p>Choose a carbon content and temperature: the lever rule gives the phase compositions and fractions.</p>
+<h3>Tensile test</h3><p>Stress–strain curve with EN ISO 6892-1 quantities. Choose <i>Heat treatment result</i> to see the strength of your own heat treatment.</p>
+<h3>Model limits</h3><p>Results are approximations for teaching. The models and their validation are described in VALIDOINTI.md and the user manual.</p>`)+
+  `<p class="mcopy">${tr('Juho Pirttilahti, Seinäjoen ammattikorkeakoulu (SEAMK), 2026. Suunnittelu, sisältö ja validointi: Juho Pirttilahti. Ohjelmakoodi toteutettu tekoälyavusteisesti (Claude, Anthropic).','Juho Pirttilahti, Seinäjoki University of Applied Sciences (SEAMK), 2026. Design, content and validation: Juho Pirttilahti. Program code implemented with AI assistance (Claude, Anthropic).')} <a href="https://creativecommons.org/licenses/by/4.0/deed.${lang}" target="_blank" rel="noopener license">CC BY 4.0</a>.</p><div class="mrow"><button class="btn pri" id="mClose" type="button">${tr('Sulje','Close')}</button></div>`;
+  m.classList.add('open');$('#mClose').focus();$('#mClose').addEventListener('click',()=>m.classList.remove('open'));}
+
+/* ---------- piirto ---------- */
+function render(){try{if(st.tab==='ht')renderHT();else if(st.tab==='xs')renderXS();else if(st.tab==='fec')renderFEC();else if(st.tab==='tt')renderTT();}catch(e){console.error(e);}}
+
+/* ---------- käynnistys ---------- */
+function init(){applyLang();setTabUI();buildCtl();
+  document.querySelectorAll('.tabs button').forEach(b=>b.addEventListener('click',()=>setTab(b.dataset.tab)));
+  document.querySelectorAll('.langsw button').forEach(b=>b.addEventListener('click',()=>setLang(b.dataset.lang)));
+  const c=$('#ctl');c.addEventListener('input',onCtl);c.addEventListener('change',onCtl);
+  $('#helpBtn').addEventListener('click',openHelp);$('#modal').addEventListener('click',e=>{if(e.target.id==='modal')e.target.classList.remove('open');});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')$('#modal').classList.remove('open');});
+  $('#cvH').addEventListener('click',e=>{const m=$('#cvH')._map;if(!m||!HT)return;const r=$('#cvH').getBoundingClientRect();st.ht.sel=clamp(m.inv(e.clientX-r.left),0,xRange());save();renderHT();});
+  $('#cvM').addEventListener('click',e=>{if(!HT)return;const r=$('#cvM').getBoundingClientRect();st.ht.sel=clamp((e.clientX-r.left)/r.width*xRange(),0,xRange());save();renderHT();});
+  $('#cvF').addEventListener('click',e=>{const m=$('#cvF')._map;if(!m)return;const r=$('#cvF').getBoundingClientRect();st.fec.C=+clamp(m.inv(e.clientX-r.left),0,2.1).toFixed(2);st.fec.T=Math.round(clamp(m.invY(e.clientY-r.top),600,1100));save();buildCtl();renderFEC();});
+  bindDrag($('#cvX'));
+  let rz=0;window.addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(render,120);});
+  if(window.matchMedia)matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',render);
+  HT=runHT(st.ht);updateHTMat();render();}
+
+/* ---------- testi- ja palauterajapinta ---------- */
+window.MatSim={version:VERSION,lang:()=>lang,setLang,setTab,mode:()=>st.tab+(st.tab==='ht'?':'+st.ht.proc+':'+st.ht.steel:st.tab==='tt'?':'+st.tt.mat:''),
+  serialize:()=>JSON.stringify({version:VERSION,tab:st.tab,ht:st.ht,xs:st.xs,fec:st.fec,tt:st.tt}),
+  load:json=>{try{const s=typeof json==='string'?JSON.parse(json):json;for(const k of ['tab','ht','xs','fec','tt'])if(s[k]!=null)st[k]=typeof DEF[k]==='object'?Object.assign({},DEF[k],s[k]):s[k];save();setTabUI();buildCtl();HT=runHT(st.ht);updateHTMat();curTT=null;render();return true;}catch(e){return false;}},
+  warnings:()=>(st.tab==='ht'&&HT?HT.warns.map(w=>w.t):[]),
+  state:()=>JSON.parse(JSON.stringify(st)),
+  set:(k,v)=>{setK(k,v);save();if(k.startsWith('ht.'))HT=runHT(st.ht),updateHTMat();buildCtl();curTT=null;render();return true;},
+  heatTreat:o=>{const h=Object.assign({},DEF.ht,o||{});const r=runHT(h);const p0=r.prof[0],pc=r.prof[r.prof.length-1];
+    return {kind:r.kind,surf:{hv:p0.hv,hvq:p0.hvq,hrc:hv2hrc(p0.hv),hrcq:hv2hrc(p0.hvq),fM:p0.fM,t85:p0.t85,Tmax:p0.Tmax},core:{hv:r.kind==='nc'?r.hvc:pc.hv,hvq:pc.hvq,hrc:hv2hrc(r.kind==='nc'?r.hvc:pc.hv),hrcq:hv2hrc(pc.hvq),fM:pc.fM,t85:pc.t85,Tmax:pc.Tmax},
+      shd:r.shd,cl:r.cl,nhd:r.nhd,ox:r.ox,HVs:r.HVs,HVcl:r.HVcl,P:r.P,prof:r.prof.map(q=>({x:q.x,hv:q.hv,hvq:q.hvq,fM:q.fM,t85:q.t85,Tmax:q.Tmax})),warnings:r.warns.map(w=>w.t)};},
+  jominy:()=>{const J=jominy();return {d:J.d.slice(),t85:J.t85.slice(),th:J.th.slice(),r700:J.r700.slice()};},jomDist,
+  quenchHV:(k,t85,band)=>quenchHV(STEELS[k],t85,band||'mid'),martFrac:(k,hv)=>martFrac(STEELS[k],hv),temperHV:(k,T,th)=>temperHV(STEELS[k],hjP(T,th==null?1:th)),hjP,
+  strength:(k,hv)=>strengthFromHV(STEELS[k],hv),
+  hrc2hv,hv2hrc,hv2hb,hv2rm,hrcM100,hrcM50,msAndrews:k=>msAndrews(STEELS[k].comp),steels:()=>JSON.parse(JSON.stringify(STEELS)),
+  delta:deltaMM,lever:(C,T)=>feC(C,T),a3,acm,
+  lattice:(kind,C)=>{if(kind==='bcc')return {a:latt.aAlpha};if(kind==='fcc')return {a:latt.aGamma(C)};if(kind==='bct'){const m=latt.bct(C);return {a:m.a,c:m.c,ca:m.c/m.a};}if(kind==='gp')return {a:latt.aGp};if(kind==='eps')return {a:latt.eps.a,c:latt.eps.c};return null;},
+  cell:(kind,C,u)=>cellAtoms(kind,C||0,u==null?1:u),
+  tensile:k=>{const m=MATS[k];const c=tensileCurve(m);const ev=tensileEval(c,m);return Object.assign({},ev,{n:c.pts.length,brittle:!!m.brittle});},
+  materials:()=>Object.keys(MATS),materialData:()=>JSON.parse(JSON.stringify(MATS)),examples:()=>EXAMPLES.map(e=>({id:e.id,n:L2(e.n)})),loadExample,
+  runTT:()=>{runTT(false);return true;},
+  ttResult:()=>curTT?Object.assign({},curTT.ev):null};
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+</script>
+<script>
+/* ---------- Palautekanava (SimPalaute) ----------
+ * Yhteinen palautemoduuli SEAMKin opetussimulaattoreille. Juho Pirttilahti, SEAMK 2026, CC BY 4.0.
+ * Lisää yläpalkkiin Palaute-painikkeen. Lomake liittää mukaan simulaattorin version, mallin, kielen,
+ * selaimen, varoitukset ja piirin (Tallenna / lataa -muoto) ja avaa valmiiksi täytetyn GitHub-issuen
+ * repon lomakepohjalla (.github/ISSUE_TEMPLATE/1-fysiikka.yml, 2-virhe.yml, 3-ehdotus.yml).
+ * Ilman GitHub-tiliä: Kopioi raportti tai Lähetä sähköpostilla.
+ * Käyttö: SimPalaute.init({repo:'omistaja/repo', nimi:{fi:'…',en:'…'}, api:()=>window.XxxSim, email:'…'})
+ * Valinnaiset: tekstit:{avain:{fi,en}} korvaa lomakkeen tekstejä, lajit:{fysiikka:{template,prefix}} korvaa lomakepohjan.
+ * api-olion odotetaan tarjoavan: version (arvo tai funktio), lang(), mode(), serialize(), warnings().
+ */
+(function(){
+'use strict';
+const URL_MAX=6000;      // GitHubin issues/new-linkin pituuskatto (varmuusmarginaalilla); pidempi piiri kopioidaan leikepöydälle
+const MAILTO_MAX=1800;   // osa sähköpostiohjelmista katkaisee pidemmät mailto-linkit
+
+const TX={
+  btn:{fi:'Palaute',en:'Feedback'},
+  btnTitle:{fi:'Ilmoita virheestä, fysiikkahavainnosta tai kehitysideasta',en:'Report a bug, a physics observation or an idea'},
+  h:{fi:'Palaute simulaattorista',en:'Simulator feedback'},
+  intro:{fi:'Palaute tallentuu simulaattorin GitHub-repoon issueksi, ja opettaja käy jokaisen läpi korjausehdotuksena.',
+         en:'Feedback is stored as an issue in the simulator\'s GitHub repository, and the teacher reviews each one as a proposed fix.'},
+  type:{fi:'Palautteen tyyppi',en:'Feedback type'},
+  t_fysiikka:{fi:'Fysiikka ei vastaa odotusta',en:'Physics does not match expectation'},
+  t_virhe:{fi:'Virhe käyttöliittymässä tai toiminnossa',en:'Bug in the interface or a function'},
+  t_ehdotus:{fi:'Kehitysehdotus',en:'Improvement idea'},
+  title:{fi:'Otsikko',en:'Title'},
+  titlePh:{fi:'Lyhyt kuvaus yhdellä rivillä',en:'Short one-line summary'},
+  a_fysiikka:{fi:'Ilmiö ja tilanne: mitä teit ja mitä tapahtui?',en:'Phenomenon and situation: what did you do and what happened?'},
+  a_virhe:{fi:'Mitä tapahtui?',en:'What happened?'},
+  a_ehdotus:{fi:'Mikä on tarve? Mitä opiskelija tai opettaja ei nyt pysty tekemään?',en:'What is the need? What can a student or teacher not do now?'},
+  b_fysiikka:{fi:'Odotettu tulos ja perustelu (kaava, laskelma, lähde tai mittaus)',en:'Expected result and justification (formula, calculation, source or measurement)'},
+  b_virhe:{fi:'Miten virheen saa toistettua?',en:'How can the bug be reproduced?'},
+  b_ehdotus:{fi:'Ehdotettu ratkaisu (valinnainen)',en:'Proposed solution (optional)'},
+  tunnus:{fi:'Validointitunnus (valinnainen, esim. V05)',en:'Validation ID (optional, e.g. V05)'},
+  piiriH:{fi:'Piiri JSON-muodossa',en:'Piiri JSON-muodossa'},
+  piiri:{fi:'Liitä nykyinen piiri (suositus: virhe voidaan toistaa täsmälleen)',en:'Attach the current circuit (recommended: the issue can be reproduced exactly)'},
+  privacy:{fi:'Issuet ovat julkisia. Älä kirjoita henkilötietoja. GitHubissa avaaminen vaatii GitHub-tilin; ilman tiliä käytä Kopioi raportti- tai sähköpostipainiketta.',
+           en:'Issues are public. Do not include personal data. Opening on GitHub requires a GitHub account; without one, use Copy report or the e-mail button.'},
+  open:{fi:'Avaa GitHubissa',en:'Open on GitHub'},
+  copy:{fi:'Kopioi raportti',en:'Copy report'},
+  mail:{fi:'Lähetä sähköpostilla',en:'Send by e-mail'},
+  cancel:{fi:'Peruuta',en:'Cancel'},
+  req:{fi:'Täytä vähintään kentät: ',en:'Please fill in at least: '},
+  copied:{fi:'Raportti kopioitu leikepöydälle.',en:'Report copied to the clipboard.'},
+  copyFail:{fi:'Kopiointi ei onnistunut. Valitse teksti alta ja kopioi se itse.',en:'Copy failed. Select the text below and copy it yourself.'},
+  opened:{fi:'GitHub avautui uuteen välilehteen. Tarkista kentät ja paina Create / Submit new issue.',en:'GitHub opened in a new tab. Check the fields and press Create / Submit new issue.'},
+  bigCirc:{fi:'Piiri ei mahtunut linkkiin, joten se kopioitiin leikepöydälle. Liitä se GitHubissa kenttään "Piiri JSON-muodossa" (Ctrl+V).',
+           en:'The circuit did not fit in the link, so it was copied to the clipboard. Paste it on GitHub into the field "Piiri JSON-muodossa" (Ctrl+V).'},
+  bigCircPh:{fi:'(Piiri ei mahtunut linkkiin. Se on leikepöydällä: liitä se tähän Ctrl+V.)',en:'(The circuit did not fit in the link. It is on the clipboard: paste it here with Ctrl+V.)'},
+  bigAll:{fi:'Raportti oli liian pitkä linkkiin, joten koko raportti kopioitiin leikepöydälle. Liitä se GitHubin ensimmäiseen kenttään.',
+          en:'The report was too long for the link, so the whole report was copied to the clipboard. Paste it into the first field on GitHub.'},
+  bigAllPh:{fi:'(Raportti on leikepöydällä: liitä se tähän Ctrl+V.)',en:'(The report is on the clipboard: paste it here with Ctrl+V.)'},
+  mailNote:{fi:'Raportti kopioitiin myös leikepöydälle. Jos viestin teksti jäi vajaaksi, liitä raportti viestiin.',en:'The report was also copied to the clipboard. If the message text is incomplete, paste the report into it.'},
+  mailShort:{fi:'Raportti on leikepöydällä: liitä se tähän viestiin (Ctrl+V).',en:'The report is on the clipboard: paste it into this message (Ctrl+V).'}
+};
+// GitHub-lomakepohjat ovat suomeksi; nämä otsikot ja kenttätunnukset vastaavat niitä.
+const KIND={
+  fysiikka:{template:'1-fysiikka.yml',prefix:'[Fysiikka] ',a:'ilmio',b:'odotus',bReq:true,piiri:'piiri'},
+  virhe:{template:'2-virhe.yml',prefix:'[Virhe] ',a:'kuvaus',b:'toisto',bReq:false,piiri:'piiri'},
+  ehdotus:{template:'3-ehdotus.yml',prefix:'[Ehdotus] ',a:'tarve',b:'ratkaisu',bReq:false,piiri:null}
+};
+
+let C=null,root=null,btn=null,els={};
+const L=()=>{try{const l=C.api()&&C.api().lang();return l==='en'?'en':'fi';}catch(e){return 'fi';}};
+const t=k=>TX[k][L()];
+const safe=(f,d)=>{try{const v=f();return v===undefined?d:v;}catch(e){return d;}};
+
+function info(){
+  const a=C.api()||{};
+  const ver=safe(()=>typeof a.version==='function'?a.version():a.version,'?');
+  const w=safe(()=>a.warnings(),[]);
+  return {
+    nimi:C.nimi.fi, ver:String(ver),
+    malli:String(safe(()=>a.mode(),'?')), kieli:L(),
+    ua:navigator.userAgent, nakyma:innerWidth+'×'+innerHeight,
+    varoitukset:Array.isArray(w)&&w.length?w.join(' | '):'ei',
+    piiri:safe(()=>a.serialize(),'')
+  };
+}
+function techBlock(i){
+  return '\n\n---\nTekniset tiedot (liitetty automaattisesti):\n'+
+    '- Simulaattori: '+i.nimi+' '+i.ver+'\n- Malli: '+i.malli+', kieli: '+i.kieli+'\n'+
+    '- Selain: '+i.ua+'\n- Näkymä: '+i.nakyma+'\n- Varoitukset: '+i.varoitukset+'\n- Sivu: '+location.href.split('#')[0];
+}
+function values(){
+  return {kind:root.querySelector('input[name=spl-kind]:checked').value,
+    title:els.title.value.trim(), a:els.a.value.trim(), b:els.b.value.trim(),
+    tunnus:els.tunnus.value.trim(), liitaPiiri:els.piiri.checked};
+}
+function validate(v){
+  const miss=[];
+  if(!v.a)miss.push(TX['a_'+v.kind][L()]);
+  if(KIND[v.kind].bReq&&!v.b)miss.push(TX['b_'+v.kind][L()]);
+  if(miss.length){status(t('req')+miss.join('; '),true);(!v.a?els.a:els.b).focus();return false;}
+  return true;
+}
+function issueTitle(v){
+  const s=v.title||v.a.split('\n')[0];
+  return KIND[v.kind].prefix+(s.length>90?s.slice(0,87)+'…':s);
+}
+function report(v,i){
+  let r='# '+issueTitle(v)+'\n\nTyyppi: '+TX['t_'+v.kind].fi+'\n';
+  if(v.kind==='fysiikka'&&v.tunnus)r+='Validointitunnus: '+v.tunnus+'\n';
+  r+='\n## '+TX['a_'+v.kind].fi+'\n'+v.a+'\n';
+  if(v.b)r+='\n## '+TX['b_'+v.kind].fi+'\n'+v.b+'\n';
+  r+=techBlock(i).replace(/^\n\n---\n/,'\n');
+  if(v.liitaPiiri&&i.piiri)r+='\n\n## '+TX.piiriH.fi+'\n```json\n'+i.piiri+'\n```\n';
+  return r;
+}
+function buildUrl(fields){
+  const q=Object.entries(fields).filter(([,x])=>x!=null&&x!=='').map(([n,x])=>encodeURIComponent(n)+'='+encodeURIComponent(x)).join('&');
+  return 'https://github.com/'+C.repo+'/issues/new?'+q;
+}
+/* Palauttaa {url, clip, note}: clip = leikepöydälle kopioitava teksti, jos jotain ei mahtunut linkkiin. */
+function issueLink(v,i){
+  const k=KIND[v.kind],tech=techBlock(i);
+  const f={template:k.template,title:issueTitle(v)};
+  f[k.a]=v.a+tech; if(v.b)f[k.b]=v.b;
+  if(v.kind==='fysiikka'&&v.tunnus)f.tunnus=v.tunnus;
+  if(v.kind==='virhe')f.selain=i.ua+' · '+i.nimi+' '+i.ver;
+  const circ=v.liitaPiiri&&k.piiri&&i.piiri?i.piiri:'';
+  if(circ)f[k.piiri]=circ;
+  let url=buildUrl(f);
+  if(url.length<=URL_MAX)return {url,clip:null,note:null};
+  if(circ){f[k.piiri]=TX.bigCircPh.fi;url=buildUrl(f);if(url.length<=URL_MAX)return {url,clip:circ,note:t('bigCirc')};}
+  const g={template:k.template,title:issueTitle(v)};g[k.a]=TX.bigAllPh.fi;
+  return {url:buildUrl(g),clip:report(v,i),note:t('bigAll')};
+}
+function copyText(s){
+  // Kutsutaan klikkauksen käsittelijästä, jotta selain sallii leikepöydän käytön.
+  const fallback=()=>{const ta=document.createElement('textarea');ta.value=s;ta.setAttribute('readonly','');
+    ta.style.cssText='position:fixed;left:-9999px;top:0';document.body.appendChild(ta);ta.select();
+    let ok=false;try{ok=document.execCommand('copy');}catch(e){}ta.remove();return ok;};
+  if(navigator.clipboard&&window.isSecureContext){
+    return navigator.clipboard.writeText(s).then(()=>true,()=>fallback());
+  }
+  return Promise.resolve(fallback());
+}
+function status(msg,err,manual){
+  els.status.textContent=msg;els.status.style.color=err?'var(--warn,#C0392B)':'';
+  els.manual.hidden=!manual;if(manual){els.manual.value=manual;}
+}
+function onOpenGithub(){
+  const v=values();if(!validate(v))return;
+  const i=info(),r=issueLink(v,i);
+  if(r.clip)copyText(r.clip).then(ok=>{if(!ok)status(r.note+' '+t('copyFail'),true,r.clip);});
+  window.open(r.url,'_blank','noopener');
+  // noopener-ikkunalla window.open palauttaa usein null myös onnistuessaan, joten estoa ei voi luotettavasti tunnistaa.
+  status((r.note?r.note+' ':'')+t('opened'));
+  els.link.href=r.url;els.link.hidden=false;
+  root.dataset.lastUrl=r.url; // testejä varten
+}
+function onCopy(){
+  const v=values();if(!validate(v))return;
+  const r=report(v,info());
+  copyText(r).then(ok=>ok?status(t('copied')):status(t('copyFail'),true,r));
+}
+function onMail(){
+  const v=values();if(!validate(v))return;
+  const r=report(v,info());
+  copyText(r);
+  const subj=encodeURIComponent(C.nimi.fi+': '+issueTitle(v));
+  let body=encodeURIComponent(r);
+  if(body.length>MAILTO_MAX)body=encodeURIComponent(t('mailShort'));
+  root.dataset.lastMail='mailto:'+C.email+'?subject='+subj+'&body='+body;
+  location.href=root.dataset.lastMail;
+  status(t('mailNote'));
+}
+function relabel(){
+  if(!root)return;
+  const l=L();
+  root.querySelectorAll('[data-spl]').forEach(el=>{const k=el.dataset.spl;el.textContent=TX[k][l];});
+  root.querySelectorAll('[data-spl-ph]').forEach(el=>{el.placeholder=TX[el.dataset.splPh][l];});
+  const kind=root.querySelector('input[name=spl-kind]:checked').value;
+  els.aLbl.textContent=TX['a_'+kind][l];els.bLbl.textContent=TX['b_'+kind][l];
+  els.tunnusRow.hidden=kind!=='fysiikka';
+  els.piiriRow.hidden=!KIND[kind].piiri;
+  root.querySelector('.mbox').setAttribute('aria-label',TX.h[l]);
+}
+function open(){relabel();status('');els.link.hidden=true;root.classList.add('open');els.title.focus();}
+function close(){root.classList.remove('open');btn.focus();}
+
+function build(){
+  btn=document.createElement('button');
+  btn.type='button';btn.className='btn';btn.id='palauteBtn';
+  btn.dataset.en=TX.btn.en;btn.dataset.fi=TX.btn.fi;btn.dataset.enTitle=TX.btnTitle.en;btn.dataset.fiTitle=TX.btnTitle.fi;
+  btn.textContent=t('btn');btn.title=t('btnTitle');
+  btn.addEventListener('click',open);
+  const grps=document.querySelectorAll(C.paikka+' .grp');
+  (grps.length?grps[grps.length-1]:document.querySelector(C.paikka)||document.body).appendChild(btn);
+
+  root=document.createElement('div');
+  root.className='modal';root.id='palauteModal';
+  root.innerHTML=
+   '<div class="mbox" role="dialog" aria-modal="true" style="max-width:640px">'+
+    '<h2 data-spl="h"></h2><p data-spl="intro"></p>'+
+    '<fieldset style="border:0;padding:0;margin:8px 0"><legend style="font-weight:600;margin-bottom:4px" data-spl="type"></legend>'+
+     ['fysiikka','virhe','ehdotus'].map((k,n)=>'<label style="display:block;margin:2px 0"><input type="radio" name="spl-kind" value="'+k+'"'+(n===1?' checked':'')+'> <span data-spl="t_'+k+'"></span></label>').join('')+
+    '</fieldset>'+
+    '<label style="display:block;font-weight:600;margin-top:8px"><span data-spl="title"></span><input id="splTitle" type="text" maxlength="120" data-spl-ph="titlePh" style="display:block;width:100%;box-sizing:border-box;margin-top:3px;padding:6px 8px;border:1px solid var(--line);border-radius:7px;background:var(--paper);color:var(--ink);font:inherit;font-weight:400"></label>'+
+    '<label style="display:block;font-weight:600;margin-top:8px"><span id="splALbl"></span><textarea id="splA" style="height:90px;font-family:inherit;font-size:14px;margin-top:3px;box-sizing:border-box"></textarea></label>'+
+    '<label style="display:block;font-weight:600;margin-top:8px"><span id="splBLbl"></span><textarea id="splB" style="height:80px;font-family:inherit;font-size:14px;margin-top:3px;box-sizing:border-box"></textarea></label>'+
+    '<label id="splTunnusRow" style="display:block;font-weight:600;margin-top:8px"><span data-spl="tunnus"></span><input id="splTunnus" type="text" maxlength="20" style="display:block;width:10em;margin-top:3px;padding:6px 8px;border:1px solid var(--line);border-radius:7px;background:var(--paper);color:var(--ink);font:inherit;font-weight:400"></label>'+
+    '<label id="splPiiriRow" style="display:block;margin-top:10px"><input id="splPiiri" type="checkbox" checked> <span data-spl="piiri"></span></label>'+
+    '<p class="mnote" data-spl="privacy" style="margin-top:10px"></p>'+
+    '<p id="splStatus" role="status" aria-live="polite" style="min-height:1.2em;margin:6px 0 0;font-size:14px"></p>'+
+    '<a id="splLink" target="_blank" rel="noopener" hidden style="font-size:13px;word-break:break-all">GitHub</a>'+
+    '<textarea id="splManual" readonly hidden style="height:120px"></textarea>'+
+    '<div class="mrow">'+
+     '<button type="button" class="btn pri" id="splOpen" data-spl="open" style="min-width:0"></button>'+
+     '<button type="button" class="btn" id="splCopy" data-spl="copy"></button>'+
+     (C.email?'<button type="button" class="btn" id="splMail" data-spl="mail"></button>':'')+
+     '<button type="button" class="btn" id="splCancel" data-spl="cancel"></button>'+
+    '</div></div>';
+  document.body.appendChild(root);
+  const $=s=>root.querySelector(s);
+  els={title:$('#splTitle'),a:$('#splA'),b:$('#splB'),aLbl:$('#splALbl'),bLbl:$('#splBLbl'),
+       tunnus:$('#splTunnus'),tunnusRow:$('#splTunnusRow'),piiri:$('#splPiiri'),piiriRow:$('#splPiiriRow'),
+       status:$('#splStatus'),link:$('#splLink'),manual:$('#splManual')};
+  root.querySelectorAll('input[name=spl-kind]').forEach(r=>r.addEventListener('change',relabel));
+  $('#splOpen').addEventListener('click',onOpenGithub);
+  $('#splCopy').addEventListener('click',onCopy);
+  if(C.email)$('#splMail').addEventListener('click',onMail);
+  $('#splCancel').addEventListener('click',close);
+  root.addEventListener('pointerdown',e=>{if(e.target===root)close();});
+  // Estetään simulaattorin pikanäppäimet (Delete, R, Ctrl+Z …) lomakkeen ollessa auki.
+  window.addEventListener('keydown',e=>{
+    if(!root.classList.contains('open'))return;
+    e.stopPropagation();
+    if(e.key==='Escape'){e.preventDefault();close();}
+  },true);
+  // Kielen vaihto kesken lomakkeen: päivitetään tekstit (simulaattori vaihtaa kielen samassa klikkauksessa).
+  document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('[data-lang]'))setTimeout(relabel,0);});
+}
+
+window.SimPalaute={
+  init(cfg){
+    if(C)return;
+    if(!cfg||!cfg.repo||!cfg.api||!cfg.nimi)throw new Error('SimPalaute.init: repo, nimi ja api vaaditaan');
+    C=Object.assign({paikka:'header.bar',email:''},cfg);
+    // Simulaattorikohtaiset tekstit ja lomakepohjat (esim. automaatiosimulaattorin 1-toiminta.yml).
+    if(cfg.tekstit)for(const k in cfg.tekstit)TX[k]=Object.assign({},TX[k],cfg.tekstit[k]);
+    if(cfg.lajit)for(const k in cfg.lajit)KIND[k]=Object.assign({},KIND[k],cfg.lajit[k]);
+    if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',build);else build();
+  },
+  open:()=>open(),
+  // Testirajapinta: rakentaa linkin ja raportin lomakkeen nykyisistä arvoista avaamatta mitään.
+  _preview:()=>{const v=values(),i=info();return {link:issueLink(v,i),report:report(v,i),valid:!!v.a&&(!KIND[v.kind].bReq||!!v.b)};},
+  _limits:{URL_MAX,MAILTO_MAX}
+};
+})();
+SimPalaute.init({repo:'Jipirtti/Materiaalisimulaattori',nimi:{fi:'Materiaalisimulaattori',en:'Materials Simulator'},api:()=>window.MatSim,email:'juho.pirttilahti@seamk.fi',
+  tekstit:{btnTitle:{fi:'Ilmoita virheestä, materiaalitekniikan havainnosta tai kehitysideasta',en:'Report a bug, a materials observation or an idea'},
+    t_fysiikka:{fi:'Tulos ei vastaa odotusta (materiaalitekniikka)',en:'Result does not match expectation (materials)'},
+    a_fysiikka:{fi:'Tilanne ja tulos: mitkä asetukset ja mitä simulaattori näytti?',en:'Situation and result: which settings, and what did the simulator show?'},
+    b_fysiikka:{fi:'Odotettu tulos ja perustelu (tekninen kortti, standardi, kirjallisuus tai mittaus)',en:'Expected result and justification (datasheet, standard, literature or measurement)'},
+    tunnus:{fi:'Validointitunnus (valinnainen, esim. M04)',en:'Validation ID (optional, e.g. M04)'},
+    piiri:{fi:'Liitä nykyiset asetukset (suositus: tilanne voidaan toistaa täsmälleen)',en:'Attach the current settings (recommended: the situation can be reproduced exactly)'},
+    piiriH:{fi:'Asetukset JSON-muodossa',en:'Asetukset JSON-muodossa'},
+    bigCirc:{fi:'Asetukset eivät mahtuneet linkkiin, joten ne kopioitiin leikepöydälle. Liitä ne GitHubissa kenttään "Asetukset JSON-muodossa" (Ctrl+V).',en:'The settings did not fit in the link, so they were copied to the clipboard. Paste them on GitHub into the field "Asetukset JSON-muodossa" (Ctrl+V).'},
+    bigCircPh:{fi:'(Asetukset eivät mahtuneet linkkiin. Ne ovat leikepöydällä: liitä ne tähän Ctrl+V.)',en:'(The settings did not fit in the link. They are on the clipboard: paste them here with Ctrl+V.)'}},
+  lajit:{fysiikka:{template:'1-materiaali.yml',prefix:'[Materiaali] '}}});
+</script>
+</body>
+</html>

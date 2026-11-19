@@ -1,0 +1,33 @@
+name: Tulos ei vastaa odotusta (materiaalitekniikka)
+description: Kovuus, lujuus, kerrospaksuus, faasiosuus tai muu tulos poikkeaa teknisestä kortista, standardista, kirjallisuudesta tai mittauksesta.
+title: "[Materiaali] "
+labels: ["materiaali", "validointi"]
+body:
+  - type: markdown
+    attributes:
+      value: Kiitos! Materiaalitekniikan havainnot käsitellään opettajan validoinnissa. Mitä tarkemmin kuvaat lähteen, sitä nopeammin asia ratkeaa.
+  - type: input
+    id: tunnus
+    attributes:
+      label: Validointitunnus
+      description: Jos havainto liittyy VALIDOINTI.md:n riviin, anna tunnus (esim. M04).
+  - type: textarea
+    id: ilmio
+    attributes:
+      label: Tilanne ja tulos
+      description: Mitkä asetukset valitsit, ja mitä simulaattori näytti?
+    validations:
+      required: true
+  - type: textarea
+    id: odotus
+    attributes:
+      label: Odotettu tulos ja perustelu
+      description: Mikä tuloksen pitäisi olla ja miksi: tekninen kortti, standardi, kirjallisuus (sivunumero) tai oma mittaus.
+    validations:
+      required: true
+  - type: textarea
+    id: piiri
+    attributes:
+      label: Asetukset JSON-muodossa
+      description: Palautelomake liittää asetukset automaattisesti. Näin tilanne voidaan toistaa täsmälleen.
+      render: json
