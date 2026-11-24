@@ -95,46 +95,46 @@ select,input[type=number]{background:var(--paper);border:1px solid var(--line);b
 <body>
 <div class="app">
   <header class="bar">
-    <div class="brand"><strong data-en="Materials Simulator">Materiaalisimulaattori</strong><span>Juho Pirttilahti, SEAMK 2026, CC BY 4.0</span></div>
-    <div class="langsw" role="group" aria-label="Kieli / Language"><button type="button" data-lang="fi" lang="fi">FI</button><button type="button" data-lang="en" lang="en">EN</button></div>
+    <div class="brand"><strong data-en="Materials Simulator" data-de="Werkstoff-Simulator">Materiaalisimulaattori</strong><span>Juho Pirttilahti, SEAMK 2026, CC BY 4.0</span></div>
+    <div class="langsw" role="group" aria-label="Kieli / Language"><button type="button" data-lang="fi" lang="fi">FI</button><button type="button" data-lang="en" lang="en">EN</button><button type="button" data-lang="de" lang="de">DE</button></div>
     <div class="grp">
-      <button class="btn" id="helpBtn" type="button" data-en="Help">Ohje</button>
-      <a class="btn" id="manualLink" href="https://jipirtti.github.io/Materiaalisimulaattori/docs/kayttoohje.html" target="_blank" rel="noopener" data-en="User manual (FI)">Käyttöohje</a>
+      <button class="btn" id="helpBtn" type="button" data-en="Help" data-de="Hilfe">Ohje</button>
+      <a class="btn" id="manualLink" href="https://jipirtti.github.io/Materiaalisimulaattori/docs/kayttoohje.html" target="_blank" rel="noopener" data-en="User manual" data-de="Bedienungsanleitung">Käyttöohje</a>
     </div>
   </header>
-  <nav class="tabs" role="tablist" aria-label="Osat" data-en-aria="Sections">
-    <button type="button" role="tab" data-tab="ht" aria-selected="true" data-en="Heat treatment">Lämpökäsittely</button>
-    <button type="button" role="tab" data-tab="xs" aria-selected="false" data-en="Crystal structure">Kiderakenne</button>
-    <button type="button" role="tab" data-tab="fec" aria-selected="false" data-en="Fe–C diagram">Fe–C-piirros</button>
-    <button type="button" role="tab" data-tab="tt" aria-selected="false" data-en="Tensile test">Vetokoe</button>
+  <nav class="tabs" role="tablist" aria-label="Osat" data-en-aria="Sections" data-de-aria="Bereiche">
+    <button type="button" role="tab" data-tab="ht" aria-selected="true" data-en="Heat treatment" data-de="Wärmebehandlung">Lämpökäsittely</button>
+    <button type="button" role="tab" data-tab="xs" aria-selected="false" data-en="Crystal structure" data-de="Kristallstruktur">Kiderakenne</button>
+    <button type="button" role="tab" data-tab="fec" aria-selected="false" data-en="Fe–C diagram" data-de="Fe–C-Diagramm">Fe–C-piirros</button>
+    <button type="button" role="tab" data-tab="tt" aria-selected="false" data-en="Tensile test" data-de="Zugversuch">Vetokoe</button>
   </nav>
-  <aside class="ctl" id="ctl" aria-label="Asetukset" data-en-aria="Settings"></aside>
+  <aside class="ctl" id="ctl" aria-label="Asetukset" data-en-aria="Settings" data-de-aria="Einstellungen"></aside>
   <main class="view" id="view">
     <section class="panel on" id="p-ht">
       <div class="warns" id="htWarns"></div>
       <div class="g2">
-        <div class="card"><h4 data-en="Temperature – time">Lämpötila – aika</h4><canvas id="cvT" class="cv260"></canvas><div class="leg" id="legT"></div></div>
-        <div class="card"><h4 data-en="Hardness profile (click to choose depth)">Kovuusprofiili (klikkaa: valitse syvyys)</h4><canvas id="cvH" class="cv260"></canvas><div class="leg" id="legH"></div></div>
-        <div class="card"><h4 data-en="Microstructure, cross-section from the surface (schematic)">Mikrorakenne, poikkileikkaus pinnasta alkaen (kaavamainen)</h4><canvas id="cvM" class="cv260"></canvas><div class="phase" id="phaseTxt"></div></div>
-        <div class="card"><h4 data-en="Results">Tulokset</h4><table class="res" id="htRes"></table><div id="jomBox"><h4 style="margin-top:10px" data-en="Jominy hardenability and equivalent distances">Jominy-karkenevuus ja vastaavat etäisyydet</h4><canvas id="cvJ" class="cv260" style="height:190px"></canvas></div></div>
+        <div class="card"><h4 data-en="Temperature – time" data-de="Temperatur – Zeit">Lämpötila – aika</h4><canvas id="cvT" class="cv260"></canvas><div class="leg" id="legT"></div></div>
+        <div class="card"><h4 data-en="Hardness profile (click to choose depth)" data-de="Härteverlauf (klicken: Tiefe wählen)">Kovuusprofiili (klikkaa: valitse syvyys)</h4><canvas id="cvH" class="cv260"></canvas><div class="leg" id="legH"></div></div>
+        <div class="card"><h4 data-en="Microstructure, cross-section from the surface (schematic)" data-de="Gefüge, Querschnitt ab der Oberfläche (schematisch)">Mikrorakenne, poikkileikkaus pinnasta alkaen (kaavamainen)</h4><canvas id="cvM" class="cv260"></canvas><div class="phase" id="phaseTxt"></div></div>
+        <div class="card"><h4 data-en="Results" data-de="Ergebnisse">Tulokset</h4><table class="res" id="htRes"></table><div id="jomBox"><h4 style="margin-top:10px" data-en="Jominy hardenability and equivalent distances" data-de="Jominy-Härtbarkeit und äquivalente Stirnabstände">Jominy-karkenevuus ja vastaavat etäisyydet</h4><canvas id="cvJ" class="cv260" style="height:190px"></canvas></div></div>
       </div>
     </section>
     <section class="panel" id="p-xs">
       <div class="g2">
-        <div class="card"><h4 data-en="Unit cell (drag to rotate)">Alkeiskoppi (pyöritä vetämällä)</h4><canvas id="cvX" class="cv480"></canvas><div class="leg" id="legX"></div></div>
+        <div class="card"><h4 data-en="Unit cell (drag to rotate)" data-de="Elementarzelle (zum Drehen ziehen)">Alkeiskoppi (pyöritä vetämällä)</h4><canvas id="cvX" class="cv480"></canvas><div class="leg" id="legX"></div></div>
         <div class="card kv" id="xsInfo"></div>
       </div>
     </section>
     <section class="panel" id="p-fec">
       <div class="g2">
-        <div class="card"><h4 data-en="Fe–Fe₃C phase diagram, steel region (click to choose a point)">Fe–Fe₃C-tasapainopiirros, teräsalue (klikkaa: valitse piste)</h4><canvas id="cvF" class="cv480"></canvas></div>
-        <div class="card"><h4 data-en="Equilibrium state">Tasapainotila</h4><table class="res" id="fecRes"></table><h4 style="margin-top:10px" data-en="Microstructure (slow cooling, schematic)">Mikrorakenne (hidas jäähtyminen, kaavamainen)</h4><canvas id="cvFM" class="cv260"></canvas><p class="mnote" id="fecTxt"></p></div>
+        <div class="card"><h4 data-en="Fe–Fe₃C phase diagram, steel region (click to choose a point)" data-de="Zustandsdiagramm Fe–Fe₃C, Stahlbereich (klicken: Punkt wählen)">Fe–Fe₃C-tasapainopiirros, teräsalue (klikkaa: valitse piste)</h4><canvas id="cvF" class="cv480"></canvas></div>
+        <div class="card"><h4 data-en="Equilibrium state" data-de="Gleichgewichtszustand">Tasapainotila</h4><table class="res" id="fecRes"></table><h4 style="margin-top:10px" data-en="Microstructure (slow cooling, schematic)" data-de="Gefüge (langsame Abkühlung, schematisch)">Mikrorakenne (hidas jäähtyminen, kaavamainen)</h4><canvas id="cvFM" class="cv260"></canvas><p class="mnote" id="fecTxt"></p></div>
       </div>
     </section>
     <section class="panel" id="p-tt">
       <div class="g2">
-        <div class="card"><h4 data-en="Stress – strain">Jännitys – venymä</h4><canvas id="cvS" class="cv420"></canvas><div class="leg" id="legS"></div></div>
-        <div class="card"><h4 data-en="Specimen">Koesauva</h4><canvas id="cvB" class="cv260" style="height:150px"></canvas><table class="res" id="ttRes"></table></div>
+        <div class="card"><h4 data-en="Stress – strain" data-de="Spannung – Dehnung">Jännitys – venymä</h4><canvas id="cvS" class="cv420"></canvas><div class="leg" id="legS"></div></div>
+        <div class="card"><h4 data-en="Specimen" data-de="Probe">Koesauva</h4><canvas id="cvB" class="cv260" style="height:150px"></canvas><table class="res" id="ttRes"></table></div>
       </div>
     </section>
   </main>
@@ -144,12 +144,14 @@ select,input[type=number]{background:var(--paper);border:1px solid var(--line);b
 (()=>{
 'use strict';
 const $=s=>document.querySelector(s);
-let lang=(()=>{try{const u=new URLSearchParams(location.search).get('lang');if(u==='fi'||u==='en')return u;const st=localStorage.getItem('matsim-lang');if(st==='fi'||st==='en')return st;}catch(e){}
-  return (navigator.language||'fi').toLowerCase().startsWith('fi')?'fi':'en';})();
-const tr=(fi,en)=>lang==='en'?en:fi;
-const L2=a=>Array.isArray(a)?(lang==='en'?a[1]:a[0]):a;
+const LANGS=['fi','en','de'];
+let lang=(()=>{try{const u=new URLSearchParams(location.search).get('lang');if(LANGS.includes(u))return u;const st=localStorage.getItem('matsim-lang');if(LANGS.includes(st))return st;}catch(e){}
+  const n=(navigator.language||'fi').toLowerCase();return n.startsWith('fi')?'fi':n.startsWith('de')?'de':'en';})();
+const tr=(fi,en,de)=>lang==='en'?en:lang==='de'?(de??en):fi;
+const DEN={"Ø10 mm, water 850 °C": "Ø10 mm, Wasser 850 °C", "Ø10 mm, oil 850 °C": "Ø10 mm, Öl 850 °C", "Ø60 mm, oil 850 °C": "Ø60 mm, Öl 850 °C", "Air (still)": "Luft (ruhend)", "Oil, agitated (h 2000 W/m²K)": "Öl, bewegt (h 2000 W/m²K)", "Polymer solution (h 3500 W/m²K)": "Polymerlösung (h 3500 W/m²K)", "Water, agitated (h 6000 W/m²K)": "Wasser, bewegt (h 6000 W/m²K)", "Water spray (h 15 000 W/m²K)": "Wasserbrause (h 15 000 W/m²K)", "S235JR structural steel": "Baustahl S235JR", "S355J2 structural steel": "Baustahl S355J2", "C45 normalized (+N)": "C45 normalgeglüht (+N)", "42CrMo4 quenched and tempered (+QT)": "42CrMo4 vergütet (+QT)", "Heat treatment result (Heat treatment tab)": "Ergebnis der Wärmebehandlung (Registerkarte Wärmebehandlung)", "1.4301 stainless (austenitic)": "1.4301 nichtrostend (austenitisch)", "EN AW-6082-T6 aluminium": "Aluminium EN AW-6082-T6", "EN AW-7075-T6 aluminium": "Aluminium EN AW-7075-T6", "Cu-ETP copper, annealed (R220)": "Kupfer Cu-ETP, weichgeglüht (R220)", "Ti-6Al-4V titanium": "Titan Ti-6Al-4V", "EN-GJS-400-15 ductile iron": "Gusseisen mit Kugelgraphit EN-GJS-400-15", "EN-GJL-250 grey cast iron": "Gusseisen mit Lamellengraphit EN-GJL-250", "α-iron, ferrite (bcc)": "α-Eisen, Ferrit (krz)", "γ-iron, austenite (fcc)": "γ-Eisen, Austenit (kfz)", "Martensite (body-centred tetragonal)": "Martensit (tetragonal-raumzentriert, trz)", "Bain transformation austenite → martensite": "Bain-Umwandlung Austenit → Martensit", "γ'-Fe₄N (nitride, compound layer)": "γ'-Fe₄N (Nitrid, Verbindungsschicht)", "ε-Fe₂₋₃N (nitride, compound layer)": "ε-Fe₂₋₃N (Nitrid, Verbindungsschicht)", "42CrMo4 Ø30, Q&T: oil 850 °C, temper 600 °C": "42CrMo4 Ø30, vergüten: Öl 850 °C, anlassen 600 °C", "42CrMo4 Ø100, Q&T: oil, temper 600 °C (through-hardening limit)": "42CrMo4 Ø100, vergüten: Öl, anlassen 600 °C (Grenze der Durchhärtung)", "34CrNiMo6 Ø100, Q&T: oil, temper 600 °C": "34CrNiMo6 Ø100, vergüten: Öl, anlassen 600 °C", "C45 Ø10, water quench 830 °C, no tempering": "C45 Ø10, Wasserabschreckung 830 °C, ohne Anlassen", "C45 Ø40, oil quench (poor hardenability)": "C45 Ø40, Ölabschreckung (geringe Härtbarkeit)", "42CrMo4 Ø40, induction hardening 10 kHz, temper 180 °C": "42CrMo4 Ø40, Induktionshärten 10 kHz, anlassen 180 °C", "42CrMo4 Ø40, induction hardening 200 kHz (thin case)": "42CrMo4 Ø40, Induktionshärten 200 kHz (dünne Härteschicht)", "42CrMo4 black nitriding: nitrocarburizing 580 °C 2 h + oxidation": "42CrMo4 Nitrocarburieren 580 °C 2 h + Nachoxidation", "C45 nitrocarburizing 580 °C 2 h, normalized": "C45 Nitrocarburieren 580 °C 2 h, normalgeglüht", "martensite": "Martensit", "tempered martensite": "angelassener Martensit", "bainite": "Bainit", "ferrite": "Ferrit", "pearlite": "Perlit", "compound layer ε-Fe₂₋₃(N,C) + γ′-Fe₄N": "Verbindungsschicht ε-Fe₂₋₃(N,C) + γ′-Fe₄N", "magnetite Fe₃O₄ (black oxide)": "Magnetit Fe₃O₄ (schwarzes Oxid)", "diffusion zone: tempered martensite + precipitated nitrides (CrN, Mo₂N)": "Diffusionsschicht: angelassener Martensit + ausgeschiedene Nitride (CrN, Mo₂N)", "cementite": "Zementit"};
+const L2=a=>Array.isArray(a)?(lang==='en'?a[1]:lang==='de'?(a[2]??DEN[a[1]]??a[1]):a[0]):a;
 const clamp=(x,a,b)=>x<a?a:x>b?b:x;
-const nf=(x,d=1)=>Number.isFinite(x)?x.toLocaleString(lang==='en'?'en-US':'fi-FI',{minimumFractionDigits:d,maximumFractionDigits:d,useGrouping:false}):'–';
+const nf=(x,d=1)=>Number.isFinite(x)?x.toLocaleString(({fi:'fi-FI',en:'en-US',de:'de-DE'})[lang],{minimumFractionDigits:d,maximumFractionDigits:d,useGrouping:false}):'–';
 const esc=s=>String(s).replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
 /* lineaarinen interpolointi taulukosta (x nouseva) */
 function interp(xs,ys,x){if(x<=xs[0])return ys[0];const n=xs.length;if(x>=xs[n-1])return ys[n-1];let i=1;while(xs[i]<x)i++;const t=(x-xs[i-1])/(xs[i]-xs[i-1]);return ys[i-1]+t*(ys[i]-ys[i-1]);}
@@ -531,7 +533,7 @@ function drawCell(cv,cellD,o={}){const {g,w,h}=setupCv(cv);const ink=cssv('--ink
   g.fillStyle=ink;g.textAlign='left';g.textBaseline='top';if(o.title)g.fillText(o.title,8,6);}
 
 /* ---------- Fe–C-piirros ---------- */
-function drawFeC(cv,st){const Cmax=2.2,o={x:[0,Cmax],y:[600,1100],xl:tr('Hiilipitoisuus (p-%)','Carbon content (wt-%)'),yl:tr('Lämpötila (°C)','Temperature (°C)')};
+function drawFeC(cv,st){const Cmax=2.2,o={x:[0,Cmax],y:[600,1100],xl:tr('Hiilipitoisuus (p-%)','Carbon content (wt-%)','Kohlenstoffgehalt (Massen-%)'),yl:tr('Lämpötila (°C)','Temperature (°C)','Temperatur (°C)')};
   const ink=cssv('--ink'),c1=cssv('--c1'),c2=cssv('--c2'),c3=cssv('--c3'),mut=cssv('--muted');
   const A3x=[],A3y=[];for(let C=0;C<=CS;C+=0.01){A3x.push(C);A3y.push(a3(C));}
   const AXs=[];const AYs=[];for(let T=600;T<=912;T+=4){AXs.push(alphaSol(T));AYs.push(T);}
@@ -594,23 +596,23 @@ function runHT(h){const s=STEELS[h.steel];let r;
   r.steel=s;r.h=Object.assign({},h);r.warns=htWarnings(s,h,r);return r;}
 function htWarnings(s,h,r){const W=[],w=(t,info)=>W.push({t,info:!!info});
   if(h.proc==='qt'){
-    if(h.Taus<s.Ac3)w(tr(`Austenitointilämpötila ${h.Taus} °C on alle Ac3:n (${s.Ac3} °C): rakenne ei austenitoidu kokonaan, ja ferriitti jää sammutettuun rakenteeseen pehmeänä.`,`Austenitizing temperature ${h.Taus} °C is below Ac3 (${s.Ac3} °C): the structure does not fully austenitize, and soft ferrite remains in the quenched structure.`));
-    if(h.Taus>s.Ac3+120)w(tr(`Austenitointilämpötila on yli ${s.Ac3+120} °C: raekoko kasvaa ja säröriski kasvaa. Teknisen kortin suositus: ${s.aus[h.medium==='vesi'?'vesi':'oljy']}–${s.aus[h.medium==='vesi'?'vesi':'oljy']+30} °C.`,`Austenitizing temperature is above ${s.Ac3+120} °C: grain growth and cracking risk increase. Datasheet recommendation: ${s.aus[h.medium==='vesi'?'vesi':'oljy']}–${s.aus[h.medium==='vesi'?'vesi':'oljy']+30} °C.`));
-    if(alloyed(s)&&h.medium==='vesi')w(tr('Seostettu nuorrutusteräs vesisammutuksessa: suuri karkaisusäröjen riski. Teknisen kortin sammutusaine on öljy tai polymeeri.','Alloyed Q&T steel quenched in water: high risk of quench cracking. The datasheet quenchant is oil or polymer.'));
-    if(h.Tt>=250&&h.Tt<=400)w(tr('Päästö 250–400 °C: päästömartensiitin haurausalue (iskusitkeys heikkenee). Valitse matala (≤ 200 °C) tai korkea (≥ 500 °C) päästö.','Tempering at 250–400 °C: tempered-martensite embrittlement range (impact toughness drops). Choose low (≤ 200 °C) or high (≥ 500 °C) tempering.'),1);
-    if(h.D>(s===STEELS.C45?16:s===STEELS['42CrMo4']?100:250))w(tr('Halkaisija on suurempi kuin teknisen kortin nuorrutusarvojen kokoalue: keskusta ei karkene läpi.','Diameter exceeds the datasheet size range for Q&T properties: the core does not harden through.'),1);
+    if(h.Taus<s.Ac3)w(tr(`Austenitointilämpötila ${h.Taus} °C on alle Ac3:n (${s.Ac3} °C): rakenne ei austenitoidu kokonaan, ja ferriitti jää sammutettuun rakenteeseen pehmeänä.`,`Austenitizing temperature ${h.Taus} °C is below Ac3 (${s.Ac3} °C): the structure does not fully austenitize, and soft ferrite remains in the quenched structure.`,`Die Austenitisierungstemperatur ${h.Taus} °C liegt unter Ac3 (${s.Ac3} °C): Das Gefüge wird nicht vollständig austenitisiert, und weicher Ferrit bleibt im Abschreckgefüge erhalten.`));
+    if(h.Taus>s.Ac3+120)w(tr(`Austenitointilämpötila on yli ${s.Ac3+120} °C: raekoko kasvaa ja säröriski kasvaa. Teknisen kortin suositus: ${s.aus[h.medium==='vesi'?'vesi':'oljy']}–${s.aus[h.medium==='vesi'?'vesi':'oljy']+30} °C.`,`Austenitizing temperature is above ${s.Ac3+120} °C: grain growth and cracking risk increase. Datasheet recommendation: ${s.aus[h.medium==='vesi'?'vesi':'oljy']}–${s.aus[h.medium==='vesi'?'vesi':'oljy']+30} °C.`,`Die Austenitisierungstemperatur liegt über ${s.Ac3+120} °C: Kornwachstum und Rissgefahr nehmen zu. Empfehlung laut Datenblatt: ${s.aus[h.medium==='vesi'?'vesi':'oljy']}–${s.aus[h.medium==='vesi'?'vesi':'oljy']+30} °C.`));
+    if(alloyed(s)&&h.medium==='vesi')w(tr('Seostettu nuorrutusteräs vesisammutuksessa: suuri karkaisusäröjen riski. Teknisen kortin sammutusaine on öljy tai polymeeri.','Alloyed Q&T steel quenched in water: high risk of quench cracking. The datasheet quenchant is oil or polymer.','Legierter Vergütungsstahl in Wasser abgeschreckt: hohe Gefahr von Härterissen. Laut Datenblatt ist das Abschreckmittel Öl oder Polymer.'));
+    if(h.Tt>=250&&h.Tt<=400)w(tr('Päästö 250–400 °C: päästömartensiitin haurausalue (iskusitkeys heikkenee). Valitse matala (≤ 200 °C) tai korkea (≥ 500 °C) päästö.','Tempering at 250–400 °C: tempered-martensite embrittlement range (impact toughness drops). Choose low (≤ 200 °C) or high (≥ 500 °C) tempering.','Anlassen bei 250–400 °C: Bereich der Anlassversprödung des Martensits (die Kerbschlagzähigkeit sinkt). Wählen Sie niedriges (≤ 200 °C) oder hohes (≥ 500 °C) Anlassen.'),1);
+    if(h.D>(s===STEELS.C45?16:s===STEELS['42CrMo4']?100:250))w(tr('Halkaisija on suurempi kuin teknisen kortin nuorrutusarvojen kokoalue: keskusta ei karkene läpi.','Diameter exceeds the datasheet size range for Q&T properties: the core does not harden through.','Der Durchmesser überschreitet den Abmessungsbereich des Datenblatts für die Vergütungseigenschaften: Der Kern wird nicht durchgehärtet.'),1);
   }
   if(h.proc==='ind'){const ps=r.prof[0];
-    if(ps.Tmax<s.Ac3+100)w(tr(`Pinnan huippulämpötila ${nf(ps.Tmax,0)} °C jää alle nopean kuumennuksen austenitointirajan (Ac3 + 100 °C = ${s.Ac3+100} °C): pinta ei austenitoidu kokonaan. Lisää tehoa tai aikaa.`,`Peak surface temperature ${nf(ps.Tmax,0)} °C is below the fast-heating austenitizing limit (Ac3 + 100 °C = ${s.Ac3+100} °C): the surface does not fully austenitize. Increase power or time.`));
-    if(ps.Tmax>1150)w(tr(`Pinnan huippulämpötila ${nf(ps.Tmax,0)} °C: ylikuumeneminen (raekasvu, hiilenkato, sulamisvaara yli noin 1400 °C). Vähennä tehoa tai aikaa.`,`Peak surface temperature ${nf(ps.Tmax,0)} °C: overheating (grain growth, decarburization, melting risk above about 1400 °C). Reduce power or time.`));
-    if(h.prior==='n')w(tr('Normalisoitu lähtötila: ferriittiperliittirakenne tarvitsee nopeassa kuumennuksessa korkeamman lämpötilan hiilen tasoittumiseen. Nuorrutettu lähtötila antaa tasaisemman karkaistun kerroksen.','Normalized prior state: ferrite–pearlite needs a higher temperature for carbon homogenization during fast heating. A quenched-and-tempered prior state gives a more uniform hardened case.'),1);
-    if(r.shd>h.Di/2*0.6)w(tr('Karkaistu kerros on yli 60 % säteestä: kappale karkenee lähes läpi, ja ydin menettää sitkeytensä.','Hardened case exceeds 60 % of the radius: the part hardens nearly through and the core loses its toughness.'));
+    if(ps.Tmax<s.Ac3+100)w(tr(`Pinnan huippulämpötila ${nf(ps.Tmax,0)} °C jää alle nopean kuumennuksen austenitointirajan (Ac3 + 100 °C = ${s.Ac3+100} °C): pinta ei austenitoidu kokonaan. Lisää tehoa tai aikaa.`,`Peak surface temperature ${nf(ps.Tmax,0)} °C is below the fast-heating austenitizing limit (Ac3 + 100 °C = ${s.Ac3+100} °C): the surface does not fully austenitize. Increase power or time.`,`Die maximale Oberflächentemperatur ${nf(ps.Tmax,0)} °C liegt unter der Austenitisierungsgrenze für schnelles Erwärmen (Ac3 + 100 °C = ${s.Ac3+100} °C): Die Oberfläche wird nicht vollständig austenitisiert. Erhöhen Sie Leistung oder Zeit.`));
+    if(ps.Tmax>1150)w(tr(`Pinnan huippulämpötila ${nf(ps.Tmax,0)} °C: ylikuumeneminen (raekasvu, hiilenkato, sulamisvaara yli noin 1400 °C). Vähennä tehoa tai aikaa.`,`Peak surface temperature ${nf(ps.Tmax,0)} °C: overheating (grain growth, decarburization, melting risk above about 1400 °C). Reduce power or time.`,`Maximale Oberflächentemperatur ${nf(ps.Tmax,0)} °C: Überhitzung (Kornwachstum, Randentkohlung, Anschmelzgefahr über etwa 1400 °C). Verringern Sie Leistung oder Zeit.`));
+    if(h.prior==='n')w(tr('Normalisoitu lähtötila: ferriittiperliittirakenne tarvitsee nopeassa kuumennuksessa korkeamman lämpötilan hiilen tasoittumiseen. Nuorrutettu lähtötila antaa tasaisemman karkaistun kerroksen.','Normalized prior state: ferrite–pearlite needs a higher temperature for carbon homogenization during fast heating. A quenched-and-tempered prior state gives a more uniform hardened case.','Normalgeglühter Ausgangszustand: Ferrit–Perlit braucht beim schnellen Erwärmen eine höhere Temperatur, damit sich der Kohlenstoff ausgleicht. Ein vergüteter Ausgangszustand ergibt eine gleichmäßigere Härteschicht.'),1);
+    if(r.shd>h.Di/2*0.6)w(tr('Karkaistu kerros on yli 60 % säteestä: kappale karkenee lähes läpi, ja ydin menettää sitkeytensä.','Hardened case exceeds 60 % of the radius: the part hardens nearly through and the core loses its toughness.','Die Härteschicht übersteigt 60 % des Radius: Das Bauteil härtet fast durch, und der Kern verliert seine Zähigkeit.'));
   }
   if(h.proc==='nc'){
-    if(r.warnTemper)w(tr(`Nitrohiiletyslämpötila ${h.T} °C on lähellä nuorrutuksen päästölämpötilaa (${h.TpN} °C) tai sen yli: ydin pehmenee. Päästä vähintään 20–30 °C prosessilämpötilan yläpuolella.`,`Nitrocarburizing temperature ${h.T} °C is close to or above the prior tempering temperature (${h.TpN} °C): the core softens. Temper at least 20–30 °C above the process temperature.`));
-    if(h.T>590)w(tr('Yli 590 °C: ferriittisen nitrohiiletyksen alue ylittyy (Fe–N-eutektoidi 592 °C), ja pintaan voi muodostua typpiausteniittia.','Above 590 °C: the ferritic nitrocarburizing range is exceeded (Fe–N eutectoid 592 °C), and nitrogen austenite may form at the surface.'));
-    if(h.T<550)w(tr('Alle 550 °C: malli on sovitettu 560–590 °C alueelle; tulokset ovat suuntaa antavia.','Below 550 °C: the model is fitted to 560–590 °C; results are indicative.'),1);
-    if(r.cl>25)w(tr('Yhdistekerros yli 25 µm: huokoinen ulkovyöhyke kasvaa ja kerros voi lohkeilla. Tavallinen tavoite on 10–20 µm.','Compound layer over 25 µm: the porous outer zone grows and the layer may spall. The usual target is 10–20 µm.'),1);
+    if(r.warnTemper)w(tr(`Nitrohiiletyslämpötila ${h.T} °C on lähellä nuorrutuksen päästölämpötilaa (${h.TpN} °C) tai sen yli: ydin pehmenee. Päästä vähintään 20–30 °C prosessilämpötilan yläpuolella.`,`Nitrocarburizing temperature ${h.T} °C is close to or above the prior tempering temperature (${h.TpN} °C): the core softens. Temper at least 20–30 °C above the process temperature.`,`Die Nitrocarburiertemperatur ${h.T} °C liegt nahe an oder über der vorherigen Anlasstemperatur (${h.TpN} °C): Der Kern wird weicher. Lassen Sie mindestens 20–30 °C über der Prozesstemperatur an.`));
+    if(h.T>590)w(tr('Yli 590 °C: ferriittisen nitrohiiletyksen alue ylittyy (Fe–N-eutektoidi 592 °C), ja pintaan voi muodostua typpiausteniittia.','Above 590 °C: the ferritic nitrocarburizing range is exceeded (Fe–N eutectoid 592 °C), and nitrogen austenite may form at the surface.','Über 590 °C: Der Bereich des ferritischen Nitrocarburierens wird überschritten (Fe–N-Eutektoid 592 °C), und an der Oberfläche kann sich Stickstoffaustenit bilden.'));
+    if(h.T<550)w(tr('Alle 550 °C: malli on sovitettu 560–590 °C alueelle; tulokset ovat suuntaa antavia.','Below 550 °C: the model is fitted to 560–590 °C; results are indicative.','Unter 550 °C: Das Modell ist für 560–590 °C angepasst; die Ergebnisse sind Richtwerte.'),1);
+    if(r.cl>25)w(tr('Yhdistekerros yli 25 µm: huokoinen ulkovyöhyke kasvaa ja kerros voi lohkeilla. Tavallinen tavoite on 10–20 µm.','Compound layer over 25 µm: the porous outer zone grows and the layer may spall. The usual target is 10–20 µm.','Verbindungsschicht über 25 µm: Der poröse äußere Bereich (Porensaum) wächst, und die Schicht kann abplatzen. Üblich sind 10–20 µm.'),1);
   }
   return W;}
 
@@ -628,40 +630,40 @@ const fNum=(k,lab,unit,min,max,step)=>`<label class="fld"><span>${lab}</span><sp
 const fSel=(k,lab,opts,rb)=>`<label class="fld"><span>${lab}</span><select data-k="${k}"${rb?' data-rb="1"':''}>${opts.map(([v,l])=>`<option value="${v}"${String(getK(k))===String(v)?' selected':''}>${esc(l)}</option>`).join('')}</select></label>`;
 const fChk=(k,lab,rb)=>`<label class="fld"><span>${lab}</span><span><input type="checkbox" data-k="${k}"${getK(k)?' checked':''}${rb?' data-rb="1"':''}></span></label>`;
 const steelOpts=()=>Object.keys(STEELS).map(k=>[k,STEELS[k].name]);
-const copyHtml=()=>`<p class="copy">${tr('Juho Pirttilahti, Seinäjoen ammattikorkeakoulu (SEAMK), 2026. Suunnittelu, sisältö ja validointi: Juho Pirttilahti. Ohjelmakoodi toteutettu tekoälyavusteisesti (Claude, Anthropic).','Juho Pirttilahti, Seinäjoki University of Applied Sciences (SEAMK), 2026. Design, content and validation: Juho Pirttilahti. Program code implemented with AI assistance (Claude, Anthropic).')} <a href="https://creativecommons.org/licenses/by/4.0/deed.${lang}" target="_blank" rel="noopener license">CC BY 4.0</a>. ${tr('Versio','Version')} ${VERSION}.</p>`;
+const copyHtml=()=>`<p class="copy">${tr('Juho Pirttilahti, Seinäjoen ammattikorkeakoulu (SEAMK), 2026. Suunnittelu, sisältö ja validointi: Juho Pirttilahti. Ohjelmakoodi toteutettu tekoälyavusteisesti (Claude, Anthropic).','Juho Pirttilahti, Seinäjoki University of Applied Sciences (SEAMK), 2026. Design, content and validation: Juho Pirttilahti. Program code implemented with AI assistance (Claude, Anthropic).','Juho Pirttilahti, Fachhochschule Seinäjoki (SEAMK), 2026. Konzeption, Inhalt und Validierung: Juho Pirttilahti. Der Programmcode wurde KI-gestützt erstellt (Claude, Anthropic).')} <a href="https://creativecommons.org/licenses/by/4.0/deed.${lang}" target="_blank" rel="noopener license">CC BY 4.0</a>. ${tr('Versio','Version','Version')} ${VERSION}.</p>`;
 function buildCtl(){const c=$('#ctl');let h='';
   if(st.tab==='ht'){const H=st.ht;
-    h+=`<h3>${tr('Esimerkit','Examples')}</h3><label class="fld" style="grid-template-columns:1fr"><select id="exSel"><option value="">${tr('Valitse esimerkki…','Choose an example…')}</option>${EXAMPLES.map(e=>`<option value="${e.id}">${esc(L2(e.n))}</option>`).join('')}</select></label>`;
-    h+=`<h3>${tr('Materiaali ja prosessi','Material and process')}</h3>`+fSel('ht.steel',tr('Teräs','Steel'),steelOpts())+
-      fSel('ht.proc',tr('Prosessi','Process'),[['qt',tr('Nuorrutus (karkaisu + päästö)','Quench and temper')],['ind',tr('Induktiokarkaisu','Induction hardening')],['nc',tr('Nitrohiiletys / mustanitraus','Nitrocarburizing / black nitriding')]],1)+
-      (H.proc!=='nc'?fSel('ht.band',tr('Karkenevuus (Jominy-kaista)','Hardenability (Jominy band)'),[['mid',tr('kaistan keskiarvo','band mean')],['min',tr('alaraja','minimum')],['max',tr('yläraja','maximum')]]):'');
-    if(H.proc==='qt'){h+=`<h3>${tr('Karkaisu','Hardening')}</h3>`+fNum('ht.D',tr('Halkaisija','Diameter'),'mm',5,200,1)+fNum('ht.Taus',tr('Austenitointi','Austenitizing'),'°C',700,1000,5)+
-        fSel('ht.medium',tr('Sammutusaine','Quenchant'),Object.keys(MEDIA).filter(k=>k!=='suihku').map(k=>[k,L2(MEDIA[k].n)]))+fNum('ht.Tf',tr('Sammutusaineen lämpötila','Quenchant temperature'),'°C',10,90,5)+
-        `<h3>${tr('Päästö','Tempering')}</h3>`+fNum('ht.Tt',tr('Päästölämpötila','Tempering temperature'),'°C',100,700,10)+fNum('ht.tt',tr('Päästöaika','Tempering time'),'h',0.25,24,0.25)+
-        `<p class="note">${tr('Päästö 100 °C 1 h vastaa käytännössä päästämätöntä tilaa.','Tempering at 100 °C for 1 h corresponds in practice to the untempered state.')}</p>`;}
-    if(H.proc==='ind'){h+=`<h3>${tr('Kappale ja lähtötila','Part and prior state')}</h3>`+fNum('ht.Di',tr('Halkaisija','Diameter'),'mm',10,120,1)+
-        fSel('ht.prior',tr('Lähtötila','Prior state'),[['qt',tr('Nuorrutettu (+QT)','Quenched and tempered (+QT)')],['n',tr('Normalisoitu (+N)','Normalized (+N)')]],1)+(H.prior==='qt'?fNum('ht.Tp',tr('Nuorrutuksen päästö','Prior tempering'),'°C',450,700,10):'')+
-        `<h3>${tr('Induktiokuumennus (paikallaan, koko vaippa)','Induction heating (static, whole surface)')}</h3>`+fNum('ht.f',tr('Taajuus','Frequency'),'kHz',1,500,1)+fNum('ht.qs',tr('Pintatehotiheys','Surface power density'),'kW/cm²',0.2,5,0.1)+fNum('ht.th',tr('Kuumennusaika','Heating time'),'s',0.1,20,0.1)+
-        fNum('ht.td',tr('Viive ennen suihkua','Delay before spray'),'s',0,5,0.1)+fNum('ht.tqI',tr('Suihkusammutus','Spray quench'),'s',2,60,1)+
-        `<h3>${tr('Päästö','Tempering')}</h3>`+fNum('ht.TtI',tr('Päästölämpötila','Tempering temperature'),'°C',100,400,10)+fNum('ht.ttI',tr('Päästöaika','Tempering time'),'h',0.25,8,0.25);}
-    if(H.proc==='nc'){h+=`<h3>${tr('Lähtötila','Prior state')}</h3>`+fSel('ht.priorN',tr('Lähtötila','Prior state'),[['qt',tr('Nuorrutettu (+QT)','Quenched and tempered (+QT)')],['n',tr('Normalisoitu (+N)','Normalized (+N)')]],1)+(H.priorN==='qt'?fNum('ht.TpN',tr('Nuorrutuksen päästö','Prior tempering'),'°C',500,700,10):'')+
-        `<h3>${tr('Nitrohiiletys (kaasu tai suolahaude)','Nitrocarburizing (gas or salt bath)')}</h3>`+fNum('ht.T',tr('Lämpötila','Temperature'),'°C',540,600,5)+fNum('ht.t',tr('Aika','Time'),'h',0.5,8,0.5)+
-        fChk('ht.ox',tr('Jälkihapetus (musta Fe₃O₄)','Post-oxidation (black Fe₃O₄)'),1)+(H.ox?fNum('ht.oxT',tr('Hapetuslämpötila','Oxidation temperature'),'°C',350,550,10)+fNum('ht.oxt',tr('Hapetusaika','Oxidation time'),'min',5,60,5):'')+
-        `<p class="note">${tr('Mustanitraus = ferriittinen nitrohiiletys + jälkihapetus. Kauppanimiä mm. Tenifer/Tufftride QPQ, Nitrotec, Arcor.','Black nitriding = ferritic nitrocarburizing + post-oxidation. Trade names include Tenifer/Tufftride QPQ, Nitrotec and Arcor.')}</p>`;}
-    h+=`<div class="acts"><button class="btn" id="toTT" type="button">${tr('Vie tulos vetokokeeseen','Send result to tensile test')}</button></div>`;
+    h+=`<h3>${tr('Esimerkit','Examples','Beispiele')}</h3><label class="fld" style="grid-template-columns:1fr"><select id="exSel"><option value="">${tr('Valitse esimerkki…','Choose an example…','Beispiel wählen …')}</option>${EXAMPLES.map(e=>`<option value="${e.id}">${esc(L2(e.n))}</option>`).join('')}</select></label>`;
+    h+=`<h3>${tr('Materiaali ja prosessi','Material and process','Werkstoff und Verfahren')}</h3>`+fSel('ht.steel',tr('Teräs','Steel','Stahl'),steelOpts())+
+      fSel('ht.proc',tr('Prosessi','Process','Verfahren'),[['qt',tr('Nuorrutus (karkaisu + päästö)','Quench and temper','Vergüten')],['ind',tr('Induktiokarkaisu','Induction hardening','Induktionshärten')],['nc',tr('Nitrohiiletys / mustanitraus','Nitrocarburizing / black nitriding','Nitrocarburieren / mit Nachoxidation')]],1)+
+      (H.proc!=='nc'?fSel('ht.band',tr('Karkenevuus (Jominy-kaista)','Hardenability (Jominy band)','Härtbarkeit (Jominy-Streuband)'),[['mid',tr('kaistan keskiarvo','band mean','Bandmitte')],['min',tr('alaraja','minimum','Minimum')],['max',tr('yläraja','maximum','Maximum')]]):'');
+    if(H.proc==='qt'){h+=`<h3>${tr('Karkaisu','Hardening','Härten')}</h3>`+fNum('ht.D',tr('Halkaisija','Diameter','Durchmesser'),'mm',5,200,1)+fNum('ht.Taus',tr('Austenitointi','Austenitizing','Austenitisieren'),'°C',700,1000,5)+
+        fSel('ht.medium',tr('Sammutusaine','Quenchant','Abschreckmittel'),Object.keys(MEDIA).filter(k=>k!=='suihku').map(k=>[k,L2(MEDIA[k].n)]))+fNum('ht.Tf',tr('Sammutusaineen lämpötila','Quenchant temperature','Temperatur des Abschreckmittels'),'°C',10,90,5)+
+        `<h3>${tr('Päästö','Tempering','Anlassen')}</h3>`+fNum('ht.Tt',tr('Päästölämpötila','Tempering temperature','Anlasstemperatur'),'°C',100,700,10)+fNum('ht.tt',tr('Päästöaika','Tempering time','Anlassdauer'),'h',0.25,24,0.25)+
+        `<p class="note">${tr('Päästö 100 °C 1 h vastaa käytännössä päästämätöntä tilaa.','Tempering at 100 °C for 1 h corresponds in practice to the untempered state.','Anlassen bei 100 °C für 1 h entspricht praktisch dem nicht angelassenen Zustand.')}</p>`;}
+    if(H.proc==='ind'){h+=`<h3>${tr('Kappale ja lähtötila','Part and prior state','Bauteil und Ausgangszustand')}</h3>`+fNum('ht.Di',tr('Halkaisija','Diameter','Durchmesser'),'mm',10,120,1)+
+        fSel('ht.prior',tr('Lähtötila','Prior state','Ausgangszustand'),[['qt',tr('Nuorrutettu (+QT)','Quenched and tempered (+QT)','Vergütet (+QT)')],['n',tr('Normalisoitu (+N)','Normalized (+N)','Normalgeglüht (+N)')]],1)+(H.prior==='qt'?fNum('ht.Tp',tr('Nuorrutuksen päästö','Prior tempering','Vorheriges Anlassen'),'°C',450,700,10):'')+
+        `<h3>${tr('Induktiokuumennus (paikallaan, koko vaippa)','Induction heating (static, whole surface)','Induktive Erwärmung (stehend, ganze Oberfläche)')}</h3>`+fNum('ht.f',tr('Taajuus','Frequency','Frequenz'),'kHz',1,500,1)+fNum('ht.qs',tr('Pintatehotiheys','Surface power density','Flächen\u00ADleistungs\u00ADdichte'),'kW/cm²',0.2,5,0.1)+fNum('ht.th',tr('Kuumennusaika','Heating time','Erwärmdauer'),'s',0.1,20,0.1)+
+        fNum('ht.td',tr('Viive ennen suihkua','Delay before spray','Verzögerung bis zur Brause'),'s',0,5,0.1)+fNum('ht.tqI',tr('Suihkusammutus','Spray quench','Brausen\u00ADabschreckung'),'s',2,60,1)+
+        `<h3>${tr('Päästö','Tempering','Anlassen')}</h3>`+fNum('ht.TtI',tr('Päästölämpötila','Tempering temperature','Anlasstemperatur'),'°C',100,400,10)+fNum('ht.ttI',tr('Päästöaika','Tempering time','Anlassdauer'),'h',0.25,8,0.25);}
+    if(H.proc==='nc'){h+=`<h3>${tr('Lähtötila','Prior state','Ausgangszustand')}</h3>`+fSel('ht.priorN',tr('Lähtötila','Prior state','Ausgangszustand'),[['qt',tr('Nuorrutettu (+QT)','Quenched and tempered (+QT)','Vergütet (+QT)')],['n',tr('Normalisoitu (+N)','Normalized (+N)','Normalgeglüht (+N)')]],1)+(H.priorN==='qt'?fNum('ht.TpN',tr('Nuorrutuksen päästö','Prior tempering','Vorheriges Anlassen'),'°C',500,700,10):'')+
+        `<h3>${tr('Nitrohiiletys (kaasu tai suolahaude)','Nitrocarburizing (gas or salt bath)','Nitrocarburieren (Gas oder Salzbad)')}</h3>`+fNum('ht.T',tr('Lämpötila','Temperature','Temperatur'),'°C',540,600,5)+fNum('ht.t',tr('Aika','Time','Zeit'),'h',0.5,8,0.5)+
+        fChk('ht.ox',tr('Jälkihapetus (musta Fe₃O₄)','Post-oxidation (black Fe₃O₄)','Nachoxidation (schwarzes Fe₃O₄)'),1)+(H.ox?fNum('ht.oxT',tr('Hapetuslämpötila','Oxidation temperature','Oxidationstemperatur'),'°C',350,550,10)+fNum('ht.oxt',tr('Hapetusaika','Oxidation time','Oxidationsdauer'),'min',5,60,5):'')+
+        `<p class="note">${tr('Mustanitraus = ferriittinen nitrohiiletys + jälkihapetus. Kauppanimiä mm. Tenifer/Tufftride QPQ, Nitrotec, Arcor.','Black nitriding = ferritic nitrocarburizing + post-oxidation. Trade names include Tenifer/Tufftride QPQ, Nitrotec and Arcor.','Nitrocarburieren mit Nachoxidation = ferritisches Nitrocarburieren + Nachoxidation (schwarze Oberfläche). Handelsnamen sind u. a. Tenifer/Tufftride QPQ, Nitrotec und Arcor.')}</p>`;}
+    h+=`<div class="acts"><button class="btn" id="toTT" type="button">${tr('Vie tulos vetokokeeseen','Send result to tensile test','Ergebnis an den Zugversuch übergeben')}</button></div>`;
   }
-  if(st.tab==='xs'){const X=st.xs;h+=`<h3>${tr('Hila','Lattice')}</h3>`+fSel('xs.kind',tr('Rakenne','Structure'),Object.keys(XS).map(k=>[k,L2(XS[k].n)]),1);
-    if(['fcc','bct','bain'].includes(X.kind))h+=fNum('xs.C',tr('Hiilipitoisuus','Carbon content'),'%',0,1.4,0.05);
-    if(X.kind==='bain')h+=`<div class="rng"><span>${tr('Muunnos','Transformation')}</span><input type="range" min="0" max="1" step="0.01" data-k="xs.u" value="${X.u}"><span id="uVal">${nf(X.u*100,0)} %</span></div><div class="acts"><button class="btn" id="bainPlay" type="button">${tr('Animoi','Animate')}</button></div>`;
-    if(['bcc','fcc','bct'].includes(X.kind))h+=fChk('xs.sites',tr('Näytä oktaedriset välisijat','Show octahedral interstitial sites'));
-    h+=`<p class="note">${tr('Pyöritä koppia vetämällä hiirellä tai sormella.','Rotate the cell by dragging with the mouse or a finger.')}</p>`;}
-  if(st.tab==='fec'){h+=`<h3>${tr('Piste','Point')}</h3>`+fNum('fec.C',tr('Hiilipitoisuus','Carbon content'),'%',0,2.1,0.01)+fNum('fec.T',tr('Lämpötila','Temperature'),'°C',600,1100,5)+
-    `<p class="note">${tr('Klikkaa piirrosta valitaksesi pisteen. Vipusääntö antaa faasien osuudet kahden faasin alueella.','Click the diagram to choose a point. The lever rule gives the phase fractions in a two-phase region.')}</p><h3>${tr('Teräkset piirroksessa','Steels on the diagram')}</h3><div class="acts">${Object.keys(STEELS).map(k=>`<button class="btn" type="button" data-fc="${STEELS[k].comp.C}">${k} (${nf(STEELS[k].comp.C,2)} % C)</button>`).join('')}</div>`;}
-  if(st.tab==='tt'){h+=`<h3>${tr('Materiaali','Material')}</h3>`+fSel('tt.mat',tr('Koesauva','Specimen'),Object.keys(MATS).map(k=>[k,L2(MATS[k].n)]))+
-    fSel('tt.cmp',tr('Vertailu','Comparison'),[['',tr('ei vertailua','no comparison')],...Object.keys(MATS).map(k=>[k,L2(MATS[k].n)])])+
-    `<div class="acts"><button class="btn pri" id="ttRun" type="button">${tr('Aja vetokoe','Run tensile test')}</button></div>`+
-    `<h3>${tr('Kovuusmuunnin (teräs)','Hardness converter (steel)')}</h3>`+fNum('conv.hv',tr('Vickers-kovuus','Vickers hardness'),'HV',80,940,5)+`<div class="kv" id="convOut"></div>`+
-    `<p class="note">${tr('HRC ISO 18265 -tyyppisestä taulukosta (≥ 238 HV), HB ≈ 0,95·HV, Rm ≈ 3,1·HV. Muunnokset ovat likiarvoja.','HRC from an ISO 18265-type table (≥ 238 HV), HB ≈ 0.95·HV, Rm ≈ 3.1·HV. Conversions are approximate.')}</p>`;}
+  if(st.tab==='xs'){const X=st.xs;h+=`<h3>${tr('Hila','Lattice','Gitter')}</h3>`+fSel('xs.kind',tr('Rakenne','Structure','Struktur'),Object.keys(XS).map(k=>[k,L2(XS[k].n)]),1);
+    if(['fcc','bct','bain'].includes(X.kind))h+=fNum('xs.C',tr('Hiilipitoisuus','Carbon content','Kohlenstoffgehalt'),'%',0,1.4,0.05);
+    if(X.kind==='bain')h+=`<div class="rng"><span>${tr('Muunnos','Transformation','Umwandlung')}</span><input type="range" min="0" max="1" step="0.01" data-k="xs.u" value="${X.u}"><span id="uVal">${nf(X.u*100,0)} %</span></div><div class="acts"><button class="btn" id="bainPlay" type="button">${tr('Animoi','Animate','Animieren')}</button></div>`;
+    if(['bcc','fcc','bct'].includes(X.kind))h+=fChk('xs.sites',tr('Näytä oktaedriset välisijat','Show octahedral interstitial sites','Oktaederlücken anzeigen'));
+    h+=`<p class="note">${tr('Pyöritä koppia vetämällä hiirellä tai sormella.','Rotate the cell by dragging with the mouse or a finger.','Drehen Sie die Zelle durch Ziehen mit der Maus oder dem Finger.')}</p>`;}
+  if(st.tab==='fec'){h+=`<h3>${tr('Piste','Point','Punkt')}</h3>`+fNum('fec.C',tr('Hiilipitoisuus','Carbon content','Kohlenstoffgehalt'),'%',0,2.1,0.01)+fNum('fec.T',tr('Lämpötila','Temperature','Temperatur'),'°C',600,1100,5)+
+    `<p class="note">${tr('Klikkaa piirrosta valitaksesi pisteen. Vipusääntö antaa faasien osuudet kahden faasin alueella.','Click the diagram to choose a point. The lever rule gives the phase fractions in a two-phase region.','Klicken Sie in das Diagramm, um einen Punkt zu wählen. Das Hebelgesetz liefert die Phasenanteile im Zweiphasengebiet.')}</p><h3>${tr('Teräkset piirroksessa','Steels on the diagram','Stähle im Diagramm')}</h3><div class="acts">${Object.keys(STEELS).map(k=>`<button class="btn" type="button" data-fc="${STEELS[k].comp.C}">${k} (${nf(STEELS[k].comp.C,2)} % C)</button>`).join('')}</div>`;}
+  if(st.tab==='tt'){h+=`<h3>${tr('Materiaali','Material','Werkstoff')}</h3>`+fSel('tt.mat',tr('Koesauva','Specimen','Probe'),Object.keys(MATS).map(k=>[k,L2(MATS[k].n)]))+
+    fSel('tt.cmp',tr('Vertailu','Comparison','Vergleich'),[['',tr('ei vertailua','no comparison','kein Vergleich')],...Object.keys(MATS).map(k=>[k,L2(MATS[k].n)])])+
+    `<div class="acts"><button class="btn pri" id="ttRun" type="button">${tr('Aja vetokoe','Run tensile test','Zugversuch starten')}</button></div>`+
+    `<h3>${tr('Kovuusmuunnin (teräs)','Hardness converter (steel)','Härteumwertung (Stahl)')}</h3>`+fNum('conv.hv',tr('Vickers-kovuus','Vickers hardness','Vickershärte'),'HV',80,940,5)+`<div class="kv" id="convOut"></div>`+
+    `<p class="note">${tr('HRC ISO 18265 -tyyppisestä taulukosta (≥ 238 HV), HB ≈ 0,95·HV, Rm ≈ 3,1·HV. Muunnokset ovat likiarvoja.','HRC from an ISO 18265-type table (≥ 238 HV), HB ≈ 0.95·HV, Rm ≈ 3.1·HV. Conversions are approximate.','HRC aus einer Tabelle nach Art der ISO 18265 (≥ 238 HV), HB ≈ 0,95·HV, Rm ≈ 3,1·HV. Die Umwertungen sind Näherungen.')}</p>`;}
   h+=copyHtml();c.innerHTML=h;
   const ex=$('#exSel');if(ex)ex.addEventListener('change',()=>{if(ex.value)loadExample(ex.value);});
   const tt=$('#toTT');if(tt)tt.addEventListener('click',()=>{st.tt.mat='HT';setTab('tt');buildCtl();runTT(true);});
@@ -708,22 +710,22 @@ function renderHT(){if(!HT)return;const h=HT.h,s=HT.steel,c1=cssv('--c1'),c2=css
   const rec=HT.sim.rec,isNC=HT.kind==='nc',tk=isNC?1/3600:1;const tx=rec.t.map(t=>t*tk);const tmax=tx[tx.length-1]||1;
   const Tm=Math.max(...rec.s,...rec.c,900);
   const hl=[{y:s.Ac1,l:'Ac1 '+s.Ac1+' °C',c:mut,below:1},{y:s.Ac3,l:'Ac3 '+s.Ac3+' °C',c:mut}];if(!isNC){hl.push({y:s.Ms,l:'Ms '+s.Ms+' °C',c:c4});}
-  plotXY($('#cvT'),{x:[0,tmax],y:[0,Math.ceil((Tm+50)/100)*100],xl:isNC?tr('Aika (h)','Time (h)'):tr('Aika (s)','Time (s)'),yl:'T (°C)',hlines:hl,
+  plotXY($('#cvT'),{x:[0,tmax],y:[0,Math.ceil((Tm+50)/100)*100],xl:isNC?tr('Aika (h)','Time (h)','Zeit (h)'):tr('Aika (s)','Time (s)','Zeit (s)'),yl:'T (°C)',hlines:hl,
     series:isNC?[{x:tx,y:rec.s,c:c1}]:[{x:tx,y:rec.c,c:c2},{x:tx,y:rec.m,c:c3},{x:tx,y:rec.s,c:c1}]});
-  legend($('#legT'),isNC?[{c:c1,l:tr('Kappale (kaavamainen prosessikäyrä)','Part (schematic process curve)')}]:[{c:c1,l:tr('Pinta','Surface')},{c:c3,l:tr('Puolivälissä säteestä','Mid-radius')},{c:c2,l:tr('Keskusta','Centre')}]);
+  legend($('#legT'),isNC?[{c:c1,l:tr('Kappale (kaavamainen prosessikäyrä)','Part (schematic process curve)','Bauteil (schematischer Prozessverlauf)')}]:[{c:c1,l:tr('Pinta','Surface','Oberfläche')},{c:c3,l:tr('Puolivälissä säteestä','Mid-radius','Halber Radius')},{c:c2,l:tr('Keskusta','Centre','Kern')}]);
   /* kovuusprofiili */
   const xr=xRange();const P=HT.prof.filter(q=>q.x<=xr+1e-9);const xs=P.map(q=>q.x);
   const hvMax=Math.max(...P.map(q=>Math.max(q.hv||0,q.hvq||0)),400);
   const sel=h.sel!=null?h.sel:(isNC?Math.min(xr,HT.nhd*0.5):HT.kind==='ind'?Math.min(xr,HT.shd*0.5):0);
-  const o={x:[0,xr],y:[0,Math.ceil((hvMax+60)/100)*100],xl:tr('Syvyys pinnasta (mm)','Depth from surface (mm)'),yl:'HV',series:[],vlines:[{x:sel,c:cssv('--acc'),dash:[2,3],w:2}],hlines:[]};
-  if(isNC){o.series.push({x:xs,y:P.map(q=>q.hv),c:c1});o.hlines.push({y:HT.hvc+50,l:tr('ydin + 50 HV (NHD-raja)','core + 50 HV (NHD limit)'),c:mut});o.vlines.push({x:HT.nhd,l:'NHD '+nf(HT.nhd,2)+' mm',c:c3});}
+  const o={x:[0,xr],y:[0,Math.ceil((hvMax+60)/100)*100],xl:tr('Syvyys pinnasta (mm)','Depth from surface (mm)','Abstand von der Oberfläche (mm)'),yl:'HV',series:[],vlines:[{x:sel,c:cssv('--acc'),dash:[2,3],w:2}],hlines:[]};
+  if(isNC){o.series.push({x:xs,y:P.map(q=>q.hv),c:c1});o.hlines.push({y:HT.hvc+50,l:tr('ydin + 50 HV (NHD-raja)','core + 50 HV (NHD limit)','Kern + 50 HV (Grenze NHD)'),c:mut});o.vlines.push({x:HT.nhd,l:'NHD '+nf(HT.nhd,2)+' mm',c:c3});}
   else{o.series.push({x:xs,y:P.map(q=>q.hvq),c:c2,dash:[6,4],w:1.6},{x:xs,y:P.map(q=>q.hv),c:c1});
-    if(HT.kind==='ind'){o.hlines.push({y:HT.HL,l:tr('rajakovuus 0,8 × pinta','limit hardness 0.8 × surface'),c:mut});o.vlines.push({x:HT.shd,l:'SHD '+nf(HT.shd,2)+' mm',c:c3});
+    if(HT.kind==='ind'){o.hlines.push({y:HT.HL,l:tr('rajakovuus 0,8 × pinta','limit hardness 0.8 × surface','Grenzhärte 0,8 × Oberfläche'),c:mut});o.vlines.push({x:HT.shd,l:'SHD '+nf(HT.shd,2)+' mm',c:c3});
       o.y2={r:[0,1500],l:'Tmax (°C)',series:[{x:xs,y:P.map(q=>q.Tmax),c:c4,w:1.4,dash:[2,3]}]};}}
   plotXY($('#cvH'),o);
-  legend($('#legH'),isNC?[{c:c1,l:tr('Kovuus (diffuusiovyöhyke ja ydin)','Hardness (diffusion zone and core)')}]:[{c:c2,l:tr('Sammutettu','As-quenched'),dash:1},{c:c1,l:tr('Päästetty','Tempered')}].concat(HT.kind==='ind'?[{c:c4,l:tr('Huippulämpötila (oikea asteikko)','Peak temperature (right axis)'),dash:1}]:[]));
+  legend($('#legH'),isNC?[{c:c1,l:tr('Kovuus (diffuusiovyöhyke ja ydin)','Hardness (diffusion zone and core)','Härte (Diffusionsschicht und Kern)')}]:[{c:c2,l:tr('Sammutettu','As-quenched','Abgeschreckt'),dash:1},{c:c1,l:tr('Päästetty','Tempered','Angelassen')}].concat(HT.kind==='ind'?[{c:c4,l:tr('Huippulämpötila (oikea asteikko)','Peak temperature (right axis)','Höchsttemperatur (rechte Achse)'),dash:1}]:[]));
   /* mikrorakenne */
-  const W=xr;const mk=[];if(isNC){mk.push({x:(HT.ox+HT.cl)/1000/W,l:tr('yhdistekerros ','compound layer ')+nf(HT.cl,1)+' µm'});mk.push({x:HT.nhd/W,l:'NHD',row:1});}
+  const W=xr;const mk=[];if(isNC){mk.push({x:(HT.ox+HT.cl)/1000/W,l:tr('yhdistekerros ','compound layer ','Verbindungsschicht ')+nf(HT.cl,1)+' µm'});mk.push({x:HT.nhd/W,l:'NHD',row:1});}
   if(HT.kind==='ind')mk.push({x:HT.shd/W,l:'SHD'});
   const niceL=(()=>{const t=W*0.2;const p=Math.pow(10,Math.floor(Math.log10(t)));const m=t/p;const v=(m<2?1:m<5?2:5)*p;return v;})();
   drawMicro($('#cvM'),u=>{let x=u*W;if(isNC){/* ohuet kerrokset näkyviin vähintään 3 px */const px=W/($('#cvM').getBoundingClientRect().width||500);
@@ -731,33 +733,33 @@ function renderHT(){if(!HT)return;const h=HT.h,s=HT.steel,c1=cssv('--c1'),c2=css
     {sel:sel/W,marks:mk,scale:{mm:niceL/W,label:niceL>=1?nf(niceL,0)+' mm':niceL>=0.1?nf(niceL,1)+' mm':nf(niceL*1000,0)+' µm'},grain:isNC?10:13,seed:7});
   /* faasiteksti valitulla syvyydellä */
   const f=phasesAt(sel),q=profAt(sel);const parts=Object.keys(f).filter(k=>f[k]>=0.005).sort((a,b)=>f[b]-f[a]).map(k=>`${L2(PHN[k])} ${nf(f[k]*100,0)} %`);
-  let t=`<b>${tr('Syvyys','Depth')} ${nf(sel,isNC?3:2)} mm:</b> ${parts.join(', ')}. `;
-  const hv=isNC&&f.CL?HT.HVcl:q.hv;if(Number.isFinite(hv))t+=`${tr('Kovuus','Hardness')} ${nf(hv,0)} HV${hv2hrc(hv)&&!isNC?` (${nf(hv2hrc(hv),1)} HRC)`:''}. `;
+  let t=`<b>${tr('Syvyys','Depth','Tiefe')} ${nf(sel,isNC?3:2)} mm:</b> ${parts.join(', ')}. `;
+  const hv=isNC&&f.CL?HT.HVcl:q.hv;if(Number.isFinite(hv))t+=`${tr('Kovuus','Hardness','Härte')} ${nf(hv,0)} HV${hv2hrc(hv)&&!isNC?` (${nf(hv2hrc(hv),1)} HRC)`:''}. `;
   if(!isNC){if(Number.isFinite(q.Tmax)&&HT.kind==='ind')t+=`Tmax ${nf(q.Tmax,0)} °C. `;if(Number.isFinite(q.t85))t+=`t8/5 ${nf(q.t85,q.t85<10?1:0)} s. `;}
-  $('#phaseTxt').innerHTML=t+`<br><span class="mnote">${tr('Kuva on kaavamainen: rakeiden koko ja muoto eivät ole mittakaavassa, faasien osuudet ovat.','The image is schematic: grain size and shape are not to scale; phase fractions are.')}</span>`;
+  $('#phaseTxt').innerHTML=t+`<br><span class="mnote">${tr('Kuva on kaavamainen: rakeiden koko ja muoto eivät ole mittakaavassa, faasien osuudet ovat.','The image is schematic: grain size and shape are not to scale; phase fractions are.','Das Bild ist schematisch: Korngröße und -form sind nicht maßstäblich, die Phasenanteile schon.')}</span>`;
   /* tulostaulukko */
   const rows=[];const R=(a,b)=>rows.push(`<tr><td>${a}</td><td>${b}</td></tr>`);const hvs=v=>Number.isFinite(v)?`${nf(v,0)} HV`+(hv2hrc(v)&&v<=900&&HT.kind!=='nc'?` / ${nf(hv2hrc(v),1)} HRC`:''):'–';
   const p0=HT.prof[0],pc=HT.prof[HT.prof.length-1];
-  if(HT.kind==='qt'){R(tr('Pinta, sammutettu','Surface, as-quenched'),hvs(p0.hvq));R(tr('Pinta, päästetty','Surface, tempered'),hvs(p0.hv));R(tr('Keskusta, sammutettu','Centre, as-quenched'),hvs(pc.hvq));R(tr('Keskusta, päästetty','Centre, tempered'),hvs(pc.hv));
-    R(tr('Martensiittia pinta / keskusta','Martensite surface / centre'),`${nf(p0.fM*100,0)} % / ${nf(pc.fM*100,0)} %`);R('t8/5 '+tr('pinta / keskusta','surface / centre'),`${nf(p0.t85,1)} s / ${nf(pc.t85,1)} s`);
-    R(tr('Vastaava Jominy-etäisyys pinta / keskusta','Equivalent Jominy distance surface / centre'),`${nf(jomDist(p0.t85),1)} / ${nf(jomDist(pc.t85),1)} mm`);
-    R(tr('Päästöparametri P (Hollomon–Jaffe)','Tempering parameter P (Hollomon–Jaffe)'),nf(HT.P,0));
-    const m=MATS.HT;R(tr(`Lujuus ${nf(m.dep,1)} mm syvyydellä (Rm ≈ 3,1·HV)`,`Strength at ${nf(m.dep,1)} mm depth (Rm ≈ 3.1·HV)`),`Rm ${nf(m.Rm,0)}, Rp0,2 ${nf(m.Rp,0)} MPa`);
-    R(tr('Ms: Andrews / tekninen kortti','Ms: Andrews / datasheet'),`${nf(msAndrews(s.comp),0)} / ${s.Ms} °C`);}
-  if(HT.kind==='ind'){R(tr('Pinnan huippulämpötila','Peak surface temperature'),nf(p0.Tmax,0)+' °C');R(tr('Pinta, päästetty','Surface, tempered'),hvs(p0.hv));R(tr('Pintakarkaisusyvyys SHD (ISO 18203)','Surface hardening depth SHD (ISO 18203)'),nf(HT.shd,2)+' mm');
-    R(tr('Rajakovuus 0,8 × pinnan kovuus','Limit hardness 0.8 × surface hardness'),nf(HT.HL,0)+' HV');
-    let da=0;for(const q of HT.prof){if(q.fA>=0.5)da=q.x;else break;}R(tr('Austenitoitunut syvyys (≥ 50 %)','Austenitized depth (≥ 50 %)'),nf(da,2)+' mm');
-    R(tr('Ydin','Core'),hvs(pc.hv));R(tr('Tunkeutumissyvyys δ 20 °C / yli Curien (850 °C)','Penetration depth δ at 20 °C / above Curie (850 °C)'),`${nf(deltaMM(h.f,20),2)} / ${nf(deltaMM(h.f,850),2)} mm`);
-    R(tr('Kuumennusenergia','Heating energy'),nf(h.qs*h.th,2)+' kJ/cm²');}
-  if(HT.kind==='nc'){if(h.ox)R(tr('Oksidikerros Fe₃O₄','Oxide layer Fe₃O₄'),'≈ '+nf(HT.ox,1)+' µm');R(tr('Yhdistekerros','Compound layer'),nf(HT.cl,1)+' µm');R(tr('Yhdistekerroksen kovuus','Compound layer hardness'),hvs(HT.HVcl));
-    R(tr('Diffuusiovyöhykkeen pintakovuus','Diffusion zone surface hardness'),hvs(HT.HVs));R(tr('Nitrauskovuussyvyys NHD (ydin + 50 HV, ISO 18203)','Nitriding hardness depth NHD (core + 50 HV, ISO 18203)'),nf(HT.nhd,3)+' mm');R(tr('Ydin','Core'),hvs(HT.hvc));
-    R(tr('Nitridejä muodostavat seosaineet X = Cr + Mo','Nitride-forming alloying elements X = Cr + Mo'),nf(s.nit.X,2)+' %');}
+  if(HT.kind==='qt'){R(tr('Pinta, sammutettu','Surface, as-quenched','Oberfläche, abgeschreckt'),hvs(p0.hvq));R(tr('Pinta, päästetty','Surface, tempered','Oberfläche, angelassen'),hvs(p0.hv));R(tr('Keskusta, sammutettu','Centre, as-quenched','Kern, abgeschreckt'),hvs(pc.hvq));R(tr('Keskusta, päästetty','Centre, tempered','Kern, angelassen'),hvs(pc.hv));
+    R(tr('Martensiittia pinta / keskusta','Martensite surface / centre','Martensit Oberfläche / Kern'),`${nf(p0.fM*100,0)} % / ${nf(pc.fM*100,0)} %`);R('t8/5 '+tr('pinta / keskusta','surface / centre','Oberfläche / Kern'),`${nf(p0.t85,1)} s / ${nf(pc.t85,1)} s`);
+    R(tr('Vastaava Jominy-etäisyys pinta / keskusta','Equivalent Jominy distance surface / centre','Äquivalenter Stirnabstand Oberfläche / Kern'),`${nf(jomDist(p0.t85),1)} / ${nf(jomDist(pc.t85),1)} mm`);
+    R(tr('Päästöparametri P (Hollomon–Jaffe)','Tempering parameter P (Hollomon–Jaffe)','Anlassparameter P (Hollomon–Jaffe)'),nf(HT.P,0));
+    const m=MATS.HT;R(tr(`Lujuus ${nf(m.dep,1)} mm syvyydellä (Rm ≈ 3,1·HV)`,`Strength at ${nf(m.dep,1)} mm depth (Rm ≈ 3.1·HV)`,`Festigkeit in ${nf(m.dep,1)} mm Tiefe (Rm ≈ 3,1·HV)`),`Rm ${nf(m.Rm,0)}, Rp0,2 ${nf(m.Rp,0)} MPa`);
+    R(tr('Ms: Andrews / tekninen kortti','Ms: Andrews / datasheet','Ms: Andrews / Datenblatt'),`${nf(msAndrews(s.comp),0)} / ${s.Ms} °C`);}
+  if(HT.kind==='ind'){R(tr('Pinnan huippulämpötila','Peak surface temperature','Maximale Oberflächentemperatur'),nf(p0.Tmax,0)+' °C');R(tr('Pinta, päästetty','Surface, tempered','Oberfläche, angelassen'),hvs(p0.hv));R(tr('Pintakarkaisusyvyys SHD (ISO 18203)','Surface hardening depth SHD (ISO 18203)','Randschichthärtungs-Härtetiefe SHD (ISO 18203)'),nf(HT.shd,2)+' mm');
+    R(tr('Rajakovuus 0,8 × pinnan kovuus','Limit hardness 0.8 × surface hardness','Grenzhärte 0,8 × Oberflächenhärte'),nf(HT.HL,0)+' HV');
+    let da=0;for(const q of HT.prof){if(q.fA>=0.5)da=q.x;else break;}R(tr('Austenitoitunut syvyys (≥ 50 %)','Austenitized depth (≥ 50 %)','Austenitisierte Tiefe (≥ 50 %)'),nf(da,2)+' mm');
+    R(tr('Ydin','Core','Kern'),hvs(pc.hv));R(tr('Tunkeutumissyvyys δ 20 °C / yli Curien (850 °C)','Penetration depth δ at 20 °C / above Curie (850 °C)','Eindringtiefe δ bei 20 °C / über Curie-Temperatur (850 °C)'),`${nf(deltaMM(h.f,20),2)} / ${nf(deltaMM(h.f,850),2)} mm`);
+    R(tr('Kuumennusenergia','Heating energy','Erwärmungsenergie'),nf(h.qs*h.th,2)+' kJ/cm²');}
+  if(HT.kind==='nc'){if(h.ox)R(tr('Oksidikerros Fe₃O₄','Oxide layer Fe₃O₄','Oxidschicht Fe₃O₄'),'≈ '+nf(HT.ox,1)+' µm');R(tr('Yhdistekerros','Compound layer','Verbindungsschicht'),nf(HT.cl,1)+' µm');R(tr('Yhdistekerroksen kovuus','Compound layer hardness','Härte der Verbindungsschicht'),hvs(HT.HVcl));
+    R(tr('Diffuusiovyöhykkeen pintakovuus','Diffusion zone surface hardness','Oberflächenhärte der Diffusionsschicht'),hvs(HT.HVs));R(tr('Nitrauskovuussyvyys NHD (ydin + 50 HV, ISO 18203)','Nitriding hardness depth NHD (core + 50 HV, ISO 18203)','Nitrierhärtetiefe NHD (Kern + 50 HV, ISO 18203)'),nf(HT.nhd,3)+' mm');R(tr('Ydin','Core','Kern'),hvs(HT.hvc));
+    R(tr('Nitridejä muodostavat seosaineet X = Cr + Mo','Nitride-forming alloying elements X = Cr + Mo','Nitridbildende Legierungselemente X = Cr + Mo'),nf(s.nit.X,2)+' %');}
   $('#htRes').innerHTML=rows.join('');
   /* Jominy (ei nitrohiiletyksessä) */
   $('#jomBox').hidden=isNC;if(isNC)return;
-  const J=s.jd;const eq=[];if(HT.kind==='qt'){eq.push({x:jomDist(p0.t85),l:tr('pinta','surface'),c:c1},{x:jomDist(pc.t85),l:tr('keskusta','centre'),c:c2,row:1});}
-  if(HT.kind==='ind'&&Number.isFinite(p0.t85))eq.push({x:jomDist(p0.t85),l:tr('pinta','surface'),c:c1});
-  plotXY($('#cvJ'),{x:[0,Math.max(50,J[J.length-1])],y:[15,65],xl:tr('Etäisyys sammutetusta päästä (mm)','Distance from quenched end (mm)'),yl:'HRC',
+  const J=s.jd;const eq=[];if(HT.kind==='qt'){eq.push({x:jomDist(p0.t85),l:tr('pinta','surface','Oberfläche'),c:c1},{x:jomDist(pc.t85),l:tr('keskusta','centre','Kern'),c:c2,row:1});}
+  if(HT.kind==='ind'&&Number.isFinite(p0.t85))eq.push({x:jomDist(p0.t85),l:tr('pinta','surface','Oberfläche'),c:c1});
+  plotXY($('#cvJ'),{x:[0,Math.max(50,J[J.length-1])],y:[15,65],xl:tr('Etäisyys sammutetusta päästä (mm)','Distance from quenched end (mm)','Abstand von der abgeschreckten Stirnfläche (mm)'),yl:'HRC',
     series:[{x:J,y:s.jmax,c:mut,w:1.4},{x:J,y:s.jmin,c:mut,w:1.4},{x:J,y:J.map((_,i)=>(s.jmin[i]+s.jmax[i])/2),c:c3,dash:[5,4],w:1.4}],vlines:eq.map(e=>({x:e.x,l:e.l+' '+nf(e.x,1)+' mm',c:e.c,row:e.row}))});
 }
 const deltaMM=(fk,T)=>503*Math.sqrt((1.9e-7+1.1e-9*T)/((T<T_CURIE?50:1)*fk*1000))*1000;
@@ -770,23 +772,23 @@ function renderXS(){const X=st.xs,C=X.C;const cd=cellAtoms(X.kind,C,X.u);let gho
     const q=[[0,0],[a,a],[2*a,0],[a,-a]];ghost=[];for(const z of[0,c])for(let i=0;i<4;i++)ghost.push([[...q[i],z],[...q[(i+1)%4],z]]);for(const p of q)ghost.push([[...p,0],[...p,c]]);}
   drawCell($('#cvX'),cd,{sites:X.sites&&['bcc','fcc','bct'].includes(X.kind),ghost,zoom:X.kind==='bain'?0.7:1});
   const uv=$('#uVal');if(uv)uv.textContent=nf(X.u*100,0)+' %';
-  const it=[{c:'#8C9AA8',l:tr('Fe-atomi','Fe atom'),sw:1}];if(cd.at.some(a=>a.t==='C'))it.push({c:'#202326',l:tr('C-atomi (välisija)','C atom (interstitial)'),sw:1});if(cd.at.some(a=>a.t==='N'))it.push({c:'#2F6FD0',l:tr('N-atomi (välisija)','N atom (interstitial)'),sw:1});
-  if(X.sites&&['bcc','fcc','bct'].includes(X.kind))it.push({c:cssv('--acc'),l:tr('Oktaedrinen välisija','Octahedral interstitial site'),sw:1});if(ghost)it.push({c:cssv('--c2'),l:tr('Alkuperäinen pkk-koppi (austeniitti)','Parent fcc cell (austenite)'),dash:1});
+  const it=[{c:'#8C9AA8',l:tr('Fe-atomi','Fe atom','Fe-Atom'),sw:1}];if(cd.at.some(a=>a.t==='C'))it.push({c:'#202326',l:tr('C-atomi (välisija)','C atom (interstitial)','C-Atom (Zwischengitterplatz)'),sw:1});if(cd.at.some(a=>a.t==='N'))it.push({c:'#2F6FD0',l:tr('N-atomi (välisija)','N atom (interstitial)','N-Atom (Zwischengitterplatz)'),sw:1});
+  if(X.sites&&['bcc','fcc','bct'].includes(X.kind))it.push({c:cssv('--acc'),l:tr('Oktaedrinen välisija','Octahedral interstitial site','Oktaederlücke'),sw:1});if(ghost)it.push({c:cssv('--c2'),l:tr('Alkuperäinen pkk-koppi (austeniitti)','Parent fcc cell (austenite)','Ausgangszelle kfz (Austenit)'),dash:1});
   legend($('#legX'),it);
   const A='Å';let h=`<h4>${esc(L2(XS[X.kind].n))}</h4>`;const p=(a,b)=>h+=`<p><span class="mnote">${a}</span><br><span class="big">${b}</span></p>`;
-  if(X.kind==='bcc'){p(tr('Hilaparametri a (20 °C)','Lattice parameter a (20 °C)'),`${nf(latt.aAlpha,3)} ${A}`);p(tr('Atomeja kopissa / koordinaatioluku / täyttöaste','Atoms per cell / coordination number / packing factor'),'2 / 8 / 0,68');
-    p(tr('Hiilen liukoisuus enintään','Maximum carbon solubility'),'0,022 % (727 °C)');
-    h+=`<p>${tr('Ferriitin oktaedriset välisijat ovat pieniä (säde noin 0,19 Å, hiiliatomin säde 0,77 Å), joten hiili liukenee siihen erittäin niukasti. Liukenematon hiili on sementiittinä Fe₃C perliitissä tai karbideina.','Ferrite\'s octahedral interstitial sites are small (radius about 0.19 Å, carbon atom radius 0.77 Å), so carbon dissolves very sparingly. Undissolved carbon exists as cementite Fe₃C in pearlite or as carbides.')}</p>`;}
-  if(X.kind==='fcc'){p(tr('Hilaparametri a (huoneenlämpötilaan ekstrapoloitu)','Lattice parameter a (extrapolated to room temperature)'),`${nf(latt.aGamma(C),3)} ${A}`);p(tr('Atomeja kopissa / koordinaatioluku / täyttöaste','Atoms per cell / coordination number / packing factor'),'4 / 12 / 0,74');
-    p(tr('Hiilen liukoisuus enintään','Maximum carbon solubility'),'2,11 % (1148 °C)');
-    h+=`<p>${tr('Austeniitin oktaedrinen välisija on suurempi (säde noin 0,52 Å), joten hiili liukenee siihen hyvin. Induktiokarkaisussa pinta kuumennetaan sekunneissa austeniitiksi, ja karbidien hiilen on ehdittävä liueta ja tasoittua: siksi nopea kuumennus tarvitsee korkeamman lämpötilan (noin Ac3 + 100 °C) kuin uunikarkaisu.','Austenite\'s octahedral site is larger (radius about 0.52 Å), so carbon dissolves readily. In induction hardening the surface becomes austenite within seconds, and carbon from carbides must dissolve and homogenize: this is why fast heating needs a higher temperature (about Ac3 + 100 °C) than furnace hardening.')}</p>`;}
-  if(X.kind==='bct'||X.kind==='bain'){const m=latt.bct(C);p(tr('Martensiitin hilaparametrit a / c','Martensite lattice parameters a / c'),`${nf(m.a,3)} / ${nf(m.c,3)} ${A}`);p('c/a',nf(m.c/m.a,4));
-    if(X.kind==='bain'){p(tr('Kopin c/a tällä hetkellä','Current cell c/a'),nf(cd.ca,3));p(tr('Muutos pkk → tkt','Change fcc → bct'),`c: −${nf((1-m.c/latt.aGamma(C))*100,0)} %, a: +${nf((m.a/(latt.aGamma(C)/Math.SQRT2)-1)*100,0)} %`);}
-    h+=`<p>${tr('Nopeassa sammutuksessa hiili ei ehdi diffundoitua pois. Pkk-hila muuttuu leikkautumalla tilakeskiseksi (Bainin muunnos), ja hiiliatomit jäävät z-suuntaisiin oktaedrisiin välisijoihin. Ne venyttävät hilaa c-suunnassa: c/a ≈ 1 + 0,045·C (p-%). Hilan jännitys estää dislokaatioiden liikettä, mikä tekee martensiitista kovan. Kovuus riippuu lähes yksinomaan hiilipitoisuudesta.','On rapid quenching carbon has no time to diffuse away. The fcc lattice transforms by shear into a body-centred one (Bain transformation), and the carbon atoms remain in z-oriented octahedral sites. They stretch the lattice in the c direction: c/a ≈ 1 + 0.045·C (wt-%). The lattice strain hinders dislocation motion, which makes martensite hard. Hardness depends almost entirely on carbon content.')}</p>`;
-    p(tr('100 % martensiitin kovuus tällä hiilellä','Hardness of 100 % martensite at this carbon'),`${nf(hrcM100(C),1)} HRC`);}
-  if(X.kind==='gp'){p(tr('Hilaparametri a','Lattice parameter a'),`${nf(latt.aGp,3)} ${A}`);h+=`<p>${tr("γ′-Fe₄N: rautaatomit pkk-järjestyksessä, typpi kopin keskellä (yksi neljäsosa oktaedrisista välisijoista). Muodostuu yhdistekerroksen sisäosaan nitrauksessa, typpeä noin 5,9 %.","γ′-Fe₄N: iron atoms in an fcc arrangement, nitrogen at the cell centre (one quarter of the octahedral sites). Forms in the inner part of the compound layer during nitriding, nitrogen about 5.9 %.")}</p>`;}
-  if(X.kind==='eps'){p(tr('Hilaparametrit a / c (likiarvo, riippuu typpipitoisuudesta)','Lattice parameters a / c (approximate, depend on nitrogen content)'),`${nf(latt.eps.a,2)} / ${nf(latt.eps.c,2)} ${A}`);
-    h+=`<p>${tr('ε-Fe₂₋₃(N,C): rauta tiiviissä heksagonaalisessa järjestyksessä, typpi ja hiili oktaedrisissa välisijoissa. Nitrohiiletyksessä hiili vakauttaa ε-faasia, joten yhdistekerros on pääosin ε:a. Se on kova (noin 700–1000 HV), kulumista ja korroosiota kestävä. Jälkihapetus muodostaa sen päälle ohuen mustan magnetiittikerroksen Fe₃O₄, josta nimi mustanitraus.','ε-Fe₂₋₃(N,C): iron in a close-packed hexagonal arrangement, nitrogen and carbon in octahedral sites. In nitrocarburizing carbon stabilizes the ε phase, so the compound layer is mostly ε. It is hard (about 700–1000 HV) and resists wear and corrosion. Post-oxidation forms a thin black magnetite layer Fe₃O₄ on top of it, hence the name black nitriding.')}</p>`;}
+  if(X.kind==='bcc'){p(tr('Hilaparametri a (20 °C)','Lattice parameter a (20 °C)','Gitterkonstante a (20 °C)'),`${nf(latt.aAlpha,3)} ${A}`);p(tr('Atomeja kopissa / koordinaatioluku / täyttöaste','Atoms per cell / coordination number / packing factor','Atome je Zelle / Koordinationszahl / Packungsdichte'),'2 / 8 / 0,68');
+    p(tr('Hiilen liukoisuus enintään','Maximum carbon solubility','Maximale Kohlenstofflöslichkeit'),'0,022 % (727 °C)');
+    h+=`<p>${tr('Ferriitin oktaedriset välisijat ovat pieniä (säde noin 0,19 Å, hiiliatomin säde 0,77 Å), joten hiili liukenee siihen erittäin niukasti. Liukenematon hiili on sementiittinä Fe₃C perliitissä tai karbideina.','Ferrite\'s octahedral interstitial sites are small (radius about 0.19 Å, carbon atom radius 0.77 Å), so carbon dissolves very sparingly. Undissolved carbon exists as cementite Fe₃C in pearlite or as carbides.','Die Oktaederlücken des Ferrits sind klein (Radius etwa 0,19 Å, Radius des Kohlenstoffatoms 0,77 Å), daher löst sich Kohlenstoff nur sehr wenig. Nicht gelöster Kohlenstoff liegt als Zementit Fe₃C im Perlit oder als Karbid vor.')}</p>`;}
+  if(X.kind==='fcc'){p(tr('Hilaparametri a (huoneenlämpötilaan ekstrapoloitu)','Lattice parameter a (extrapolated to room temperature)','Gitterkonstante a (auf Raumtemperatur extrapoliert)'),`${nf(latt.aGamma(C),3)} ${A}`);p(tr('Atomeja kopissa / koordinaatioluku / täyttöaste','Atoms per cell / coordination number / packing factor','Atome je Zelle / Koordinationszahl / Packungsdichte'),'4 / 12 / 0,74');
+    p(tr('Hiilen liukoisuus enintään','Maximum carbon solubility','Maximale Kohlenstofflöslichkeit'),'2,11 % (1148 °C)');
+    h+=`<p>${tr('Austeniitin oktaedrinen välisija on suurempi (säde noin 0,52 Å), joten hiili liukenee siihen hyvin. Induktiokarkaisussa pinta kuumennetaan sekunneissa austeniitiksi, ja karbidien hiilen on ehdittävä liueta ja tasoittua: siksi nopea kuumennus tarvitsee korkeamman lämpötilan (noin Ac3 + 100 °C) kuin uunikarkaisu.','Austenite\'s octahedral site is larger (radius about 0.52 Å), so carbon dissolves readily. In induction hardening the surface becomes austenite within seconds, and carbon from carbides must dissolve and homogenize: this is why fast heating needs a higher temperature (about Ac3 + 100 °C) than furnace hardening.','Die Oktaederlücke des Austenits ist größer (Radius etwa 0,52 Å), daher löst sich Kohlenstoff leicht. Beim Induktionshärten wird die Oberfläche innerhalb von Sekunden austenitisch, und der Kohlenstoff aus den Karbiden muss in Lösung gehen und sich ausgleichen: Deshalb braucht schnelles Erwärmen eine höhere Temperatur (etwa Ac3 + 100 °C) als das Härten im Ofen.')}</p>`;}
+  if(X.kind==='bct'||X.kind==='bain'){const m=latt.bct(C);p(tr('Martensiitin hilaparametrit a / c','Martensite lattice parameters a / c','Gitterkonstanten des Martensits a / c'),`${nf(m.a,3)} / ${nf(m.c,3)} ${A}`);p('c/a',nf(m.c/m.a,4));
+    if(X.kind==='bain'){p(tr('Kopin c/a tällä hetkellä','Current cell c/a','Aktuelle Zelle c/a'),nf(cd.ca,3));p(tr('Muutos pkk → tkt','Change fcc → bct','Änderung kfz → trz'),`c: −${nf((1-m.c/latt.aGamma(C))*100,0)} %, a: +${nf((m.a/(latt.aGamma(C)/Math.SQRT2)-1)*100,0)} %`);}
+    h+=`<p>${tr('Nopeassa sammutuksessa hiili ei ehdi diffundoitua pois. Pkk-hila muuttuu leikkautumalla tilakeskiseksi (Bainin muunnos), ja hiiliatomit jäävät z-suuntaisiin oktaedrisiin välisijoihin. Ne venyttävät hilaa c-suunnassa: c/a ≈ 1 + 0,045·C (p-%). Hilan jännitys estää dislokaatioiden liikettä, mikä tekee martensiitista kovan. Kovuus riippuu lähes yksinomaan hiilipitoisuudesta.','On rapid quenching carbon has no time to diffuse away. The fcc lattice transforms by shear into a body-centred one (Bain transformation), and the carbon atoms remain in z-oriented octahedral sites. They stretch the lattice in the c direction: c/a ≈ 1 + 0.045·C (wt-%). The lattice strain hinders dislocation motion, which makes martensite hard. Hardness depends almost entirely on carbon content.','Beim schnellen Abschrecken hat der Kohlenstoff keine Zeit wegzudiffundieren. Das kfz-Gitter klappt durch Scherung in ein raumzentriertes um (Bain-Umwandlung), und die Kohlenstoffatome bleiben in z-orientierten Oktaederlücken. Sie dehnen das Gitter in c-Richtung: c/a ≈ 1 + 0,045·C (Massen-%). Die Gitterverzerrung behindert die Versetzungsbewegung, wodurch der Martensit hart wird. Die Härte hängt fast nur vom Kohlenstoffgehalt ab.')}</p>`;
+    p(tr('100 % martensiitin kovuus tällä hiilellä','Hardness of 100 % martensite at this carbon','Härte von 100 % Martensit bei diesem Kohlenstoffgehalt'),`${nf(hrcM100(C),1)} HRC`);}
+  if(X.kind==='gp'){p(tr('Hilaparametri a','Lattice parameter a','Gitterkonstante a'),`${nf(latt.aGp,3)} ${A}`);h+=`<p>${tr("γ′-Fe₄N: rautaatomit pkk-järjestyksessä, typpi kopin keskellä (yksi neljäsosa oktaedrisista välisijoista). Muodostuu yhdistekerroksen sisäosaan nitrauksessa, typpeä noin 5,9 %.","γ′-Fe₄N: iron atoms in an fcc arrangement, nitrogen at the cell centre (one quarter of the octahedral sites). Forms in the inner part of the compound layer during nitriding, nitrogen about 5.9 %.","γ′-Fe₄N: Eisenatome in kfz-Anordnung, Stickstoff in der Zellmitte (ein Viertel der Oktaederlücken). Bildet sich beim Nitrieren im inneren Teil der Verbindungsschicht, Stickstoff etwa 5,9 %.")}</p>`;}
+  if(X.kind==='eps'){p(tr('Hilaparametrit a / c (likiarvo, riippuu typpipitoisuudesta)','Lattice parameters a / c (approximate, depend on nitrogen content)','Gitterkonstanten a / c (Näherung, abhängig vom Stickstoffgehalt)'),`${nf(latt.eps.a,2)} / ${nf(latt.eps.c,2)} ${A}`);
+    h+=`<p>${tr('ε-Fe₂₋₃(N,C): rauta tiiviissä heksagonaalisessa järjestyksessä, typpi ja hiili oktaedrisissa välisijoissa. Nitrohiiletyksessä hiili vakauttaa ε-faasia, joten yhdistekerros on pääosin ε:a. Se on kova (noin 700–1000 HV), kulumista ja korroosiota kestävä. Jälkihapetus muodostaa sen päälle ohuen mustan magnetiittikerroksen Fe₃O₄, josta nimi mustanitraus.','ε-Fe₂₋₃(N,C): iron in a close-packed hexagonal arrangement, nitrogen and carbon in octahedral sites. In nitrocarburizing carbon stabilizes the ε phase, so the compound layer is mostly ε. It is hard (about 700–1000 HV) and resists wear and corrosion. Post-oxidation forms a thin black magnetite layer Fe₃O₄ on top of it, hence the name black nitriding.','ε-Fe₂₋₃(N,C): Eisen in hexagonal dichtester Packung, Stickstoff und Kohlenstoff in Oktaederlücken. Beim Nitrocarburieren stabilisiert der Kohlenstoff die ε-Phase, daher besteht die Verbindungsschicht überwiegend aus ε. Sie ist hart (etwa 700–1000 HV) und verschleiß- und korrosionsbeständig. Die Nachoxidation bildet darauf eine dünne schwarze Magnetitschicht Fe₃O₄, daher die schwarze Oberfläche.')}</p>`;}
   $('#xsInfo').innerHTML=h;}
 function bindDrag(cv){let d=null;cv.style.touchAction='none';cv.addEventListener('pointerdown',e=>{d={x:e.clientX,y:e.clientY};cv.setPointerCapture(e.pointerId);});
   cv.addEventListener('pointermove',e=>{if(!d)return;view3.yaw+=(e.clientX-d.x)*0.01;view3.pitch=clamp(view3.pitch+(e.clientY-d.y)*0.01,-1.4,1.4);d={x:e.clientX,y:e.clientY};renderXS();});
@@ -794,18 +796,18 @@ function bindDrag(cv){let d=null;cv.style.touchAction='none';cv.addEventListener
 
 /* ---------- Fe–C ---------- */
 function renderFEC(){const F=st.fec;drawFeC($('#cvF'),F);const r=feC(F.C,F.T);const rows=[];const R=(a,b)=>rows.push(`<tr><td>${a}</td><td>${b}</td></tr>`);
-  const reg={g:tr('austeniitti γ','austenite γ'),a:tr('ferriitti α','ferrite α'),ag:'α + γ',gc:'γ + Fe₃C',ac:'α + Fe₃C'}[r.reg];
-  R(tr('Piste','Point'),`${nf(F.C,2)} % C, ${nf(F.T,0)} °C`);R(tr('Alue','Region'),reg);
-  for(const p of r.ph)R(tr(`Faasi ${p.n}: koostumus / osuus`,`Phase ${p.n}: composition / fraction`),`${nf(p.x,p.x<0.1?3:2)} % C / ${nf(p.f*100,1)} %`);
-  if(r.micro)for(const m of r.micro)R(tr('Rakenneosa: ','Constituent: ')+({α_pro:tr('esieutektoidinen ferriitti','proeutectoid ferrite'),P:tr('perliitti','pearlite'),α:tr('ferriitti','ferrite'),'Fe₃C_pro':tr('esieutektoidinen sementiitti','proeutectoid cementite')}[m.n]),nf(m.f*100,1)+' %');
+  const reg={g:tr('austeniitti γ','austenite γ','Austenit γ'),a:tr('ferriitti α','ferrite α','Ferrit α'),ag:'α + γ',gc:'γ + Fe₃C',ac:'α + Fe₃C'}[r.reg];
+  R(tr('Piste','Point','Punkt'),`${nf(F.C,2)} % C, ${nf(F.T,0)} °C`);R(tr('Alue','Region','Gebiet'),reg);
+  for(const p of r.ph)R(tr(`Faasi ${p.n}: koostumus / osuus`,`Phase ${p.n}: composition / fraction`,`Phase ${p.n}: Zusammensetzung / Anteil`),`${nf(p.x,p.x<0.1?3:2)} % C / ${nf(p.f*100,1)} %`);
+  if(r.micro)for(const m of r.micro)R(tr('Rakenneosa: ','Constituent: ','Gefügebestandteil: ')+({α_pro:tr('esieutektoidinen ferriitti','proeutectoid ferrite','voreutektoider Ferrit'),P:tr('perliitti','pearlite','Perlit'),α:tr('ferriitti','ferrite','Ferrit'),'Fe₃C_pro':tr('esieutektoidinen sementiitti','proeutectoid cementite','voreutektoider Zementit')}[m.n]),nf(m.f*100,1)+' %');
   R('A3 / Acm / A1',`${F.C<CS?nf(a3(F.C),0):'–'} / ${F.C>CS?nf(acm(F.C),0):'–'} / ${TA1} °C`);
   $('#fecRes').innerHTML=rows.join('');
   /* mikrorakenne hitaassa jäähtymisessä huoneenlämpöön */
   const C=F.C;let fr;if(r.reg==='g')fr={A:1};else if(r.reg==='ag'){fr={F:r.ph[0].f,A:r.ph[1].f};}else if(r.reg==='gc'){fr={A:r.ph[0].f,C:r.ph[1].f};}else if(r.reg==='a')fr={F:1};
   else{const m=r.micro;fr={};for(const q of m){const k=q.n==='P'?'P':q.n==='Fe₃C_pro'?'C':'F';fr[k]=(fr[k]||0)+q.f;}}
   drawMicro($('#cvFM'),()=>fr,{grain:16,seed:11});
-  let t;if(r.reg==='g'||r.reg==='ag'||r.reg==='gc')t=tr('Tässä lämpötilassa rakenteessa on austeniittia (vaalea, kuvassa tasainen). Hitaasti jäähdytettäessä austeniitti muuttuu A1:ssä (727 °C) perliitiksi.','At this temperature the structure contains austenite (light, plain in the image). On slow cooling austenite transforms to pearlite at A1 (727 °C).');
-  else t=tr('Hitaasti jäähdytetty tasapainorakenne: perliitti on ferriitin ja sementiitin lamellirakenne (tumma, raidallinen). Nopea sammutus austeniittialueelta tuottaa sen sijaan martensiittia: katso Lämpökäsittely-välilehti.','Slowly cooled equilibrium structure: pearlite is a lamellar structure of ferrite and cementite (dark, striped). Rapid quenching from the austenite region produces martensite instead: see the Heat treatment tab.');
+  let t;if(r.reg==='g'||r.reg==='ag'||r.reg==='gc')t=tr('Tässä lämpötilassa rakenteessa on austeniittia (vaalea, kuvassa tasainen). Hitaasti jäähdytettäessä austeniitti muuttuu A1:ssä (727 °C) perliitiksi.','At this temperature the structure contains austenite (light, plain in the image). On slow cooling austenite transforms to pearlite at A1 (727 °C).','Bei dieser Temperatur enthält das Gefüge Austenit (im Bild hell, ohne Struktur). Bei langsamer Abkühlung wandelt Austenit bei A1 (727 °C) in Perlit um.');
+  else t=tr('Hitaasti jäähdytetty tasapainorakenne: perliitti on ferriitin ja sementiitin lamellirakenne (tumma, raidallinen). Nopea sammutus austeniittialueelta tuottaa sen sijaan martensiittia: katso Lämpökäsittely-välilehti.','Slowly cooled equilibrium structure: pearlite is a lamellar structure of ferrite and cementite (dark, striped). Rapid quenching from the austenite region produces martensite instead: see the Heat treatment tab.','Langsam abgekühltes Gleichgewichtsgefüge: Perlit ist ein lamellares Gefüge aus Ferrit und Zementit (dunkel, gestreift). Schnelles Abschrecken aus dem Austenitgebiet ergibt stattdessen Martensit: siehe Registerkarte Wärmebehandlung.');
   $('#fecTxt').textContent=t;}
 
 /* ---------- vetokoe ---------- */
@@ -818,30 +820,30 @@ function renderTT(){if(!curTT){runTT(false);return;}const {c,m,ev}=curTT;const c
   let cm=null;if(st.tt.cmp&&MATS[st.tt.cmp]){cm=tensileCurve(MATS[st.tt.cmp]);series.unshift({x:cm.pts.map(p=>p[0]*100),y:cm.pts.map(p=>p[1]),c:mut,dash:[5,4],w:1.6});}
   const xmax=Math.max(c.ef,cm?cm.ef:0)*100*1.08+0.5,ymax=Math.max(ev.Rm,cm?Math.max(...cm.pts.map(p=>p[1])):0)*1.15;
   const done=curTT.u>=1;const hl=done?[{y:ev.Rm,l:'Rm '+nf(ev.Rm,0)+' MPa',c:c2}]:[];if(done&&ev.Rp&&!m.ReH)hl.push({y:ev.Rp,l:'Rp0,2 '+nf(ev.Rp,0)+' MPa',c:mut});if(done&&m.ReH)hl.push({y:ev.ReH,l:'ReH '+nf(ev.ReH,0)+' MPa',c:mut});
-  plotXY($('#cvS'),{x:[0,xmax],y:[0,ymax],xl:tr('Venymä ε (%)','Strain ε (%)'),yl:tr('Jännitys R (MPa)','Stress R (MPa)'),series,hlines:hl,
+  plotXY($('#cvS'),{x:[0,xmax],y:[0,ymax],xl:tr('Venymä ε (%)','Strain ε (%)','Dehnung ε (%)'),yl:tr('Jännitys R (MPa)','Stress R (MPa)','Spannung R (MPa)'),series,hlines:hl,
     after:(g,X,Y)=>{const last=sub[sub.length-1];g.fillStyle=c1;g.beginPath();g.arc(X(last[0]*100),Y(last[1]),4,0,7);g.fill();}});
   legend($('#legS'),[{c:c1,l:L2(m.n)}].concat(cm?[{c:mut,l:L2(MATS[st.tt.cmp].n),dash:1}]:[]));
   const last=sub[sub.length-1];const e=last[0];const neck=m.brittle?0:clamp((e-m.Ag/100)/Math.max(1e-6,(m.A-m.Ag)/100),0,1);
   drawSpecimen($('#cvB'),e,m,neck,done);
   const rows=[];const R=(a,b)=>rows.push(`<tr><td>${a}</td><td>${b}</td></tr>`);
-  if(done){if(m.ReH){R(tr('Ylempi myötöraja ReH','Upper yield strength ReH'),nf(ev.ReH,0)+' MPa');R(tr('Alempi myötöraja ReL','Lower yield strength ReL'),nf(ev.ReL,0)+' MPa');}
-    else if(!m.brittle)R(tr('Venymisraja Rp0,2','Proof strength Rp0.2'),nf(ev.Rp,0)+' MPa');
-    R(tr('Murtolujuus Rm','Tensile strength Rm'),nf(ev.Rm,0)+' MPa');if(!m.brittle)R(tr('Tasavenymä Ag','Uniform elongation Ag'),nf(ev.Ag,1)+' %');R(tr('Murtovenymä A','Elongation after fracture A'),nf(ev.A,1)+' %');
-    R(tr('Murtokurouma Z','Reduction of area Z'),nf(m.Z,0)+' %');R(tr('Kimmomoduuli E','Elastic modulus E'),nf(ev.E,0)+' GPa');
-    if(!m.brittle)R(tr('Myötösuhde','Yield ratio'),nf((m.ReH?ev.ReL:ev.Rp)/ev.Rm,2));
-    if(m.min)R(tr('Vaatimus ','Requirement ')+(m.std||''),esc(m.min));
-    if(st.tt.mat==='HT'&&HT)R(tr('Lähde','Source'),tr(`Lämpökäsittely-välilehti: ${HT.steel.name}, ${nf(m.hv,0)} HV ${nf(m.dep,1)} mm syvyydellä`,`Heat treatment tab: ${HT.steel.name}, ${nf(m.hv,0)} HV at ${nf(m.dep,1)} mm depth`));}
-  else R(tr('Koe käynnissä','Test running'),'ε = '+nf(e*100,1)+' %');
+  if(done){if(m.ReH){R(tr('Ylempi myötöraja ReH','Upper yield strength ReH','Obere Streckgrenze ReH'),nf(ev.ReH,0)+' MPa');R(tr('Alempi myötöraja ReL','Lower yield strength ReL','Untere Streckgrenze ReL'),nf(ev.ReL,0)+' MPa');}
+    else if(!m.brittle)R(tr('Venymisraja Rp0,2','Proof strength Rp0.2','Dehngrenze Rp0,2'),nf(ev.Rp,0)+' MPa');
+    R(tr('Murtolujuus Rm','Tensile strength Rm','Zugfestigkeit Rm'),nf(ev.Rm,0)+' MPa');if(!m.brittle)R(tr('Tasavenymä Ag','Uniform elongation Ag','Gleichmaßdehnung Ag'),nf(ev.Ag,1)+' %');R(tr('Murtovenymä A','Elongation after fracture A','Bruchdehnung A'),nf(ev.A,1)+' %');
+    R(tr('Murtokurouma Z','Reduction of area Z','Brucheinschnürung Z'),nf(m.Z,0)+' %');R(tr('Kimmomoduuli E','Elastic modulus E','Elastizitätsmodul E'),nf(ev.E,0)+' GPa');
+    if(!m.brittle)R(tr('Myötösuhde','Yield ratio','Streckgrenzenverhältnis'),nf((m.ReH?ev.ReL:ev.Rp)/ev.Rm,2));
+    if(m.min)R(tr('Vaatimus ','Requirement ','Anforderung ')+(m.std||''),esc(m.min));
+    if(st.tt.mat==='HT'&&HT)R(tr('Lähde','Source','Quelle'),tr(`Lämpökäsittely-välilehti: ${HT.steel.name}, ${nf(m.hv,0)} HV ${nf(m.dep,1)} mm syvyydellä`,`Heat treatment tab: ${HT.steel.name}, ${nf(m.hv,0)} HV at ${nf(m.dep,1)} mm depth`,`Registerkarte Wärmebehandlung: ${HT.steel.name}, ${nf(m.hv,0)} HV in ${nf(m.dep,1)} mm Tiefe`));}
+  else R(tr('Koe käynnissä','Test running','Versuch läuft'),'ε = '+nf(e*100,1)+' %');
   $('#ttRes').innerHTML=rows.join('');
-  const hv=st.conv.hv;const co=$('#convOut');if(co)co.innerHTML=`<p>${hv2hrc(hv)?nf(hv2hrc(hv),1)+' HRC':tr('alle 20 HRC','below 20 HRC')} · ${nf(hv2hb(hv),0)} HB · Rm ≈ ${nf(hv2rm(hv),0)} MPa</p>`;}
+  const hv=st.conv.hv;const co=$('#convOut');if(co)co.innerHTML=`<p>${hv2hrc(hv)?nf(hv2hrc(hv),1)+' HRC':tr('alle 20 HRC','below 20 HRC','unter 20 HRC')} · ${nf(hv2hb(hv),0)} HB · Rm ≈ ${nf(hv2rm(hv),0)} MPa</p>`;}
 
 /* ---------- kieli ---------- */
 function applyLang(){document.documentElement.lang=lang;
-  document.querySelectorAll('[data-en]').forEach(el=>{if(el.dataset.fi==null)el.dataset.fi=el.textContent;el.textContent=lang==='en'?el.dataset.en:el.dataset.fi;});
-  document.querySelectorAll('[data-en-aria]').forEach(el=>{if(el.dataset.fiAria==null)el.dataset.fiAria=el.getAttribute('aria-label');el.setAttribute('aria-label',lang==='en'?el.dataset.enAria:el.dataset.fiAria);});
+  document.querySelectorAll('[data-en]').forEach(el=>{if(el.dataset.fi==null)el.dataset.fi=el.textContent;el.textContent=lang==='en'?el.dataset.en:lang==='de'?(el.dataset.de??el.dataset.en):el.dataset.fi;});
+  document.querySelectorAll('[data-en-aria]').forEach(el=>{if(el.dataset.fiAria==null)el.dataset.fiAria=el.getAttribute('aria-label');el.setAttribute('aria-label',lang==='en'?el.dataset.enAria:lang==='de'?(el.dataset.deAria??el.dataset.enAria):el.dataset.fiAria);});
   document.querySelectorAll('.langsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lang===lang)));
-  $('#manualLink').href='https://jipirtti.github.io/Materiaalisimulaattori/docs/kayttoohje.html';}
-function setLang(l){if(l!=='fi'&&l!=='en')return false;lang=l;try{localStorage.setItem('matsim-lang',l);}catch(e){}applyLang();buildCtl();render();if(window.SimPalaute&&SimPalaute.relabel)SimPalaute.relabel();return true;}
+  $('#manualLink').href='https://jipirtti.github.io/Materiaalisimulaattori/docs/'+({fi:'kayttoohje',en:'user-manual',de:'bedienungsanleitung'})[lang]+'.html';}
+function setLang(l){if(!LANGS.includes(l))return false;lang=l;try{localStorage.setItem('matsim-lang',l);}catch(e){}applyLang();buildCtl();render();if(window.SimPalaute&&SimPalaute.relabel)SimPalaute.relabel();return true;}
 
 /* ---------- ohje ---------- */
 function openHelp(){const m=$('#modal'),b=$('#mbox');
@@ -864,8 +866,17 @@ function openHelp(){const m=$('#modal'),b=$('#mbox');
 <h3>Crystal structure</h3><p>Unit cells of ferrite, austenite, martensite and nitrides. The Bain transformation shows how fcc austenite shears into tetragonal martensite.</p>
 <h3>Fe–C diagram</h3><p>Choose a carbon content and temperature: the lever rule gives the phase compositions and fractions.</p>
 <h3>Tensile test</h3><p>Stress–strain curve with EN ISO 6892-1 quantities. Choose <i>Heat treatment result</i> to see the strength of your own heat treatment.</p>
-<h3>Model limits</h3><p>Results are approximations for teaching. The models and their validation are described in VALIDOINTI.md and the user manual.</p>`)+
-  `<p class="mcopy">${tr('Juho Pirttilahti, Seinäjoen ammattikorkeakoulu (SEAMK), 2026. Suunnittelu, sisältö ja validointi: Juho Pirttilahti. Ohjelmakoodi toteutettu tekoälyavusteisesti (Claude, Anthropic).','Juho Pirttilahti, Seinäjoki University of Applied Sciences (SEAMK), 2026. Design, content and validation: Juho Pirttilahti. Program code implemented with AI assistance (Claude, Anthropic).')} <a href="https://creativecommons.org/licenses/by/4.0/deed.${lang}" target="_blank" rel="noopener license">CC BY 4.0</a>.</p><div class="mrow"><button class="btn pri" id="mClose" type="button">${tr('Sulje','Close')}</button></div>`;
+<h3>Model limits</h3><p>Results are approximations for teaching. The models and their validation are described in VALIDOINTI.md and the user manual.</p>`,`<h2>Werkstoff-Simulator</h2>
+<p>Der Simulator zeigt, wie eine Wärmebehandlung Gefüge, Härte und Festigkeit von Stahl verändert, was im Kristallgitter geschieht und wie sich verschiedene Werkstoffe im Zugversuch verhalten.</p>
+<h3>Wärmebehandlung</h3><p><b>Vergüten:</b> Ein Rundstab wird austenitisiert, abgeschreckt und angelassen. Ein Wärmeleitungsmodell berechnet in jeder Tiefe die Abkühlzeit t8/5 (800 → 500 °C). Die Härte wird aus dem Jominy-Streuband des Stahls bei dem Stirnabstand mit derselben Abkühlgeschwindigkeit abgelesen. Das Anlassen nutzt den Hollomon–Jaffe-Parameter und das Anlassschaubild des Datenblatts.</p>
+<p><b>Induktionshärten:</b> Die Randschicht wird durch Wirbelströme erwärmt. Die Leistung dringt bis zur Tiefe δ = 503·√(ρ/(μr·f)) ein; oberhalb der Curie-Temperatur (770 °C) ist μr = 1, sodass die Eindringtiefe zunimmt. Die Härteschicht (SHD) wird über die Grenzhärte 0,8 × Oberflächenhärte bestimmt.</p>
+<p><b>Nitrocarburieren und Nachoxidation:</b> Bei 560–590 °C diffundieren Stickstoff und Kohlenstoff in den Ferrit. An der Oberfläche wächst eine Verbindungsschicht (ε + γ′), darunter liegt die Diffusionsschicht, in der Chrom- und Molybdännitride den Stahl härten. Die Nachoxidation färbt die Oberfläche schwarz (Fe₃O₄).</p>
+<p>Klicken Sie auf den Härteverlauf oder das Gefügebild, um die Phasen in der gewählten Tiefe zu sehen.</p>
+<h3>Kristallstruktur</h3><p>Elementarzellen von Ferrit, Austenit, Martensit und Nitriden. Die Bain-Umwandlung zeigt, wie kfz-Austenit durch Scherung in tetragonalen Martensit übergeht.</p>
+<h3>Fe–C-Diagramm</h3><p>Wählen Sie Kohlenstoffgehalt und Temperatur: Das Hebelgesetz liefert Zusammensetzung und Anteile der Phasen.</p>
+<h3>Zugversuch</h3><p>Spannungs-Dehnungs-Kurve mit den Kennwerten nach DIN EN ISO 6892-1. Wählen Sie <i>Ergebnis der Wärmebehandlung</i>, um die Festigkeit Ihrer eigenen Wärmebehandlung zu sehen.</p>
+<h3>Grenzen des Modells</h3><p>Die Ergebnisse sind Näherungen für die Lehre. Die Modelle und ihre Validierung sind in VALIDOINTI.md und in der Bedienungsanleitung beschrieben.</p>`)+
+  `<p class="mcopy">${tr('Juho Pirttilahti, Seinäjoen ammattikorkeakoulu (SEAMK), 2026. Suunnittelu, sisältö ja validointi: Juho Pirttilahti. Ohjelmakoodi toteutettu tekoälyavusteisesti (Claude, Anthropic).','Juho Pirttilahti, Seinäjoki University of Applied Sciences (SEAMK), 2026. Design, content and validation: Juho Pirttilahti. Program code implemented with AI assistance (Claude, Anthropic).','Juho Pirttilahti, Fachhochschule Seinäjoki (SEAMK), 2026. Konzeption, Inhalt und Validierung: Juho Pirttilahti. Der Programmcode wurde KI-gestützt erstellt (Claude, Anthropic).')} <a href="https://creativecommons.org/licenses/by/4.0/deed.${lang}" target="_blank" rel="noopener license">CC BY 4.0</a>.</p><div class="mrow"><button class="btn pri" id="mClose" type="button">${tr('Sulje','Close','Schließen')}</button></div>`;
   m.classList.add('open');$('#mClose').focus();$('#mClose').addEventListener('click',()=>m.classList.remove('open'));}
 
 /* ---------- piirto ---------- */
@@ -966,6 +977,24 @@ const TX={
   mailNote:{fi:'Raportti kopioitiin myös leikepöydälle. Jos viestin teksti jäi vajaaksi, liitä raportti viestiin.',en:'The report was also copied to the clipboard. If the message text is incomplete, paste the report into it.'},
   mailShort:{fi:'Raportti on leikepöydällä: liitä se tähän viestiin (Ctrl+V).',en:'The report is on the clipboard: paste it into this message (Ctrl+V).'}
 };
+const TXDE={btn:'Feedback',btnTitle:'Fehler, physikalische Beobachtung oder Idee melden',h:'Feedback zum Simulator',
+  intro:'Das Feedback wird als Issue im GitHub-Repository des Simulators gespeichert, und die Lehrkraft prüft jeden Eintrag als Korrekturvorschlag.',
+  type:'Art des Feedbacks',t_fysiikka:'Physik entspricht nicht der Erwartung',t_virhe:'Fehler in der Oberfläche oder einer Funktion',t_ehdotus:'Verbesserungsvorschlag',
+  title:'Titel',titlePh:'Kurze Beschreibung in einer Zeile',
+  a_fysiikka:'Phänomen und Situation: Was haben Sie getan und was ist passiert?',a_virhe:'Was ist passiert?',a_ehdotus:'Worin besteht der Bedarf? Was können Studierende oder Lehrkräfte derzeit nicht tun?',
+  b_fysiikka:'Erwartetes Ergebnis und Begründung (Formel, Berechnung, Quelle oder Messung)',b_virhe:'Wie lässt sich der Fehler reproduzieren?',b_ehdotus:'Lösungsvorschlag (optional)',
+  tunnus:'Validierungs-ID (optional, z. B. V05)',piiriH:'Piiri JSON-muodossa',piiri:'Aktuelle Schaltung anhängen (empfohlen: der Fehler lässt sich genau reproduzieren)',
+  privacy:'Issues sind öffentlich. Bitte keine personenbezogenen Daten angeben. Zum Öffnen auf GitHub ist ein GitHub-Konto erforderlich; ohne Konto verwenden Sie „Bericht kopieren“ oder „Per E-Mail senden“.',
+  open:'Auf GitHub öffnen',copy:'Bericht kopieren',mail:'Per E-Mail senden',cancel:'Abbrechen',req:'Bitte mindestens ausfüllen: ',
+  copied:'Bericht in die Zwischenablage kopiert.',copyFail:'Kopieren fehlgeschlagen. Markieren Sie den Text unten und kopieren Sie ihn selbst.',
+  opened:'GitHub wurde in einem neuen Tab geöffnet. Prüfen Sie die Felder und klicken Sie auf Create / Submit new issue.',
+  bigCirc:'Die Schaltung passte nicht in den Link und wurde daher in die Zwischenablage kopiert. Fügen Sie sie auf GitHub in das Feld „Piiri JSON-muodossa“ ein (Strg+V).',
+  bigCircPh:'(Die Schaltung passte nicht in den Link. Sie befindet sich in der Zwischenablage: hier mit Strg+V einfügen.)',
+  bigAll:'Der Bericht war für den Link zu lang und wurde daher vollständig in die Zwischenablage kopiert. Fügen Sie ihn auf GitHub in das erste Feld ein.',
+  bigAllPh:'(Der Bericht befindet sich in der Zwischenablage: hier mit Strg+V einfügen.)',
+  mailNote:'Der Bericht wurde auch in die Zwischenablage kopiert. Falls der Nachrichtentext unvollständig ist, fügen Sie den Bericht in die Nachricht ein.',
+  mailShort:'Der Bericht befindet sich in der Zwischenablage: Fügen Sie ihn in diese Nachricht ein (Strg+V).'};
+for(const k in TXDE)if(TX[k])TX[k].de=TXDE[k];
 // GitHub-lomakepohjat ovat suomeksi; nämä otsikot ja kenttätunnukset vastaavat niitä.
 const KIND={
   fysiikka:{template:'1-fysiikka.yml',prefix:'[Fysiikka] ',a:'ilmio',b:'odotus',bReq:true,piiri:'piiri'},
@@ -974,8 +1003,8 @@ const KIND={
 };
 
 let C=null,root=null,btn=null,els={};
-const L=()=>{try{const l=C.api()&&C.api().lang();return l==='en'?'en':'fi';}catch(e){return 'fi';}};
-const t=k=>TX[k][L()];
+const L=()=>{try{const l=C.api()&&C.api().lang();return l==='en'||l==='de'?l:'fi';}catch(e){return 'fi';}};
+const t=k=>TX[k][L()]??TX[k].en;
 const safe=(f,d)=>{try{const v=f();return v===undefined?d:v;}catch(e){return d;}};
 
 function info(){
@@ -1082,8 +1111,8 @@ function onMail(){
 function relabel(){
   if(!root)return;
   const l=L();
-  root.querySelectorAll('[data-spl]').forEach(el=>{const k=el.dataset.spl;el.textContent=TX[k][l];});
-  root.querySelectorAll('[data-spl-ph]').forEach(el=>{el.placeholder=TX[el.dataset.splPh][l];});
+  root.querySelectorAll('[data-spl]').forEach(el=>{const k=el.dataset.spl;el.textContent=TX[k][l]??TX[k].en;});
+  root.querySelectorAll('[data-spl-ph]').forEach(el=>{el.placeholder=TX[el.dataset.splPh][l]??TX[el.dataset.splPh].en;});
   const kind=root.querySelector('input[name=spl-kind]:checked').value;
   els.aLbl.textContent=TX['a_'+kind][l];els.bLbl.textContent=TX['b_'+kind][l];
   els.tunnusRow.hidden=kind!=='fysiikka';
@@ -1096,7 +1125,7 @@ function close(){root.classList.remove('open');btn.focus();}
 function build(){
   btn=document.createElement('button');
   btn.type='button';btn.className='btn';btn.id='palauteBtn';
-  btn.dataset.en=TX.btn.en;btn.dataset.fi=TX.btn.fi;btn.dataset.enTitle=TX.btnTitle.en;btn.dataset.fiTitle=TX.btnTitle.fi;
+  btn.dataset.en=TX.btn.en;btn.dataset.fi=TX.btn.fi;btn.dataset.de=TX.btn.de;btn.dataset.enTitle=TX.btnTitle.en;btn.dataset.fiTitle=TX.btnTitle.fi;btn.dataset.deTitle=TX.btnTitle.de;
   btn.textContent=t('btn');btn.title=t('btnTitle');
   btn.addEventListener('click',open);
   const grps=document.querySelectorAll(C.paikka+' .grp');
@@ -1162,16 +1191,16 @@ window.SimPalaute={
   _limits:{URL_MAX,MAILTO_MAX}
 };
 })();
-SimPalaute.init({repo:'Jipirtti/Materiaalisimulaattori',nimi:{fi:'Materiaalisimulaattori',en:'Materials Simulator'},api:()=>window.MatSim,email:'juho.pirttilahti@seamk.fi',
-  tekstit:{btnTitle:{fi:'Ilmoita virheestä, materiaalitekniikan havainnosta tai kehitysideasta',en:'Report a bug, a materials observation or an idea'},
-    t_fysiikka:{fi:'Tulos ei vastaa odotusta (materiaalitekniikka)',en:'Result does not match expectation (materials)'},
-    a_fysiikka:{fi:'Tilanne ja tulos: mitkä asetukset ja mitä simulaattori näytti?',en:'Situation and result: which settings, and what did the simulator show?'},
-    b_fysiikka:{fi:'Odotettu tulos ja perustelu (tekninen kortti, standardi, kirjallisuus tai mittaus)',en:'Expected result and justification (datasheet, standard, literature or measurement)'},
-    tunnus:{fi:'Validointitunnus (valinnainen, esim. M04)',en:'Validation ID (optional, e.g. M04)'},
-    piiri:{fi:'Liitä nykyiset asetukset (suositus: tilanne voidaan toistaa täsmälleen)',en:'Attach the current settings (recommended: the situation can be reproduced exactly)'},
-    piiriH:{fi:'Asetukset JSON-muodossa',en:'Asetukset JSON-muodossa'},
-    bigCirc:{fi:'Asetukset eivät mahtuneet linkkiin, joten ne kopioitiin leikepöydälle. Liitä ne GitHubissa kenttään "Asetukset JSON-muodossa" (Ctrl+V).',en:'The settings did not fit in the link, so they were copied to the clipboard. Paste them on GitHub into the field "Asetukset JSON-muodossa" (Ctrl+V).'},
-    bigCircPh:{fi:'(Asetukset eivät mahtuneet linkkiin. Ne ovat leikepöydällä: liitä ne tähän Ctrl+V.)',en:'(The settings did not fit in the link. They are on the clipboard: paste them here with Ctrl+V.)'}},
+SimPalaute.init({repo:'Jipirtti/Materiaalisimulaattori',nimi:{fi:'Materiaalisimulaattori',en:'Materials Simulator',de:'Werkstoff-Simulator'},api:()=>window.MatSim,email:'juho.pirttilahti@seamk.fi',
+  tekstit:{btnTitle:{fi:'Ilmoita virheestä, materiaalitekniikan havainnosta tai kehitysideasta',en:'Report a bug, a materials observation or an idea',de:'Fehler, werkstofftechnische Beobachtung oder Verbesserungsidee melden'},
+    t_fysiikka:{fi:'Tulos ei vastaa odotusta (materiaalitekniikka)',en:'Result does not match expectation (materials)',de:'Ergebnis entspricht nicht der Erwartung (Werkstofftechnik)'},
+    a_fysiikka:{fi:'Tilanne ja tulos: mitkä asetukset ja mitä simulaattori näytti?',en:'Situation and result: which settings, and what did the simulator show?',de:'Situation und Ergebnis: Welche Einstellungen, und was hat der Simulator angezeigt?'},
+    b_fysiikka:{fi:'Odotettu tulos ja perustelu (tekninen kortti, standardi, kirjallisuus tai mittaus)',en:'Expected result and justification (datasheet, standard, literature or measurement)',de:'Erwartetes Ergebnis und Begründung (Datenblatt, Norm, Literatur oder Messung)'},
+    tunnus:{fi:'Validointitunnus (valinnainen, esim. M04)',en:'Validation ID (optional, e.g. M04)',de:'Validierungs-ID (optional, z. B. M04)'},
+    piiri:{fi:'Liitä nykyiset asetukset (suositus: tilanne voidaan toistaa täsmälleen)',en:'Attach the current settings (recommended: the situation can be reproduced exactly)',de:'Aktuelle Einstellungen anhängen (empfohlen: die Situation lässt sich genau reproduzieren)'},
+    piiriH:{fi:'Asetukset JSON-muodossa',en:'Asetukset JSON-muodossa',de:'Asetukset JSON-muodossa'},
+    bigCirc:{fi:'Asetukset eivät mahtuneet linkkiin, joten ne kopioitiin leikepöydälle. Liitä ne GitHubissa kenttään "Asetukset JSON-muodossa" (Ctrl+V).',en:'The settings did not fit in the link, so they were copied to the clipboard. Paste them on GitHub into the field "Asetukset JSON-muodossa" (Ctrl+V).',de:'Die Einstellungen passten nicht in den Link und wurden deshalb in die Zwischenablage kopiert. Fügen Sie sie auf GitHub in das Feld "Asetukset JSON-muodossa" ein (Strg+V).'},
+    bigCircPh:{fi:'(Asetukset eivät mahtuneet linkkiin. Ne ovat leikepöydällä: liitä ne tähän Ctrl+V.)',en:'(The settings did not fit in the link. They are on the clipboard: paste them here with Ctrl+V.)',de:'(Die Einstellungen passten nicht in den Link. Sie sind in der Zwischenablage: hier mit Strg+V einfügen.)'}},
   lajit:{fysiikka:{template:'1-materiaali.yml',prefix:'[Materiaali] '}}});
 </script>
 <script>
@@ -1189,19 +1218,20 @@ SimPalaute.init({repo:'Jipirtti/Materiaalisimulaattori',nimi:{fi:'Materiaalisimu
             nakyy:()=>bool} */
 (function(){
 'use strict';
-const T={btn:{fi:'Kopioi kuva',en:'Copy image'},
-  title:{fi:'Kopioi kaavio kuvana leikepöydälle (otsikko, selite ja lähdemerkintä mukana)',en:'Copy the chart to the clipboard as an image (with title, legend and source note)'},
-  ok:{fi:'Kuva kopioitu leikepöydälle',en:'Image copied to the clipboard'},
-  busy:{fi:'Kopioidaan…',en:'Copying…'},
-  fbH:{fi:'Kopioi kuva',en:'Copy the image'},
+const T={btn:{fi:'Kopioi kuva',en:'Copy image',de:'Bild kopieren'},
+  title:{fi:'Kopioi kaavio kuvana leikepöydälle (otsikko, selite ja lähdemerkintä mukana)',en:'Copy the chart to the clipboard as an image (with title, legend and source note)',de:'Diagramm als Bild in die Zwischenablage kopieren (mit Titel, Legende und Quellenangabe)'},
+  ok:{fi:'Kuva kopioitu leikepöydälle',en:'Image copied to the clipboard',de:'Bild in die Zwischenablage kopiert'},
+  busy:{fi:'Kopioidaan…',en:'Copying…',de:'Wird kopiert …'},
+  fbH:{fi:'Kopioi kuva',en:'Copy the image',de:'Bild kopieren'},
   fbP:{fi:'Selain ei sallinut kuvan kopiointia leikepöydälle. Napsauta kuvaa hiiren oikealla painikkeella (puhelimessa paina pitkään) ja valitse Kopioi kuva, tai tallenna kuva alla olevasta linkistä.',
-       en:'The browser did not allow copying the image to the clipboard. Right-click the image (long-press on a phone) and choose Copy image, or save it with the link below.'},
-  save:{fi:'Tallenna PNG-kuvana',en:'Save as PNG'},close:{fi:'Sulje',en:'Close'},
-  err:{fi:'Kuvan muodostaminen epäonnistui: ',en:'Creating the image failed: '},
-  empty:{fi:'Kaaviossa ei ole vielä mitään kopioitavaa.',en:'The chart has nothing to copy yet.'}};
+       en:'The browser did not allow copying the image to the clipboard. Right-click the image (long-press on a phone) and choose Copy image, or save it with the link below.',
+       de:'Der Browser hat das Kopieren in die Zwischenablage nicht erlaubt. Klicken Sie mit der rechten Maustaste auf das Bild (auf dem Smartphone lange drücken) und wählen Sie „Bild kopieren“, oder speichern Sie es über den Link unten.'},
+  save:{fi:'Tallenna PNG-kuvana',en:'Save as PNG',de:'Als PNG speichern'},close:{fi:'Sulje',en:'Close',de:'Schließen'},
+  err:{fi:'Kuvan muodostaminen epäonnistui: ',en:'Creating the image failed: ',de:'Das Bild konnte nicht erstellt werden: '},
+  empty:{fi:'Kaaviossa ei ole vielä mitään kopioitavaa.',en:'The chart has nothing to copy yet.',de:'Das Diagramm enthält noch nichts zum Kopieren.'}};
 let C=null,lastErr=null;
-const lang=()=>{try{const l=C&&C.api&&C.api()&&C.api().lang&&C.api().lang();if(l==='fi'||l==='en')return l;}catch(e){}return (document.documentElement.lang||'fi').slice(0,2)==='en'?'en':'fi';};
-const t=k=>T[k][lang()];
+const lang=()=>{try{const l=C&&C.api&&C.api()&&C.api().lang&&C.api().lang();if(l==='fi'||l==='en'||l==='de')return l;}catch(e){}const d=(document.documentElement.lang||'fi').slice(0,2);return d==='en'||d==='de'?d:'fi';};
+const t=k=>T[k][lang()]??T[k].en;
 const one=s=>typeof s==='function'?s():typeof s==='string'?document.querySelector(s):s;
 /* 'auto': lähin kaavion edellä oleva otsikko (h3/h4) samassa kortissa */
 function autoHead(o){let el=one(typeof o.kohde==='function'?null:o.kohde);while(el&&!(el.classList&&el.classList.contains('card'))){let p=el.previousElementSibling;
@@ -1276,7 +1306,7 @@ function capture(k){const o=C.kaaviot.find(x=>x.id===k);if(!o)throw new Error('k
 async function compose(cap){const S=cap.dpr,PAD=16,FOOT=11.5,TIT=17,LEG=13;const rows=cap.o.asettelu==='rivit';const LW=rows?190:0;
   for(const it of cap.items)if(it.svg){const sc=Math.min(S,5000/Math.max(it.w,it.h));it.img=await svgImg(it.svg,sc);it.sc=sc;}
   const d=new Date(),ds=lang()==='en'?d.toISOString().slice(0,10):d.getDate()+'.'+(d.getMonth()+1)+'.'+d.getFullYear();
-  const nimi=C.nimi[lang()]||C.nimi.fi,url=C.repo?'jipirtti.github.io/'+C.repo.split('/')[1]+'/':'';
+  const nimi=C.nimi[lang()]||C.nimi.en||C.nimi.fi,url=C.repo?'jipirtti.github.io/'+C.repo.split('/')[1]+'/':'';
   const foot=`${nimi} · Juho Pirttilahti, SEAMK · CC BY 4.0${url?' · '+url:''} · ${ds}`;
   const m=document.createElement('canvas').getContext('2d');m.font=FOOT+'px '+FONT;const footW=m.measureText(foot).width;
   m.font='600 '+TIT+'px '+FONT;const titW=cap.title?m.measureText(cap.title).width:0;
@@ -1355,7 +1385,7 @@ window.SimKuva={
   render,copy,ids:()=>C?C.kaaviot.map(o=>o.id):[],lastError:()=>lastErr};
 })();
 
-SimKuva.init({nimi:{fi:'Materiaalisimulaattori',en:'Materials Simulator'},repo:'Jipirtti/Materiaalisimulaattori',api:()=>window.MatSim,redraw:()=>window.MatSim.redraw(),
+SimKuva.init({nimi:{fi:'Materiaalisimulaattori',en:'Materials Simulator',de:'Werkstoff-Simulator'},repo:'Jipirtti/Materiaalisimulaattori',api:()=>window.MatSim,redraw:()=>window.MatSim.redraw(),
   kaaviot:[['lampotila','#cvT','#legT'],['kovuus','#cvH','#legH'],['mikrorakenne','#cvM',null],['jominy','#cvJ',null],['alkeiskoppi','#cvX','#legX'],
     ['fec','#cvF',null],['fecmikro','#cvFM',null],['vetokoe','#cvS','#legS'],['koesauva','#cvB',null]]
     .map(([id,kohde,selite])=>({id,kohde,selite,otsikko:'auto',paikka:{sel:'auto'}}))});
