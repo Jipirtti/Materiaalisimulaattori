@@ -165,6 +165,15 @@ Kovuusmuunnin muuntaa Vickers-kovuuden Rockwell C -kovuudeksi, Brinell-kovuudeks
 - Nitrohiiletyksen kerrospaksuudet ovat parabolisen kasvulain likiarvoja. Nitrauspotentiaalia ja huokoisuutta ei mallinneta.
 - Mikrorakennekuvan faasiosuudet ovat mallin mukaiset, mutta raekoko ja muodot eivät ole mittakaavassa.
 
+## Kaavion kopiointi kuvana
+
+Jokaisen kaavion kulmassa on painike **Kopioi kuva**. Se kopioi kaavion leikepöydälle PNG-kuvana, jonka voi liittää suoraan raporttiin, diaan tai viestiin (Ctrl+V).
+
+- Kuva piirretään aina vaalealla taustalla, vaikka simulaattori olisi tummassa teemassa, ja kaksinkertaisella tarkkuudella.
+- Kuvassa ovat kaavion otsikko, kaavio, selite ja lähdemerkintä (simulaattorin nimi, Juho Pirttilahti, SEAMK, CC BY 4.0, verkko-osoite ja päivämäärä).
+- Painike on jokaisen kaavion otsikkorivillä: lämpötila–aika, kovuusprofiili, mikrorakenne, Jominy-käyrä, alkeiskoppi, Fe–C-piirros, tasapainomikrorakenne, jännitys–venymä ja koesauva.
+- Jos selain ei salli kopiointia leikepöydälle, kuva avautuu ikkunaan. Sieltä sen voi kopioida hiiren oikealla painikkeella (puhelimessa painamalla pitkään) tai tallentaa PNG-tiedostona.
+
 ## Palaute
 
 Paina yläpalkin *Palaute*. Valitse tyyppi (tulos ei vastaa odotusta, virhe tai kehitysehdotus) ja kirjoita kuvaus. Jos tulos poikkeaa odotetusta, kerro lähde, esimerkiksi tekninen kortti, standardi tai oma mittaus. Lomake liittää mukaan asetukset, jotta tilanne voidaan toistaa. *Avaa GitHubissa* vaatii GitHub-tilin. Ilman tiliä käytä *Kopioi raportti* tai *Lähetä sähköpostilla*.

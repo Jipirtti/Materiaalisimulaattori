@@ -28,6 +28,7 @@ Materiaalisimulaattoria kehitetään avoimesti Seinäjoen ammattikorkeakoulussa 
 | `drawMicro` | Kaavamainen mikrorakenne |
 | `EXAMPLES` | Esimerkit |
 | `SimPalaute` | Palautekanava (sama moduuli kuin muissa simulaattoreissa; tekstit ja lomakepohja `1-materiaali.yml` annetaan init-kutsussa) |
+| `SimKuva` | Kaavion kopiointi kuvana (sama moduuli kaikissa simulaattoreissa; kaaviot, otsikot, selitteet ja painikkeiden paikat annetaan init-kutsussa) |
 | `window.MatSim` | Testirajapinta |
 
 ### Uusi teräs
